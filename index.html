@@ -753,44 +753,9 @@ function renderInfoBlock(labelClass, label, content, kw){
     return `<div class="vs"><div class="tl ${labelClass}">${label}</div><div class="ct">${hl(content,kw)}</div></div>`;
 }
 function renderListBlock(labelClass, label, items, kw){
-    if(!items || !items.length) return '';
-    return renderInfoBlock(labelClass, label, items.join('
+      if(!items || !items.length) return '';
+      return renderInfoBlock(labelClass, label, items.join('
 '), kw);
-}
-function renderSourceBlock(v){
-    if(!v.sources?.length) return '';
-    const rows = v.sources.map(s => `<div class="su-s"><div class="ct">${escapeHtml(s.org || '')}${s.title ? ` · ${s.url ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.title)}</a>` : escapeHtml(s.title)}` : ''}${s.last_verified_at ? `<br>검증일: ${escapeHtml(s.last_verified_at)}` : ''}</div></div>`).join('');
-    return `<div class="ss"><div class="ss-t"><b>${v.sources.length}</b> 출처</div>${rows}</div>`;
-}
-function renderV2Blocks(v, kw){
-    return [
-        renderMiniGuide(v, kw),
-        renderInfoBlock('tl-s','요약',v.summary||'',kw),
-        renderChecklistBlock('tl-s','빠른 순서',v.quick_steps,kw),
-        renderChecklistBlock('tl-s','필수서류',v.key_rules,kw),
-        renderChecklistBlock('tl-e','실무 보완서류',v.practical_docs,kw),
-        renderChecklistBlock('tl-s','대상',v.eligibility,kw),
-        renderChecklistBlock('tl-n','진행 흐름',v.office_flow,kw),
-        renderChecklistBlock('tl-e','소득요건',v.income_rules,kw),
-        renderChecklistBlock('tl-e','재신청',v.reapply_triggers,kw),
-        renderChecklistBlock('tl-e','업데이트 가능',v.updatable_fields,kw),
-        renderChecklistBlock('tl-f','사진 규정',v.photo_rules,kw),
-        renderChecklistBlock('tl-f','ADHD 준비 팁',v.adhd_tips,kw),
-        renderChecklistBlock('tl-f','주의',v.warnings,kw),
-        renderSourceBlock(v)
-    ].join('');
-}
-function renderSubCodes(v, kw, kwL){
-    const hs=v.subCodes&&v.subCodes.length>0;
-    if(!hs) return '';
-    let sh=`<div class="ss"><div class="ss-t"><b>세부항목</b>${v.subCodes.length}개</div>`;
-    v.subCodes.forEach(s=>{
-        const x=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase();
-        const im=!kw.length||kwL.some(k=>x.includes(k));
-        sh+=`<div class="su${kw.length&&im?' open':''}"><div class="su-h" onclick="this.parentElement.classList.toggle('open')"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c">`;
-        if(s.addReq) sh+=`<div class="su-s"><div class="tl tl-n">안내/추가</div><div class="ct">${hl(s.addReq,kw)}</div></div>`;
-        if(s.note) sh+=`<div class="su-s"><div class="tl tl-f">실무참고</div><div class="ct">${hl(s.note,kw)}</div></div>`;
-        sh+=`</div></div></div>`;
     });
     sh+=`</div>`;
     return sh;
