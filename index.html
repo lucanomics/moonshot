@@ -12,7 +12,6 @@
             --fm: 'JetBrains Mono', 'Fira Code', 'Noto Sans Mono', monospace;
             --fs: clamp(14px, 1.35vw, 16px);
             
-            /* Soft Light Mode (눈 피로도 감소) */
             --bg0: #f8fafc; --bg1: #ffffff; --bg2: #f1f5f9; --bg3: #e2e8f0; --bgI: #ffffff;
             --bd: #cbd5e1; --bd2: #e2e8f0; --bd3: #cbd5e1;
             --t1: #1e293b; --t2: #334155; --t3: #64748b;
@@ -20,19 +19,17 @@
             --cy: #0ea5e9; --cyL: #e0f2fe;
             --hlB: #fef3c7; --hlT: #92400e;
             
-            /* Category Colors */
             --cSh: #94a3b8; --cSt: #3b82f6; --cWk: #f59e0b; --cIn: #10b981;
             --cFm: #ec4899; --cOt: #8b5cf6; --cDp: #64748b; --cNh: #0d9488; 
             --cFq: #ef4444; --cSc: #d946ef;
             
-            /* Soft Shadows */
             --sh1: 0 2px 6px rgba(15, 23, 41, 0.04); 
             --sh2: 0 8px 24px rgba(15, 23, 41, 0.08);
             --shG: 0 0 24px rgba(59, 130, 246, 0.15);
+            --shD: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         [data-theme="dark"] {
-            /* Soft Dark Mode (Slate 계열, 순수 블랙 배제) */
             --bg0: #0f172a; --bg1: #1e293b; --bg2: #334155; --bg3: #1e293b; --bgI: #0f172a;
             --bd: #334155; --bd2: #475569; --bd3: #334155;
             --t1: #cbd5e1; --t2: #94a3b8; --t3: #64748b;
@@ -44,206 +41,91 @@
             
             --sh1: 0 2px 8px rgba(0, 0, 0, 0.3); 
             --sh2: 0 12px 32px rgba(0, 0, 0, 0.4);
-            --shG: 0 0 32px rgba(30, 58, 138, 0.5); /* Deep Space Blue Glow */
+            --shG: 0 0 32px rgba(30, 58, 138, 0.5);
+            --shD: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
         
         html { font-size: var(--fs); scroll-behavior: smooth; }
-        body {
-            font-family: var(--ff);
-            background: var(--bg0);
-            color: var(--t1);
-            line-height: 1.65;
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background 0.4s ease, color 0.4s ease;
-        }
+        body { font-family: var(--ff); background: var(--bg0); color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
 
-        /* ═══ BACKGROUND STARS (Softened) ═══ */
         .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; transition: opacity 0.8s ease; }
         .star { position: absolute; background: #cbd5e1; border-radius: 50%; animation: twk var(--d, 4s) infinite alternate; }
         @keyframes twk { 0% { opacity: 0.1; } 100% { opacity: 0.4; } }
         body.searched .stars { opacity: 0.05; }
 
-        /* ═══ LAYOUT MORPHING (Landing -> Searched) ═══ */
-        .hero-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            position: relative;
-            z-index: 10;
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.searched .hero-container {
-            min-height: 70px;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            background: color-mix(in srgb, var(--bg1) 85%, transparent);
-            border-bottom: 1px solid var(--bd);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: var(--sh1);
-        }
+        .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.searched .hero-container { min-height: 70px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 85%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: var(--sh1); }
 
-        .header-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            width: 100%;
-            max-width: 700px;
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.searched .header-inner {
-            flex-direction: row;
-            justify-content: space-between;
-            max-width: 1200px;
-            gap: 1rem;
-            padding: 0.6rem 1.2rem;
-        }
+        .header-inner { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 700px; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.searched .header-inner { flex-direction: row; justify-content: space-between; max-width: 1200px; gap: 1rem; padding: 0.6rem 1.2rem; }
 
-        /* ═══ LOGO AREA ═══ */
-        .logo-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.searched .logo-area {
-            flex-direction: row;
-            gap: 0.6rem;
-            flex-shrink: 0;
-        }
+        .logo-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.searched .logo-area { flex-direction: row; gap: 0.6rem; flex-shrink: 0; }
 
-        /* SVG Logo Morph */
         .logo-svg { width: 100px; height: 100px; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         body.searched .logo-svg { width: 34px; height: 34px; }
 
         .logo-text { display: flex; flex-direction: column; align-items: center; transition: all 0.7s ease; }
         body.searched .logo-text { align-items: flex-start; }
         
-        .logo-brand {
-            font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1;
-            background: linear-gradient(135deg, var(--ac), var(--cy));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            transition: font-size 0.7s ease;
-        }
+        .logo-brand { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; background: linear-gradient(135deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: font-size 0.7s ease; }
         body.searched .logo-brand { font-size: 1.2rem; }
         
         .logo-sub { font-size: 0.85rem; font-weight: 500; color: var(--t3); letter-spacing: 0.02em; transition: all 0.4s; }
         body.searched .logo-sub { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
 
-        /* ═══ ROCKET ANIMATION (3rd to 1st Quadrant) ═══ */
-        .rocket-flyer {
-            transition: transform 0.1s;
-            transform-origin: center;
-        }
+        .rocket-flyer { transition: transform 0.1s; transform-origin: center; }
         .exhaust { opacity: 0; transition: opacity 0.2s; }
+        body.launching .rocket-flyer { animation: moonshotLaunch 0.7s cubic-bezier(0.5, 0, 0.2, 1) forwards; }
+        body.launching .exhaust { opacity: 1; animation: flicker 0.1s infinite alternate; }
         
-        body.launching .rocket-flyer {
-            animation: moonshotLaunch 0.7s cubic-bezier(0.5, 0, 0.2, 1) forwards;
-        }
-        body.launching .exhaust {
-            opacity: 1;
-            animation: flicker 0.1s infinite alternate;
-        }
-        
-        /* 45 degree top-right trajectory */
-        @keyframes moonshotLaunch {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(150px, -150px) scale(0.5); opacity: 0; }
-        }
-        @keyframes flicker {
-            from { transform: scale(0.9); opacity: 0.7; }
-            to { transform: scale(1.1); opacity: 1; }
-        }
+        @keyframes moonshotLaunch { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(150px, -150px) scale(0.5); opacity: 0; } }
+        @keyframes flicker { from { transform: scale(0.9); opacity: 0.7; } to { transform: scale(1.1); opacity: 1; } }
 
-        /* ═══ SEARCH BAR ═══ */
-        .search-wrap { width: 100%; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        .search-wrap { width: 100%; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
         body.searched .search-wrap { max-width: 500px; flex: 1; min-width: 200px; }
 
-        .sbar {
-            position: relative; display: flex; align-items: center;
-            background: var(--bgI); border: 2px solid var(--bd);
-            border-radius: 999px; box-shadow: var(--sh1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sbar:focus-within {
-            border-color: var(--ac);
-            box-shadow: var(--shG), 0 0 0 4px var(--acG);
-        }
+        .sbar { position: relative; display: flex; align-items: center; background: var(--bgI); border: 2px solid var(--bd); border-radius: 999px; box-shadow: var(--sh1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 20; }
+        .sbar:focus-within { border-color: var(--ac); box-shadow: var(--shG), 0 0 0 4px var(--acG); }
 
         .sbar-icon { position: absolute; left: 1.2rem; color: var(--t3); width: 22px; height: 22px; transition: all 0.2s; }
         .sbar:focus-within .sbar-icon { color: var(--ac); transform: scale(1.1); }
 
-        #q {
-            flex: 1; border: 0; outline: 0; background: 0;
-            padding: 1.1rem 1rem 1.1rem 3.2rem;
-            font-size: 1.1rem; color: var(--t1); font-family: var(--ff);
-            transition: all 0.7s ease;
-        }
+        #q { flex: 1; border: 0; outline: 0; background: 0; padding: 1.1rem 1rem 1.1rem 3.2rem; font-size: 1.1rem; color: var(--t1); font-family: var(--ff); transition: all 0.7s ease; }
         body.searched #q { padding: 0.75rem 0.8rem 0.75rem 2.8rem; font-size: 0.95rem; }
         #q::placeholder { color: var(--t3); font-weight: 400; }
 
         .xb { background: 0; border: 0; color: var(--t3); cursor: pointer; padding: 0.5rem; font-size: 1.2rem; display: none; }
         .xb:hover { color: var(--t1); } .xb.v { display: block; }
 
-        .sbar-go {
-            background: 0; border: 0; cursor: pointer; color: var(--t3);
-            padding: 0 1.2rem 0 0.5rem; display: flex; align-items: center;
-            transition: color 0.2s, transform 0.2s;
-        }
+        .sbar-go { background: 0; border: 0; cursor: pointer; color: var(--t3); padding: 0 1.2rem 0 0.5rem; display: flex; align-items: center; transition: color 0.2s, transform 0.2s; }
         .sbar-go:hover { color: var(--ac); transform: scale(1.1); }
         .sbar-go svg { width: 22px; height: 22px; }
 
-        .smeta {
-            display: flex; justify-content: space-between; margin-top: 0.5rem;
-            font-size: 0.75rem; color: var(--t3); padding: 0 1rem;
-            opacity: 0; height: 0; overflow: hidden; transition: opacity 0.3s;
-        }
+        /* ══ AUTO SUGGEST ══ */
+        .auto-list { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--shD); max-height: 300px; overflow-y: auto; z-index: 999; display: none; opacity: 0; transform: translateY(-10px); transition: opacity 0.2s, transform 0.2s; }
+        .auto-list.active { display: block; opacity: 1; transform: translateY(0); }
+        .auto-item { padding: 0.75rem 1.2rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--t1); border-bottom: 1px solid var(--bd2); transition: background 0.2s; }
+        .auto-item:last-child { border-bottom: none; }
+        .auto-item:hover { background: var(--bg2); }
+        .auto-item svg { color: var(--t3); width: 16px; height: 16px; flex-shrink: 0; }
+
+        .smeta { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--t3); padding: 0 1rem; opacity: 0; height: 0; overflow: hidden; transition: opacity 0.3s; }
         body.searched .smeta { opacity: 1; height: auto; overflow: visible; }
 
-        /* ═══ CONTROLS (Top Right in Searched State) ═══ */
-        .ctrls {
-            display: flex; align-items: center; gap: 0.4rem;
-            opacity: 0; pointer-events: none; max-width: 0; overflow: hidden;
-            transition: opacity 0.4s ease;
-        }
+        .ctrls { display: flex; align-items: center; gap: 0.4rem; opacity: 0; pointer-events: none; max-width: 0; overflow: hidden; transition: opacity 0.4s ease; }
         body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overflow: visible; flex-shrink: 0; }
 
-        .cb {
-            background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px;
-            padding: 0.3rem 0.7rem; font-size: 0.75rem; color: var(--t2); cursor: pointer;
-            font-family: var(--ff); font-weight: 600; white-space: nowrap; transition: all 0.2s;
-        }
+        .cb { background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px; padding: 0.3rem 0.7rem; font-size: 0.75rem; color: var(--t2); cursor: pointer; font-family: var(--ff); font-weight: 600; white-space: nowrap; transition: all 0.2s; }
         .cb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
         .cb.on { background: var(--ac2); color: #fff; border-color: var(--ac2); box-shadow: 0 2px 8px rgba(99,102,241,.3); }
 
-        /* ═══ LANDING HINTS ═══ */
-        .landing-hints {
-            display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
-            margin-top: 2rem; max-width: 650px;
-            transition: opacity 0.4s, max-height 0.4s; overflow: hidden;
-        }
+        .landing-hints { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 2rem; max-width: 650px; transition: opacity 0.4s, max-height 0.4s; overflow: hidden; }
         body.searched .landing-hints { opacity: 0; max-height: 0; margin: 0; pointer-events: none; }
-        .lh {
-            background: var(--bg2); border: 1px solid var(--bd); border-radius: 999px;
-            padding: 0.4rem 0.9rem; font-size: 0.8rem; color: var(--t3); cursor: pointer;
-            transition: all 0.2s; font-weight: 500;
-        }
+        .lh { background: var(--bg2); border: 1px solid var(--bd); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.8rem; color: var(--t3); cursor: pointer; transition: all 0.2s; font-weight: 500; }
         .lh:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); transform: translateY(-2px); }
 
-        /* ═══ RESULTS AREA ═══ */
-        .results-area {
-            max-width: 1160px; margin: 0 auto; padding: 0 1rem;
-            opacity: 0; transform: translateY(40px); pointer-events: none;
-            transition: opacity 0.6s ease 0.1s, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
-        }
+        .results-area { max-width: 1160px; margin: 0 auto; padding: 0 1rem; opacity: 0; transform: translateY(40px); pointer-events: none; transition: opacity 0.6s ease 0.1s, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s; }
         body.searched .results-area { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
         .qf { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.2rem 0 1rem; }
@@ -252,7 +134,6 @@
 
         .rlist { display: flex; flex-direction: column; gap: 0.7rem; padding-bottom: 3rem; }
 
-        /* ═══ VISA CARD ═══ */
         .vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 12px; box-shadow: var(--sh1); border-left: 5px solid var(--cbc, var(--bd2)); transition: box-shadow 0.3s, transform 0.2s; animation: cIn 0.3s ease both; }
         .vc:hover { box-shadow: var(--sh2); transform: translateY(-2px); }
         @keyframes cIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -303,7 +184,7 @@
             body:not(.searched) #q { font-size: 1rem; padding: 1rem 0.5rem 1rem 2.8rem; }
             body.searched .logo-brand { font-size: 1.1rem; }
             body.searched .header-inner { padding: 0.6rem; gap: 0.5rem; }
-            .ctrls { display: none; } /* 모바일 헤더에서 컨트롤 숨김 */
+            .ctrls { display: none; }
         }
     </style>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -316,14 +197,11 @@
 <div class="hero-container" id="hero">
     <div class="header-inner">
         <div class="logo-area" onclick="if(document.body.classList.contains('searched')) resetToLanding()">
-            
             <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="85" cy="25" r="1.5" fill="#cbd5e1" opacity=".5"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite"/></circle>
                 <circle cx="95" cy="50" r="1.2" fill="#94a3b8" opacity=".4"/>
                 <circle cx="25" cy="40" r="2" fill="#cbd5e1" opacity=".3"/>
-
                 <path d="M 30,90 A 45,45 0 1,0 90,30 A 55,55 0 1,1 30,90 Z" fill="url(#gMoon)" opacity=".95"/>
-
                 <g class="rocket-flyer">
                     <g transform="translate(48, 72) rotate(45)">
                         <rect x="-8" y="-18" width="16" height="34" rx="8" fill="url(#gRocket)"/>
@@ -337,35 +215,34 @@
                         </g>
                     </g>
                 </g>
-
                 <defs>
                     <linearGradient id="gMoon" x1="20" y1="20" x2="100" y2="100">
-                        <stop offset="0%" stop-color="#3b82f6"/>
-                        <stop offset="100%" stop-color="#1e3a8a"/>
+                        <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>
                     </linearGradient>
                     <linearGradient id="gRocket" x1="0" y1="-20" x2="0" y2="20">
-                        <stop offset="0%" stop-color="#f1f5f9"/>
-                        <stop offset="100%" stop-color="#94a3b8"/>
+                        <stop offset="0%" stop-color="#f1f5f9"/><stop offset="100%" stop-color="#94a3b8"/>
                     </linearGradient>
                 </defs>
             </svg>
-
             <div class="logo-text">
                 <span class="logo-brand">Moonshot</span>
                 <span class="logo-sub">출입국 민원·비자 통합 검색 플랫폼</span>
             </div>
         </div>
 
-        <div class="search-wrap">
+        <div class="search-wrap" id="search-wrap">
             <div class="sbar">
                 <svg class="sbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-                <input type="text" id="q" placeholder="비자코드, 시나리오, 체류민원 검색 (예: 결핵, 오버스테이)" autocomplete="off" spellcheck="false">
+                <input type="text" id="q" placeholder="비자코드, F-3 소득요건, K-ETA, 결핵 등 키워드 검색" autocomplete="off" spellcheck="false">
                 <button class="xb" id="xb" onclick="clearSearch()">✕</button>
                 <button class="sbar-go" onclick="executeSearch()" title="검색">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
             </div>
-            <div class="smeta"><span id="rc"></span><span id="rh">관련도 순 자동 정렬 · AND/OR 필터 · SCN 지원</span></div>
+            
+            <div class="auto-list" id="auto-list"></div>
+
+            <div class="smeta"><span id="rc"></span><span id="rh">관련도 순 자동 정렬 · 연관검색어 지원</span></div>
         </div>
 
         <div class="ctrls">
@@ -376,7 +253,6 @@
             <button class="cb" onclick="toggleTheme()" title="테마 변경">🌗</button>
         </div>
     </div>
-
     <div class="landing-hints" id="landingHints"></div>
 </div>
 
@@ -386,14 +262,15 @@
 </div>
 
 <footer class="ft">
-    <strong style="background:linear-gradient(90deg,var(--ac),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Moonshot</strong> v11.1 · ⚠ 법령 변경 시 갱신 필요 · 실무 교차검증 필수
+    <strong style="background:linear-gradient(90deg,var(--ac),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Moonshot</strong> v12.0 · F-3 소득요건(25.7.1) 및 연관검색어 탑재 완료 · 실무 교차검증 필수
 </footer>
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// DATA v11.1 (결핵 가이드 추가 및 100% 보존)
+// DATA v12.0 (F-3 개편 소득요건 100% 통합)
 // ═══════════════════════════════════════════════════════════
 const VISA_DATA=[
+{code:"K-ETA",name:"전자여행허가 (K-ETA) 종합 가이드",cat:"faq",period:"유효기간 3년 (여권 만료일 우선)",newReq:"무사증 입국 전 항공기·선박 탑승 전 신청 필수. 17세 이하·65세 이상 면제. 복수국적자(한국여권) 신청 제외. 수수료 1만원(결제수수료 3% 별도, 환불 불가).",extReq:"여권 재발급, 분실 새 여권, 이름·여권번호 변경 시 재신청 필수. 체류지, 연락처, 입국목적 변경 시 여행정보 업데이트 가능.",faq:"Q: 취업·유학 목적?\nA: 불가. 관광, 친지방문, 비영리 상용만 가능.\nQ: 심사 기간?\nA: 통상 72시간 이내, 급행 없음.",subCodes:[{code:"K-ETA-1",name:"대상 및 면제조건",addReq:"관광, 친지, 회의, 비영리 상용 목적 한정.",note:"입국일 기준 17세 이하 또는 65세 이상 면제(18세 도달 시 신청 필수). 외국인등록증 소지자 해당 체류자격 우선."},{code:"K-ETA-2",name:"신청 및 입력 규정",addReq:"여권, 이메일, 숙소(영문도로명, 특수문자 제외), 얼굴사진(히잡 등 허용, 이마~턱 노출).",note:"가족/지인 대리 신청 가능. 연도만 있는 생일은 00월 00일 입력. 임시저장 7일 유효."},{code:"K-ETA-3",name:"수정 및 재신청",addReq:"재신청: 여권 재발급, 이름/여권번호 변경.",note:"업데이트 가능: 입국목적, 체류지, 연락처, 동반인. 직업 변경 시 재신청 불필요."},{code:"K-ETA-4",name:"주의 및 제한사항",addReq:"탑승 후/국내 체류 중 신청 시 불이익. 공식 사이트(k-eta.go.kr) 외 대행 주의.",note:"허위 정보 시 입국제한(동반인 포함). 입국신고서 면제. 국내 체류자격 변경 절대 불가."}]},
 {code:"TB-1",name:"결핵 고위험 국가 진단서 제출 기준",cat:"scn",period:"비자 신청 시",newReq:"[제출 대상] 결핵 고위험 35개국 국민 중 90일 초과 장기 체류 목적 비자 신청자, 단기(C-4) 계절근로자 및 결핵환자 가족 간병인, 완전출국 후 신규 장기비자 신청자.",extReq:"[검사 요건] 흉부 X선 검사, 객담검사 중 1가지 이상 결과 포함(의심 증상 시 둘 다 필수). 최근 3개월 이내 발급된 지정 병원 진단서만 인정.",faq:"Q: 고위험 35개국 목록?\nA: 네팔, 동티모르, 러시아, 말레이시아, 몽골, 미얀마, 방글라데시, 베트남, 스리랑카, 우즈베키스탄, 인도, 인도네시아, 중국, 캄보디아, 키르기스, 태국, 파키스탄, 필리핀, 라오스, 카자흐스탄, 타지키스탄, 우크라이나, 아제르바이잔, 벨라루스, 몰도바공화국, 나이지리아, 남아프리카공화국, 에티오피아, 콩고민주공화국, 케냐, 모잠비크, 짐바브웨, 앙골라, 페루, 파푸아뉴기니.",subCodes:[{code:"TB-1-1",name:"제출 예외 및 유의사항",addReq:"결혼비자(F-6)의 경우 건강진단서에 결핵검사가 포함되어 있으면 별도 제출 면제.",note:"태국 등 국가별 결핵 검사 지정 병원은 관할 재외공관 첨부파일 참조 필수."}]},
 {code:"SCN-1",name:"글로벌 의사결정 매트릭스",cat:"scn",period:"기본 원칙",newReq:"[단기→장기] 원칙 불허 (예외적 인도적 사유만). [유학→취업] D-2 → D-10 → E-7 → F-2 → F-5 표준 흐름 적용.",extReq:"[연장 핵심] 현재 자격 정의 충족 여부, 위반/과태료/세금 체납 등 감점 요소 평가.",faq:"Q: F계열 자격 변경은?\nA: 동일 계열 내 변경은 원칙 허용, 타 계열 장기 변경은 일부만 예외적 허용.",subCodes:[]},
 {code:"SCN-2",name:"실무 변수 체크리스트",cat:"scn",period:"상시 검토",newReq:"[공통 변수] 현재 자격/만료일, 입국경로(사증 종류), 오버스테이 여부, 범죄경력, 세금/건보 납부 이력.",extReq:"[특화 변수] 대한민국 남성 동포 병역상태, 혼인단절 사유 및 시점, 단순노무 종사 여부.",faq:"Q: 체크리스트 활용법?\nA: 민원 접수 시 파라미터를 먼저 스캔하여 허용/불허 방향을 가늠할 것.",subCodes:[]},
@@ -431,7 +308,7 @@ const VISA_DATA=[
 {code:"E-10",name:"선원취업",cat:"work",period:"3년, 연장가능",newReq:"선원근로계약서, 선원 교육/자격증명, 건강진단서.",extReq:"통합신청서, 여권, 등록증, 수수료. 선원근로계약서, 선원수첩, 선주확인서, 체류지.",faq:"Q: 무단 하선?\nA: 불법체류. 선주 즉시 보고.",subCodes:[{code:"E-10-1",name:"내항선원",addReq:"내항 선원근로계약서.",note:""},{code:"E-10-2",name:"어선원",addReq:"어선 승선 계약서.",note:"제주 근해어업."},{code:"E-10-3",name:"순항선원",addReq:"크루즈선 계약서.",note:""}]},
 {code:"F-1",name:"방문동거",cat:"family",period:"2년, 연장가능",newReq:"초청인 여권/신분증, 가족관계 입증, 체류자격 입증.",extReq:"통합신청서, 여권, 등록증, 6만원. 가족/혼인관계증명서, 등본, 소득증명.",faq:"Q: 이혼 후?\nA: F-1-6 6개월 한시.",subCodes:[{code:"F-1-3",name:"외교동거",addReq:"외교·공무 가족관계.",note:""},{code:"F-1-5",name:"결혼이민자 부모·가족",addReq:"초청장, 신원보증서, 비취업서약서. 재외공관 필수.",note:"입국 후 전환 불가."},{code:"F-1-9",name:"동포배우자 등",addReq:"F-4/H-2 동포 배우자·자녀 입증.",note:""},{code:"F-1-13",name:"유학생부모",addReq:"고교 이하 유학생 재학, 부모관계.",note:""},{code:"F-1-21",name:"외교가사보조",addReq:"공관 요청서.",note:""},{code:"F-1-22",name:"고액가사보조",addReq:"고액투자자 고용계약서.",note:""},{code:"F-1-23",name:"첨단가사보조",addReq:"우수인재 고용계약서.",note:""},{code:"F-1-24",name:"전문가사보조",addReq:"전문인력 고용계약서.",note:""}]},
 {code:"F-2",name:"거주",cat:"family",period:"5년, 연장가능",newReq:"소분류별 점수/투자금/가족관계 입증.",extReq:"통합신청서, 여권, 등록증, 6만원. 소분류별 유지 입증, 체류지.",faq:"Q: F-2-7 미달?\nA: 사회통합 가점+TOPIK 향상.",subCodes:[{code:"F-2-2",name:"국민자녀",addReq:"한국인 부·모 가족관계증명서, 출생증명.",note:""},{code:"F-2-3",name:"영주자가족",addReq:"F-5 등록증 사본, 가족관계.",note:""},{code:"F-2-7",name:"점수제 거주",addReq:"점수 80점↑, TOPIK 4급↑ 또는 사회통합 5단계.",note:"빈출. 매년 쿼터."},{code:"F-2-99",name:"기타 거주",addReq:"개별 사유 소명.",note:"인도적 사유 등."}]},
-{code:"F-3",name:"동반",cat:"family",period:"주체류자와 동일",newReq:"주체류자 여권/등록증, 가족관계(혼인/출생), 재직/체류자격 입증.",extReq:"통합신청서, 여권, 등록증, 6만원. 주체류자 등록증, 가족관계, 체류지.",faq:"Q: 아르바이트?\nA: 원칙 불가. 활동허가 필수.",subCodes:[{code:"F-3-1",name:"동반",addReq:"D-1~E-7 자격자의 배우자·미성년 자녀.",note:""}]},
+{code:"F-3",name:"동반",cat:"family",period:"주체류자와 동일",newReq:"주체류자 여권/등록증, 가족관계 증빙(공증/아포스티유), 초청자 소득요건(2025.7.1 개편) 입증.",extReq:"통합신청서, 여권, 등록증, 6만원. 주체류자 등록증, 가족관계, 체류지.",faq:"Q: 아르바이트?\nA: 원칙 불가. 활동허가 필수.",subCodes:[{code:"F-3-1",name:"동반 기본",addReq:"D-1~E-7 자격자의 배우자·미성년 자녀.",note:""},{code:"F-3-2",name:"소득요건(25.7.1 개편)",addReq:"E-2, E-6, E-7(1~4), D-8, D-9 대상. 12개월 이상 체류 시 2인 23,595,948원, 3인 30,152,118원(전년도 소득금액증명).",note:"E-7-4 배우자 2천만원 자산 요건 폐지. 12개월 미만 시 월할(2인 월 1,996,329원). 소득부족액 10% 미만 시 부족액 5배 이상 예금으로 보완 가능."},{code:"F-3-3",name:"소득요건 면제",addReq:"E-1(교수), E-3(연구), E-4(기술지도), E-5(전문직업), D-8(50만불 이상 고액투자자).",note:"위 전문인력은 동반가족 초청 시 소득(체류경비) 요건 입증 면제."}]},
 {code:"F-4",name:"재외동포",cat:"family",period:"3년, 연장가능",newReq:"외국 영주권/시민권, 과거 한국 국적 입증, 범죄경력증명서.",extReq:"재외동포 통합신청서, 여권, 거소신고증, 6만원. 체류지.",faq:"Q: 취업 제한?\nA: 단순노무 불가. 과태료.",subCodes:[{code:"F-4-11",name:"재외동포 본인",addReq:"국적 상실/이탈 입증.",note:""},{code:"F-4-12",name:"직계가족",addReq:"직계 관계 입증.",note:""},{code:"F-4-13",name:"D·E계열 6개월↑",addReq:"체류 이력 입증.",note:""},{code:"F-4-14",name:"대학 졸업자",addReq:"학위증명서.",note:""},{code:"F-4-15",name:"OECD영주자",addReq:"OECD 영주권.",note:""},{code:"F-4-16",name:"법인대표 등",addReq:"법인대표 임명장.",note:""},{code:"F-4-17",name:"10만불 기업가",addReq:"10만불↑ 투자 증명.",note:""},{code:"F-4-18",name:"다국적기업 종사자",addReq:"다국적기업 재직증명.",note:""},{code:"F-4-19",name:"동포단체대표",addReq:"단체대표 증빙.",note:""},{code:"F-4-20",name:"공무원 등",addReq:"공무원 재직증명.",note:""},{code:"F-4-21",name:"교원",addReq:"교원 자격증/재직증명.",note:""},{code:"F-4-25",name:"60세 이상자",addReq:"연령 입증.",note:"한국어 면제."}]},
 {code:"F-5",name:"영주",cat:"family",period:"영구(10년마다 재발급)",newReq:"전환 요건 입증, 해외범죄경력, 생계유지/소양(사회통합 5단계).",extReq:"연장 불필요. 영주증 10년 만료 전 재발급(3만원).",faq:"Q: 강제퇴거?\nA: 원칙 불가. 내란/외환/5년↑ 징역 예외.",subCodes:[{code:"F-5-3",name:"결혼이민 영주",addReq:"F-6 2년↑, 생계유지, 한국어(사회통합5단계/TOPIK4급).",note:"빈출 전환."},{code:"F-5-5",name:"고액투자 영주",addReq:"미화 50만불↑, 국민 5인↑ 고용.",note:""},{code:"F-5-11",name:"특정능력 영주",addReq:"특정 분야 경력·기여.",note:""},{code:"F-5-16",name:"점수제 영주",addReq:"F-2-7 3년↑ 유지, 점수 충족.",note:"F-2-7→F-5-16."}]},
 {code:"F-6",name:"결혼이민",cat:"family",period:"1~3년, 연장가능",newReq:"[한국인] 기본/가족/혼인증명, 등본, 소득/주거, 초청장. [외국인] 혼인/출생(공증), 범죄/건강, 한국어.",extReq:"통합신청서, 여권, 등록증, 3만원. 혼인관계, 등본, 직업신고서. 자녀 시 3년.",faq:"Q: 가정폭력?\nA: 권리구제 종료 시까지 연장(제25조의2).\nQ: 영주?\nA: 2년↑→F-5-3.",subCodes:[{code:"F-6-1",name:"국민배우자",addReq:"혼인관계(유지), 초청인 소득·주거, 기본소양.",note:"혼인 진정성 심사."},{code:"F-6-2",name:"자녀양육자",addReq:"이혼/사별, 미성년 자녀 양육권·친권, 가족관계.",note:""},{code:"F-6-3",name:"혼인단절자",addReq:"가정폭력 피해(고소장·보호명령·상담소), 귀책사유 입증.",note:"제25조의2 적용."}]},
@@ -479,8 +356,56 @@ function calculateScore(item,keywords){
     return currentSearchMode==='and' ? (isAnd?score:0) : score;
 }
 
+// ═══ AUTO SUGGESTION (연관검색어) ═══
+const PREDEF_KEYWORDS = [
+    "F-3 소득요건 개편", "E-7-4 숙련기능", "건강보험 면제 및 감면", "K-ETA 면제조건",
+    "F-6-3 혼인단절", "B-2-2 제주무비자", "결핵 고위험 35개국", "오버스테이 자진신고",
+    "D-2 유학 아르바이트", "D-10 구직활동", "F-5 영주권 점수제", "하이코리아 방문예약"
+];
+
+function showSuggestions(val) {
+    const list = document.getElementById('auto-list');
+    list.innerHTML = '';
+    if(!val) { list.classList.remove('active'); return; }
+    
+    const lowerVal = val.toLowerCase();
+    const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
+    
+    VISA_DATA.forEach(v => {
+        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal)) {
+            const str = `${v.code} ${v.name}`;
+            if(!matches.includes(str)) matches.push(str);
+        }
+    });
+
+    if(matches.length > 0) {
+        matches.slice(0, 7).forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'auto-item';
+            div.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg> <span>${hl(m, [val])}</span>`;
+            div.onclick = () => {
+                document.getElementById('q').value = m;
+                list.classList.remove('active');
+                executeSearch();
+            };
+            list.appendChild(div);
+        });
+        list.classList.add('active');
+    } else {
+        list.classList.remove('active');
+    }
+}
+
+// Close suggestion list when clicked outside
+document.addEventListener('click', function(e) {
+    if(!document.getElementById('search-wrap').contains(e.target)){
+        document.getElementById('auto-list').classList.remove('active');
+    }
+});
+
 // ═══ STATE MACHINE ═══
 function executeSearch(){
+    document.getElementById('auto-list').classList.remove('active');
     const q=document.getElementById('q').value.trim();
     if(!q) return;
     
@@ -554,19 +479,34 @@ function renderResults(query){
 
 // ═══ CONTROLS ═══
 let dt;
-function handleInput(){const v=document.getElementById('q').value;document.getElementById('xb').classList.toggle('v',v.length>0);if(document.body.classList.contains('searched')){clearTimeout(dt);dt=setTimeout(()=>renderResults(v),150);}}
-function clearSearch(){const i=document.getElementById('q');i.value='';i.focus();document.getElementById('xb').classList.remove('v');if(document.body.classList.contains('searched'))renderResults('');}
+function handleInput(){
+    const v=document.getElementById('q').value;
+    document.getElementById('xb').classList.toggle('v',v.length>0);
+    showSuggestions(v);
+    if(document.body.classList.contains('searched')){
+        clearTimeout(dt);
+        dt=setTimeout(()=>renderResults(v),150);
+    }
+}
+function clearSearch(){
+    const i=document.getElementById('q');
+    i.value='';
+    i.focus();
+    document.getElementById('xb').classList.remove('v');
+    document.getElementById('auto-list').classList.remove('active');
+    if(document.body.classList.contains('searched'))renderResults('');
+}
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched'))renderResults(document.getElementById('q').value);}
 function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);}
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
 // ═══ INIT FILTERS ═══
 (function(){
-    const lf=[{l:'자격변경 원칙',q:'SCN-1'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'제주무비자',q:'B-2-2 제주'},{l:'가정폭력',q:'가정폭력'}];
+    const lf=[{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'K-ETA 가이드',q:'K-ETA'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'제주무비자',q:'B-2-2 제주'},{l:'가정폭력',q:'가정폭력'}];
     const lc=document.getElementById('landingHints');
     lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{document.getElementById('q').value=x.q;executeSearch();};lc.appendChild(b);});
     
-    const rf=[{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'},{l:'아포스티유',q:'아포스티유'}];
+    const rf=[{l:'F-3 소득',q:'F-3 소득'},{l:'K-ETA',q:'K-ETA'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
     const qc=document.getElementById('qf');
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
 })();
