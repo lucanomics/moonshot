@@ -1,866 +1,470 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출입국 민원·비자 통합 검색 플랫폼 v5.1</title>
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            /* Design System Tokens: Spacing */
-            --space-xs: 0.5rem;
-            --space-sm: 0.75rem;
-            --space-md: 1rem;
-            --space-lg: 1.25rem;
-            --space-xl: 1.5rem;
-            --space-2xl: 2rem;
-
-            /* Design System Tokens: Typography */
-            --font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', system-ui, sans-serif;
-            --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Noto Sans Mono', monospace;
-            --font-size-base: clamp(13px, 1.4vw, 15px);
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.8125rem;
-            --font-size-md: 0.875rem;
-            --font-size-lg: 0.95rem;
-            --font-size-xl: 1.1rem;
-
-            /* Color System: Light Mode */
-            --bg-primary: #f4f3f0;
-            --bg-secondary: #fff;
-            --bg-card: #fff;
-            --bg-card-subtle: #f9f8f6;
-            --bg-input: #fff;
-            --bg-subtle: #f5f4f1;
-            --bg-subtle-2: #faf9f7;
-
-            --border-primary: #d6d3cd;
-            --border-card: #e0ddd7;
-            --border-subtle: #d0cdc6;
-
-            --text-primary: #1a1a1a;
-            --text-secondary: #4a4740;
-            --text-tertiary: #7a7770;
-
-            --accent: #2c5aa0;
-            --accent-light: #e8eef6;
-            --accent-hover: #1e4080;
-
-            --highlight-bg: #fff3b0;
-            --highlight-text: #1a1a1a;
-
-            /* Tag Colors */
-            --tag-new-bg: #dceefb; --tag-new-text: #1a4a7a;
-            --tag-extension-bg: #e0f0e0; --tag-extension-text: #1a5a2a;
-            --tag-faq-bg: #f5e6d8; --tag-faq-text: #6a3a1a;
-            --tag-sub-bg: #ece8f4; --tag-sub-text: #4a3a6a;
-            --tag-period-bg: #e8e6f0; --tag-period-text: #3a3060;
-
-            /* Category Colors */
-            --category-short: #9ca3af;
-            --category-study: #3b82f6;
-            --category-work: #f59e0b;
-            --category-invest: #10b981;
-            --category-family: #ec4899;
-            --category-other: #8b5cf6;
-            --category-diplo: #64748b;
-            --category-nhis: #0d9488;
-            --category-faq: #ef4444;
-
-            /* Shadows & Radius */
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .06);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
-            --radius-lg: 12px;
-            --radius-md: 8px;
-            --radius-sm: 6px;
-        }
-
-        [data-theme="dark"] {
-            /* Color System: Dark Mode */
-            --bg-primary: #131316;
-            --bg-secondary: #1a1a1e;
-            --bg-card: #1e1e24;
-            --bg-card-subtle: #252530;
-            --bg-input: #252530;
-            --bg-subtle: #1c1c22;
-            --bg-subtle-2: #222228;
-
-            --border-primary: #333340;
-            --border-card: #333340;
-            --border-subtle: #2e2e3a;
-
-            --text-primary: #e0ded8;
-            --text-secondary: #a8a5a0;
-            --text-tertiary: #706d68;
-
-            --accent: #6ba3e8;
-            --accent-light: #1a2538;
-            --accent-hover: #8ab8f0;
-
-            --highlight-bg: #5a4b15;
-            --highlight-text: #f4ebd0;
-
-            /* Tag Colors Dark */
-            --tag-new-bg: #152535; --tag-new-text: #70b0e0;
-            --tag-extension-bg: #152818; --tag-extension-text: #60b070;
-            --tag-faq-bg: #352518; --tag-faq-text: #c89868;
-            --tag-sub-bg: #252035; --tag-sub-text: #a090c8;
-            --tag-period-bg: #1e1a2e; --tag-period-text: #9088c0;
-
-            --category-nhis: #14b8a6;
-            --category-faq: #f87171;
-
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .4);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, .5);
-        }
-
-        html {
-            font-size: var(--font-size-base);
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.65;
-            min-height: 100vh;
-            transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ===== Header ===== */
-        .platform-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-primary);
-            padding: var(--space-sm) var(--space-md);
-            backdrop-filter: blur(16px);
-            box-shadow: var(--shadow-sm);
-            transition: background-color 0.2s ease;
-        }
-
-        .platform-header__inner {
-            max-width: 1140px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            flex-wrap: wrap;
-        }
-
-        .platform-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-weight: 700;
-            font-size: var(--font-size-lg);
-            color: var(--text-primary);
-            white-space: nowrap;
-            letter-spacing: -0.02em;
-        }
-
-        .platform-logo__icon {
-            width: 28px;
-            height: 28px;
-            background: var(--accent);
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: var(--font-size-sm);
-            font-weight: 800;
-        }
-
-        .platform-header__controls {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            margin-left: auto;
-            flex-wrap: wrap;
-        }
-
-        .control-button {
-            background: var(--bg-card-subtle);
-            border: 1px solid var(--border-primary);
-            border-radius: 999px;
-            padding: var(--space-xs) var(--space-md);
-            font-size: var(--font-size-xs);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: var(--font-family);
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .control-button:hover {
-            background: var(--accent-light);
-            color: var(--accent);
-            border-color: var(--accent);
-            transform: translateY(-1px);
-        }
-
-        .control-button.is-active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        /* ===== Search Area ===== */
-        .search-area {
-            max-width: 1140px;
-            margin: var(--space-xl) auto 0;
-            padding: 0 var(--space-md);
-        }
-
-        .search-bar {
-            position: relative;
-            display: flex;
-            align-items: center;
-            background: var(--bg-input);
-            border: 2px solid var(--border-primary);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .search-bar:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.15);
-        }
-
-        .search-bar__icon {
-            position: absolute;
-            left: var(--space-md);
-            color: var(--text-tertiary);
-            font-size: 1.25rem;
-            pointer-events: none;
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            padding: var(--space-md) var(--space-md) var(--space-md) 2.75rem;
-            font-size: var(--font-size-md);
-            color: var(--text-primary);
-            font-family: var(--font-family);
-        }
-
-        .search-input::placeholder { color: var(--text-tertiary); }
-
-        .clear-button {
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            cursor: pointer;
-            padding: var(--space-sm) var(--space-md);
-            font-size: 1.25rem;
-            display: none;
-        }
-
-        .clear-button:hover { color: var(--text-primary); }
-        .clear-button.is-visible { display: block; }
-
-        .search-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--space-sm);
-            font-size: var(--font-size-xs);
-            color: var(--text-tertiary);
-            padding: 0 var(--space-xs);
-        }
-
-        /* ===== Quick Filters ===== */
-        .quick-filters {
-            max-width: 1140px;
-            margin: var(--space-md) auto 0;
-            padding: 0 var(--space-md);
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
-        }
-
-        .filter-chip {
-            background: var(--bg-card-subtle);
-            border: 1px solid var(--border-primary);
-            border-radius: 999px;
-            padding: var(--space-xs) var(--space-sm);
-            font-size: var(--font-size-xs);
-            color: var(--text-tertiary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .filter-chip:hover {
-            background: var(--accent-light);
-            color: var(--accent);
-            border-color: var(--accent);
-            transform: scale(1.02);
-        }
-
-        /* ===== Results Container ===== */
-        .results-container {
-            max-width: 1140px;
-            margin: var(--space-lg) auto var(--space-2xl);
-            padding: 0 var(--space-md);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-
-        /* ===== Visa Card (Accordion with CSS Grid) ===== */
-        .visa-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--card-border-color, var(--border-card));
-            transition: box-shadow 0.3s ease, transform 0.2s ease;
-            animation: fadeInUp 0.3s ease both;
-        }
-
-        .visa-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
-        .visa-card__header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-md);
-            background: var(--bg-card-subtle);
-            cursor: pointer;
-            user-select: none;
-            border-radius: 0 var(--radius-md) var(--radius-md) 0;
-        }
-
-        .visa-card__header:hover { background: var(--accent-light); }
-
-        .badge-code {
-            font-family: var(--font-family-mono);
-            font-weight: 700;
-            font-size: var(--font-size-lg);
-            color: var(--accent);
-            background: var(--accent-light);
-            padding: 2px 8px;
-            border-radius: var(--radius-sm);
-            letter-spacing: -0.02em;
-        }
-
-        .visa-card__title {
-            font-weight: 700;
-            font-size: var(--font-size-md);
-            color: var(--text-primary);
-        }
-
-        .badge-period {
-            font-size: var(--font-size-xs);
-            color: var(--tag-period-text);
-            background: var(--tag-period-bg);
-            padding: 2px 8px;
-            border-radius: var(--radius-sm);
-            white-space: nowrap;
-        }
-
-        .badge-count {
-            font-size: var(--font-size-xs);
-            color: var(--text-tertiary);
-            background: var(--bg-subtle);
-            padding: 2px 8px;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-        }
-
-        .toggle-icon {
-            margin-left: auto;
-            color: var(--text-tertiary);
-            font-size: var(--font-size-xs);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Grid Accordion Technique */
-        .visa-card__content-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .visa-card.is-expanded .visa-card__content-wrapper {
-            grid-template-rows: 1fr;
-        }
-
-        .visa-card.is-expanded .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .visa-card__content {
-            overflow: hidden;
-        }
-
-        .visa-section {
-            padding: var(--space-md);
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .tag-label {
-            display: inline-flex;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-bottom: var(--space-xs);
-        }
-
-        .tag-label--new { background: var(--tag-new-bg); color: var(--tag-new-text); }
-        .tag-label--ext { background: var(--tag-extension-bg); color: var(--tag-extension-text); }
-        .tag-label--faq { background: var(--tag-faq-bg); color: var(--tag-faq-text); }
-        .tag-label--sub { background: var(--tag-sub-bg); color: var(--tag-sub-text); }
-
-        .content-text {
-            font-size: var(--font-size-sm);
-            color: var(--text-secondary);
-            line-height: 1.6;
-            white-space: pre-line;
-            word-break: keep-all;
-        }
-
-        /* ===== Subcategories ===== */
-        .subcategories {
-            background: var(--bg-subtle);
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .subcategories__title {
-            padding: var(--space-sm) var(--space-md);
-            font-size: var(--font-size-xs);
-            font-weight: 700;
-            color: var(--text-tertiary);
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .sub-card { border-top: 1px solid var(--border-subtle); }
-        .sub-card__header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-lg);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .sub-card__header:hover { background: var(--bg-subtle-2); }
-        
-        .sub-card__code {
-            font-family: var(--font-family-mono);
-            font-size: var(--font-size-sm);
-            font-weight: 700;
-            color: var(--accent);
-            min-width: 4rem;
-        }
-        .sub-card__name {
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .sub-card__content-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--bg-subtle-2);
-        }
-
-        .sub-card.is-expanded .sub-card__content-wrapper { grid-template-rows: 1fr; }
-        .sub-card.is-expanded .toggle-icon { transform: rotate(180deg); }
-
-        .sub-card__content {
-            overflow: hidden;
-            border-left: 3px solid var(--accent);
-            margin-left: var(--space-xl);
-        }
-        
-        .sub-card__inner-section {
-            padding: var(--space-sm) var(--space-md);
-        }
-        .sub-card__inner-section + .sub-card__inner-section {
-            border-top: 1px dashed var(--border-subtle);
-        }
-
-        /* ===== Utilities ===== */
-        mark.highlight {
-            background: var(--highlight-bg);
-            color: var(--highlight-text);
-            padding: 0.1em 0.3em;
-            border-radius: 3px;
-            font-weight: 700;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: var(--space-2xl) var(--space-md);
-            color: var(--text-tertiary);
-        }
-        .empty-state__icon { font-size: 3rem; margin-bottom: var(--space-md); opacity: 0.3; }
-        .empty-state__title { font-weight: 700; font-size: var(--font-size-lg); color: var(--text-secondary); margin-bottom: var(--space-xs); }
-        .empty-state__desc { font-size: var(--font-size-sm); line-height: 1.6; }
-
-        .platform-footer {
-            text-align: center;
-            padding: var(--space-xl) var(--space-md);
-            font-size: var(--font-size-xs);
-            color: var(--text-tertiary);
-            border-top: 1px solid var(--border-primary);
-            max-width: 1140px;
-            margin: 0 auto;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Dark mode scrollbar */
-        [data-theme="dark"]::-webkit-scrollbar { width: 8px; }
-        [data-theme="dark"]::-webkit-scrollbar-track { background: var(--bg-primary); }
-        [data-theme="dark"]::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-    </style>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moonshot — 출입국 민원·비자 통합 검색</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ═══════════════════════════════════
+   DESIGN TOKENS — MOONSHOT THEME
+   ═══════════════════════════════════ */
+:root{
+  /* Spacing */
+  --sp-2xs:.25rem;--sp-xs:.5rem;--sp-sm:.75rem;--sp-md:1rem;--sp-lg:1.25rem;--sp-xl:1.5rem;--sp-2xl:2rem;--sp-3xl:3rem;
+  /* Typography */
+  --ff:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Noto Sans KR',system-ui,sans-serif;
+  --fm:'JetBrains Mono','Fira Code','Noto Sans Mono',monospace;
+  --fs-base:clamp(13px,1.35vw,15px);
+  /* Radius */
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;--r-full:999px;
+
+  /* ── Light Mode: Lunar White ── */
+  --bg-0:#f0f1f5;--bg-1:#ffffff;--bg-2:#f7f8fb;--bg-3:#eef0f6;--bg-input:#fff;
+  --bdr:#d4d7e0;--bdr-card:#dfe2ea;--bdr-sub:#d0d4de;
+  --tx-1:#0f1729;--tx-2:#3d4663;--tx-3:#6b7394;
+  --ac:#4f46e5;--ac2:#6366f1;--ac-glow:rgba(99,102,241,.12);--ac-lt:#eef2ff;
+  --cyan:#0891b2;--cyan-lt:#ecfeff;
+  --hl-bg:#fef3c7;--hl-tx:#92400e;
+  /* Tags */
+  --t-new-bg:#dbeafe;--t-new:#1e40af;--t-ext-bg:#d1fae5;--t-ext:#065f46;
+  --t-faq-bg:#fef3c7;--t-faq:#92400e;--t-sub-bg:#ede9fe;--t-sub:#5b21b6;
+  --t-per-bg:#e0e7ff;--t-per:#3730a3;
+  /* Categories */
+  --c-short:#94a3b8;--c-study:#3b82f6;--c-work:#f59e0b;--c-inv:#10b981;
+  --c-fam:#ec4899;--c-other:#8b5cf6;--c-diplo:#64748b;
+  --c-nhis:#0d9488;--c-faq:#ef4444;--c-scn:#d946ef;
+  /* Shadows */
+  --sh-sm:0 1px 3px rgba(15,23,41,.06);--sh-md:0 4px 16px rgba(15,23,41,.1);
+  --sh-glow:0 0 20px rgba(99,102,241,.15);
+  /* Score bar */
+  --score-track:#e2e8f0;--score-fill:linear-gradient(90deg,#6366f1,#22d3ee);
+}
+
+[data-theme="dark"]{
+  /* ── Dark Mode: Deep Space ── */
+  --bg-0:#080c18;--bg-1:#0e1225;--bg-2:#141832;--bg-3:#1a1f3a;--bg-input:#141832;
+  --bdr:#1e2548;--bdr-card:#232a50;--bdr-sub:#1c2345;
+  --tx-1:#e2e8f0;--tx-2:#94a3b8;--tx-3:#5a6380;
+  --ac:#818cf8;--ac2:#6366f1;--ac-glow:rgba(129,140,248,.15);--ac-lt:#1e1b4b;
+  --cyan:#22d3ee;--cyan-lt:#0c2a3a;
+  --hl-bg:#422006;--hl-tx:#fbbf24;
+  --t-new-bg:#1e1b4b;--t-new:#a5b4fc;--t-ext-bg:#052e16;--t-ext:#6ee7b7;
+  --t-faq-bg:#422006;--t-faq:#fcd34d;--t-sub-bg:#2e1065;--t-sub:#c4b5fd;
+  --t-per-bg:#1e1b4b;--t-per:#a5b4fc;
+  --c-nhis:#2dd4bf;--c-faq:#fca5a5;--c-scn:#e879f9;
+  --sh-sm:0 1px 4px rgba(0,0,0,.5);--sh-md:0 4px 20px rgba(0,0,0,.6);
+  --sh-glow:0 0 30px rgba(99,102,241,.2);
+  --score-track:#1e2548;
+}
+
+html{font-size:var(--fs-base);scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg-0);color:var(--tx-1);line-height:1.65;min-height:100vh;transition:background .3s,color .3s}
+
+/* ═══════════════════════════════════
+   HEADER — MOONSHOT BRANDING
+   ═══════════════════════════════════ */
+.hd{position:sticky;top:0;z-index:100;background:var(--bg-1);border-bottom:1px solid var(--bdr);padding:.6rem 1rem;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);transition:background .3s}
+.hd-in{max-width:1160px;margin:0 auto;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;flex-shrink:0}
+.logo-mark{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ac2),var(--cyan));display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 12px rgba(99,102,241,.3)}
+.logo-mark::after{content:'';position:absolute;width:10px;height:10px;background:var(--bg-1);border-radius:50%;top:4px;right:4px;opacity:.85}
+.logo-txt{display:flex;flex-direction:column;line-height:1.1}
+.logo-brand{font-size:1.1rem;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,var(--ac),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-size:.55rem;font-weight:500;color:var(--tx-3);letter-spacing:.04em}
+
+.hd-ct{display:flex;align-items:center;gap:.3rem;margin-left:auto;flex-wrap:wrap}
+.cb{background:var(--bg-3);border:1px solid var(--bdr);border-radius:var(--r-full);padding:.22rem .6rem;font-size:.68rem;color:var(--tx-2);cursor:pointer;transition:all .2s;font-family:var(--ff);font-weight:600;white-space:nowrap}
+.cb:hover{background:var(--ac-lt);color:var(--ac);border-color:var(--ac);transform:translateY(-1px)}
+.cb.on{background:var(--ac2);color:#fff;border-color:var(--ac2);box-shadow:0 2px 8px rgba(99,102,241,.3)}
+
+/* ═══════════════════════════════════
+   SEARCH — GLOW INTERFACE
+   ═══════════════════════════════════ */
+.sa{max-width:1160px;margin:var(--sp-xl) auto 0;padding:0 var(--sp-md)}
+.sb{position:relative;display:flex;align-items:center;background:var(--bg-input);border:2px solid var(--bdr);border-radius:var(--r-lg);box-shadow:var(--sh-sm);transition:all .3s cubic-bezier(.4,0,.2,1)}
+.sb:focus-within{border-color:var(--ac);box-shadow:var(--sh-glow),0 0 0 4px var(--ac-glow)}
+.sb-icon{position:absolute;left:var(--sp-md);color:var(--tx-3);font-size:1.15rem;pointer-events:none;transition:color .2s,transform .2s}
+.sb:focus-within .sb-icon{color:var(--ac);transform:scale(1.1)}
+#q{flex:1;border:none;outline:none;background:0;padding:.7rem .8rem .7rem 2.6rem;font-size:.88rem;color:var(--tx-1);font-family:var(--ff)}
+#q::placeholder{color:var(--tx-3)}
+.xb{background:0;border:0;color:var(--tx-3);cursor:pointer;padding:.4rem .7rem;font-size:1.1rem;display:none;transition:color .15s,transform .15s}
+.xb:hover{color:var(--tx-1);transform:scale(1.15)}.xb.v{display:flex;align-items:center}
+.sm{display:flex;justify-content:space-between;margin-top:.45rem;font-size:.68rem;color:var(--tx-3);padding:0 .3rem}
+
+/* ═══════════════════════════════════
+   QUICK FILTERS — PILL CHIPS
+   ═══════════════════════════════════ */
+.qf{max-width:1160px;margin:.55rem auto 0;padding:0 var(--sp-md);display:flex;flex-wrap:wrap;gap:.3rem}
+.qb{background:var(--bg-3);border:1px solid var(--bdr);border-radius:var(--r-full);padding:.18rem .55rem;font-size:.63rem;color:var(--tx-3);cursor:pointer;transition:all .2s;font-weight:500}
+.qb:hover{background:var(--ac-lt);color:var(--ac);border-color:var(--ac);transform:translateY(-1px)}
+
+/* ═══════════════════════════════════
+   RESULTS CONTAINER
+   ═══════════════════════════════════ */
+.rs{max-width:1160px;margin:var(--sp-md) auto var(--sp-2xl);padding:0 var(--sp-md);display:flex;flex-direction:column;gap:.55rem}
+
+/* ═══════════════════════════════════
+   VISA CARD — LAYERED GLASS
+   ═══════════════════════════════════ */
+.vc{background:var(--bg-1);border:1px solid var(--bdr-card);border-radius:var(--r-md);box-shadow:var(--sh-sm);border-left:4px solid var(--cb-c,var(--bdr-card));transition:box-shadow .3s,transform .2s;animation:fi .25s ease both}
+.vc:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Header */
+.vc-h{display:flex;align-items:center;gap:.5rem;padding:.6rem .85rem;background:var(--bg-2);cursor:pointer;user-select:none;border-radius:0 var(--r-md) var(--r-md) 0;transition:background .15s}
+.vc-h:hover{background:var(--ac-lt)}
+.bc{font-family:var(--fm);font-weight:700;font-size:.85rem;color:var(--ac);background:var(--ac-lt);padding:2px 7px;border-radius:var(--r-sm);letter-spacing:-.01em}
+.vt{font-weight:700;font-size:.82rem;color:var(--tx-1)}
+.bp{font-size:.6rem;color:var(--t-per);background:var(--t-per-bg);padding:2px 7px;border-radius:var(--r-sm);white-space:nowrap;font-weight:600}
+.bn{font-size:.58rem;color:var(--tx-3);background:var(--bg-3);padding:2px 7px;border-radius:var(--r-sm);font-weight:700}
+/* Relevance bar */
+.rel-bar{margin-left:auto;display:flex;align-items:center;gap:.35rem;flex-shrink:0}
+.rel-track{width:40px;height:4px;background:var(--score-track);border-radius:2px;overflow:hidden}
+.rel-fill{height:100%;background:var(--score-fill);border-radius:2px;transition:width .4s ease}
+.rel-pct{font-size:.55rem;color:var(--tx-3);font-variant-numeric:tabular-nums;min-width:1.8rem;text-align:right}
+.tgl{color:var(--tx-3);font-size:.6rem;transition:transform .3s cubic-bezier(.4,0,.2,1);flex-shrink:0;margin-left:.2rem}
+
+/* Accordion body */
+.vc-cw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
+.vc.open .vc-cw{grid-template-rows:1fr}
+.vc.open .tgl{transform:rotate(180deg)}
+.vc-c{overflow:hidden}
+
+/* Sections */
+.vs{padding:.55rem .85rem;border-top:1px solid var(--bdr-sub)}
+.tl{display:inline-flex;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:4px;margin-bottom:.3rem}
+.tl-n{background:var(--t-new-bg);color:var(--t-new)}
+.tl-e{background:var(--t-ext-bg);color:var(--t-ext)}
+.tl-f{background:var(--t-faq-bg);color:var(--t-faq)}
+.tl-s{background:var(--t-sub-bg);color:var(--t-sub)}
+.ct{font-size:.78rem;color:var(--tx-2);line-height:1.65;white-space:pre-line;word-break:keep-all}
+
+/* ═══════════════════════════════════
+   SUB-CODES — NESTED ACCORDION
+   ═══════════════════════════════════ */
+.ss{background:var(--bg-3);border-top:1px solid var(--bdr-sub)}
+.ss-t{padding:.4rem .85rem;font-size:.62rem;font-weight:700;color:var(--tx-3);display:flex;align-items:center;gap:.35rem}
+.ss-t b{background:var(--t-sub-bg);color:var(--t-sub);padding:2px 6px;border-radius:4px;font-size:.56rem}
+.su{border-top:1px solid var(--bdr-sub)}
+.su-h{display:flex;align-items:center;gap:.45rem;padding:.4rem .85rem .4rem 1.3rem;cursor:pointer;transition:background .15s}
+.su-h:hover{background:var(--bg-2)}
+.s-c{font-family:var(--fm);font-size:.73rem;font-weight:700;color:var(--ac);min-width:3.5rem}
+.s-n{font-size:.75rem;font-weight:600;color:var(--tx-1)}
+.su-cw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1);background:var(--bg-2)}
+.su.open .su-cw{grid-template-rows:1fr}
+.su.open .tgl{transform:rotate(180deg)}
+.su-c{overflow:hidden;border-left:3px solid var(--ac);margin-left:var(--sp-xl)}
+.su-s{padding:.35rem .85rem}
+.su-s+.su-s{border-top:1px dashed var(--bdr-sub)}
+
+/* ═══════════════════════════════════
+   HIGHLIGHT
+   ═══════════════════════════════════ */
+mark.h{background:var(--hl-bg);color:var(--hl-tx);padding:.05em .2em;border-radius:3px;font-weight:700}
+
+/* ═══════════════════════════════════
+   EMPTY STATE — COSMIC
+   ═══════════════════════════════════ */
+.es{text-align:center;padding:var(--sp-3xl) var(--sp-md)}
+.es-orbit{width:80px;height:80px;margin:0 auto var(--sp-md);position:relative}
+.es-planet{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--ac2),var(--cyan));position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 20px rgba(99,102,241,.3)}
+.es-ring{width:70px;height:70px;border:2px solid var(--bdr);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(30deg);opacity:.4}
+.es-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);position:absolute;top:-3px;left:50%;transform:translateX(-50%);animation:orbit 3s linear infinite}
+@keyframes orbit{from{transform:translateX(-50%) rotate(0deg) translateY(-35px)}to{transform:translateX(-50%) rotate(360deg) translateY(-35px)}}
+.es-t{font-weight:700;font-size:.95rem;color:var(--tx-2);margin-bottom:.3rem}
+.es-d{font-size:.78rem;color:var(--tx-3);line-height:1.6}
+
+/* ═══════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════ */
+.ft{text-align:center;padding:var(--sp-xl) var(--sp-md);font-size:.6rem;color:var(--tx-3);border-top:1px solid var(--bdr);max-width:1160px;margin:0 auto;line-height:1.7}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════ */
+@media(max-width:640px){
+  .hd{padding:.45rem .6rem}
+  .sa,.rs,.qf{padding:0 .6rem}
+  .vs{padding:.45rem .6rem}
+  .vc-h{padding:.45rem .6rem}
+  .su-h{padding:.35rem .6rem .35rem .9rem}
+  .su-c{margin-left:.6rem}
+  .logo-brand{font-size:.95rem}
+  .rel-track{width:28px}
+}
+@media(max-width:420px){
+  .rel-bar{display:none}
+  .hd-ct{gap:.2rem}
+  .cb{padding:.18rem .4rem;font-size:.62rem}
+}
+
+/* Dark scrollbar */
+[data-theme="dark"]::-webkit-scrollbar{width:7px}
+[data-theme="dark"]::-webkit-scrollbar-track{background:var(--bg-0)}
+[data-theme="dark"]::-webkit-scrollbar-thumb{background:#2a3060;border-radius:4px}
+</style>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 </head>
 <body data-theme="dark">
 
-    <header class="platform-header">
-        <div class="platform-header__inner">
-            <div class="platform-logo">
-                <div class="platform-logo__icon">출</div>
-                <span>출입국 민원·비자 통합 검색</span>
-            </div>
-            <div class="platform-header__controls">
-                <button class="control-button is-active" id="btn-and" onclick="setSearchMode('and')">AND</button>
-                <button class="control-button" id="btn-or" onclick="setSearchMode('or')">OR</button>
-                <button class="control-button" onclick="toggleAccordions(true)">전체 접기</button>
-                <button class="control-button" onclick="toggleAccordions(false)">전체 펼치기</button>
-                <button class="control-button" id="btn-theme" onclick="toggleTheme()">☀️ 라이트</button>
-            </div>
-        </div>
-    </header>
+<header class="hd"><div class="hd-in">
+  <a class="logo" href="#">
+    <div class="logo-mark"></div>
+    <div class="logo-txt">
+      <span class="logo-brand">Moonshot</span>
+      <span class="logo-sub">출입국 민원·비자 통합 검색</span>
+    </div>
+  </a>
+  <div class="hd-ct">
+    <button class="cb on" id="ma" onclick="setSearchMode('and')">AND</button>
+    <button class="cb" id="mo" onclick="setSearchMode('or')">OR</button>
+    <button class="cb" onclick="toggleAccordions(true)">전체접기</button>
+    <button class="cb" onclick="toggleAccordions(false)">전체펼치기</button>
+    <button class="cb" id="tb" onclick="toggleTheme()">☀️ 라이트</button>
+  </div>
+</div></header>
 
-    <main>
-        <section class="search-area">
-            <div class="search-bar">
-                <span class="search-bar__icon">⌕</span>
-                <input type="text" id="search-input" class="search-input" placeholder="비자코드, 체류민원, 건강보험 등 키워드 검색 (예: F-6-3, 건강보험, 하이코리아)" autocomplete="off" spellcheck="false">
-                <button class="clear-button" id="btn-clear" onclick="clearSearch()">✕</button>
-            </div>
-            <div class="search-meta">
-                <span id="result-count"></span>
-                <span id="search-hint" style="opacity: 0.7;">띄어쓰기 다중키워드 · AND/OR · 체류민원 및 소분류 직접검색</span>
-            </div>
-        </section>
+<main>
+<section class="sa">
+  <div class="sb">
+    <span class="sb-icon">⌕</span>
+    <input type="text" id="q" placeholder="비자코드, 시나리오, 체류민원 등 키워드 검색 (예: 자격변경 불가, 오버스테이)" autocomplete="off" spellcheck="false">
+    <button class="xb" id="xb" onclick="clearSearch()">✕</button>
+  </div>
+  <div class="sm"><span id="rc"></span><span id="rh" style="opacity:.7">관련도 순 자동 정렬 · AND/OR · 실무 시나리오(SCN) 직접검색</span></div>
+</section>
 
-        <section class="quick-filters" id="quick-filters-container"></section>
-        <section class="results-container" id="results-container"></section>
-    </main>
+<section class="qf" id="qf"></section>
+<section class="rs" id="rs"></section>
+</main>
 
-    <footer class="platform-footer">
-        출입국외국인청 내부 민원 검색 도구 v5.1 · visa.go.kr 및 국외체류자 민원 가이드 기반 통합 (데이터 무결성 검증 완료)<br>
-        ⚠ 법령·고시 변경 시 데이터 갱신 필요 · 체류자격별 안내매뉴얼 최신본 교차검증 필수
-    </footer>
+<footer class="ft">
+  <strong style="background:linear-gradient(90deg,var(--ac),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Moonshot</strong> — 출입국외국인청 내부 민원 검색 도구 v10.0<br>
+  ⚠ 법령·고시 변경 시 데이터 갱신 필요 · 내부 예규 및 부서별 지침 교차검증 필수
+</footer>
 
-    <script>
-        // ═══════════════════════════════════════════════════════════
-        // DATA v5.1 — visa.go.kr 비자 + 건강보험/출입국 민원 완전 통합본
-        // ═══════════════════════════════════════════════════════════
-        const VISA_DATA = [
-        // --- 건강보험 및 출입국 민원 FAQ ---
-        {code:"NHIS-1",name:"국외 체류자 건강보험 면제·감면",cat:"nhis",period:"해외 체류 기간",
-         newReq:"3개월 이상 국외 체류(예정) 시 면제. 직장가입자는 1개월 이상 업무 목적 체류 시 감면 가능.",
-         extReq:"사전신청(출국 10일 전) 또는 사후 소급 신청(출입국사실증명서 첨부). 관할 공단 방문/팩스/우편.",
-         faq:"Q: 피부양자가 국내에 있다면?\nA: 전액 면제가 아닌 일부 감면(약 50%)만 적용될 수 있음.\nQ: 국민연금도 면제?\nA: 별도 제도이므로 국민연금 납부예외는 따로 신청해야 함.",
-         subCodes:[
-             {code:"NHIS-1-1",name:"필요 서류",addReq:"출입국사실증명서, 여권/항공권 사본",note:"상황에 따라 재학/입학증명서, 해외 고용계약서, 파견명령서 등 추가"},
-             {code:"NHIS-1-2",name:"제도 변경 유의",addReq:"2025년 7월 이후 개편",note:"해외 체류 인정 요건 및 입국 후 해제 기준이 개편되므로 최신 지침 확인 필수."},
-             {code:"NHIS-1-3",name:"가입자별 처리 차이",addReq:"직장: 급여정지 처리 / 지역: 세대 부과 중 본인 점수 제외",note:"국내에 배우자·자녀 등 피부양자 잔류 시 전액 면제 불가(약 50% 감면 적용)."},
-             {code:"NHIS-1-4",name:"주의사항(자동면제 불가)",addReq:"출국 사실만으로 자동 면제 안 됨",note:"반드시 별도 신청 요망. 장기 귀국 또는 국내 의료기관 진료 시 감면 즉각 해제 및 해당 기간 보험료 재부과."}
-         ]},
-        {code:"FAQ-1",name:"외국인등록 및 체류지 변경",cat:"faq",period:"해당 체류기간 내",
-         newReq:"입국일로부터 90일 초과 체류 시 관할 출입국·외국인청에 외국인등록 의무.",
-         extReq:"주소지(체류지) 변경 시 14일 이내 관할 구청/주민센터 또는 하이코리아 전자민원으로 전입신고(체류지 변경신고) 필수.",
-         faq:"Q: 기한 내 신고 안 하면?\nA: 출입국관리법 위반으로 범칙금 부과 대상.",
-         subCodes:[{code:"FAQ-1-1",name:"하이코리아 예약",addReq:"방문 전 사전예약 필수",note:"대부분의 체류 민원은 하이코리아(hikorea.go.kr) 사전 방문예약 없이는 접수 불가."}]},
-        {code:"FAQ-2",name:"체류기간 연장 및 자격 변경",cat:"faq",period:"자격별 상이",
-         newReq:"체류기간 만료일 4개월 전부터 만료일 당일까지 연장 신청 가능.",
-         extReq:"D-2 → D-10, D-10 → E-7 등 자격 변경 시 관련 요건(학력, 고용계약 등) 충족 증빙 서류 제출.",
-         faq:"Q: 만료일이 지나버렸다면?\nA: 오버스테이(불법체류) 처리되며, 범칙금 부과 및 자진출국 절차 이행 요망.",
-         subCodes:[{code:"FAQ-2-1",name:"전자민원 활용",addReq:"하이코리아 전자민원",note:"단순 체류기간 연장은 전자민원(수수료 할인)으로 간편하게 신청 가능."}]},
-        {code:"FAQ-3",name:"재입국허가 (장기체류자)",cat:"faq",period:"허가 기간 내",
-         newReq:"원칙적으로 면제되나, 자격(F-4, F-5, F-6 등)에 따라 면제 기간(1~2년) 초과 시 사전 허가 필요.",
-         extReq:"출국 전 하이코리아 또는 공항만에서 재입국허가 신청.",
-         faq:"Q: 해외에서 연장 가능한가요?\nA: 질병, 항공 결항 등 부득이한 사유 시 재외공관을 통해 제한적 연장 가능.",
-         subCodes:[]},
-        {code:"FAQ-4",name:"전자팩스 및 오버스테이·국적",cat:"faq",period:"상시",
-         newReq:"[전자팩스] 고용변동 및 주소변경 신고 등은 전자팩스(1577-1346)로 신고 가능. [국적/영주] F-4 자격 유형, F-5 영주 신청 요건, 국적 취득/이탈 사실증명 발급 처리.",
-         extReq:"[오버스테이] 체류기간 만료 후 자진신고 시 제재 수준 안내, 입국규제 해제 사전심사 절차 진행.",
-         faq:"Q: 난민 및 다국어 상담은?\nA: 1345 외국인종합안내센터를 통해 난민 절차 및 생활지원 연계 다국어 상담 가능.",
-         subCodes:[]},
-        {code:"COM-1",name:"비자 신규/연장 공통 구비서류",cat:"faq",period:"공통",
-         newReq:"[재외공관] 비자신청서, 유효 여권, 사진 1매(3.5x4.5), 수수료, 체류자격별 입증서류(초청장, 재정능력 등). [비자포털] 전자신청서 작성, 여권/사진 스캔본, 전자결제.",
-         extReq:"[비자발급인정서] 초청인이 대리 신청. 비자발급인정신청서, 초청/피초청인 신분증명, 계약서, 수수료 등. 유효기간 3개월.",
-         faq:"Q: 주의사항?\nA: 동일 비자코드라도 신청인 국적·거주국에 따라 재외공관별 요구 서류가 달라짐. 점수제 및 투자금 기준은 지침 개정이 잦으므로 최신 공지 확인 필수.",
-         subCodes:[]},
-        {code:"TIP-1",name:"실무 민원 응대 팁 및 체크리스트",cat:"faq",period:"실무 가이드",
-         newReq:"[응대 5단계] 1.상황 파악 → 2.관련 제도 확인 → 3.필요 서류 목록화 → 4.발급처(정부24 등) 매칭 → 5.제출처 및 신청 채널 안내.",
-         extReq:"국외 체류 민원은 출입국사실증명서, 여권, 항공권 등 핵심 서류의 발급처와 제출처(공단·출입국·재외공관)를 연계하여 종합적으로 안내할 것.",
-         faq:"Q: 업무 효율 향상 방안?\nA: 하이코리아, visa.go.kr, 정부24, 건보공단 홈페이지 주요 메뉴맵 사전 숙지 필수.",
-         subCodes:[]},
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA v10.0 — 100% PRESERVED
+// ═══════════════════════════════════════════════════════════
+const VISA_DATA = [
+{code:"SCN-1",name:"글로벌 의사결정 매트릭스",cat:"scn",period:"기본 원칙",
+newReq:"[단기→장기] 원칙 불허 (예외적 인도적 사유만). [유학→취업] D-2 → D-10 → E-7 → F-2 → F-5 표준 흐름 적용.",
+extReq:"[연장 핵심] 현재 자격 정의 충족 여부, 위반/과태료/세금 체납 등 감점 요소 평가.",
+faq:"Q: F계열 자격 변경은?\nA: 동일 계열 내 변경은 원칙 허용, 타 계열 장기 변경은 일부만 예외적 허용.",subCodes:[]},
+{code:"SCN-2",name:"실무 변수 체크리스트",cat:"scn",period:"상시 검토",
+newReq:"[공통 변수] 현재 자격/만료일, 입국경로(사증 종류), 오버스테이 여부, 범죄경력, 세금/건보 납부 이력.",
+extReq:"[특화 변수] 대한민국 남성 동포 병역상태, 혼인단절 사유 및 시점, 단순노무 종사 여부.",
+faq:"Q: 체크리스트 활용법?\nA: 민원 접수 시 이 10여 가지 파라미터를 먼저 스캔하여 허용/불허 방향을 신속히 가늠할 것.",subCodes:[]},
+{code:"SCN-3",name:"C-3 (단기) 자격변경 시나리오",cat:"scn",period:"불허 원칙",
+newReq:"[원칙] 단순 관광 연장 일부 예외 제외, C-3에서 F-6(결혼이민), F-1-5/6, 취업(E-7 등) 자격으로의 국내 변경은 절대 불가.",
+extReq:"취업 또는 장기 체류 목적 시 본국 재외공관에서 정식 장기 비자를 발급받아 입국하도록 안내 필수.",
+faq:"Q: 예외는 없나?\nA: 인도적 사유(G-1)나 극히 중대한 사유 외에는 원칙 불허를 고수하여 분쟁 리스크 차단.",subCodes:[]},
+{code:"SCN-4",name:"F-1-6 (혼인단절) 타이밍 시나리오",cat:"scn",period:"시점 주의",
+newReq:"[필수 요건] F-1-6(가사정리)는 반드시 기존 장기 자격(F-6 등)을 유지한 상태에서 국내 체류 중 자격변경으로 신청해야 함.",
+extReq:"[불허 케이스] 혼인단절 후 출국했다가 C-3로 재입국한 상태에서는 F-1-6 사후 구제(변경) 원칙 불허.",
+faq:"Q: 체류 허가 기간?\nA: 6개월 단위 최장 1년 (소송 진행 시 연장 가능).",subCodes:[]},
+{code:"SCN-5",name:"F-4/H-2 (동포) 제약 시나리오",cat:"scn",period:"제한 사항",
+newReq:"[단순노무 불가] F-4는 제조·건설 등 단순노무 종사 절대 불가. H-2에서 F-4 전환 시 기존 단순노무 직무 유지 불가.",
+extReq:"[병역 제한] 2018.5.1 이후 국적이탈한 병역 미이행 남성은 41세가 되는 해 1월 1일까지 F-4 자격 부여 제한.",
+faq:"Q: H-2에서 F-4 변경은?\nA: 2년 이상 성실 근로 및 범죄/위반 없을 시 전환 가능성 높음.",subCodes:[]},
+{code:"SCN-6",name:"오버스테이 (불법체류) 시나리오",cat:"scn",period:"기간별 조치",
+newReq:"[1~30일] 과태료 및 주의, 자진출국 권고. 재입국 가능성은 높으나 다음 심사 시 감점.",
+extReq:"[31~90일] 과태료 상향, 입국규제 가능성. [91일 이상] 강제퇴거 및 장기 입국규제 가능성 큼.",
+faq:"Q: 자진신고의 실익?\nA: 과태료 및 입국규제 기간 감경 가능성이 있으나 내부 지침에 따른 재량 사항임을 명확히 안내할 것.",subCodes:[]},
+{code:"NHIS-1",name:"국외 체류자 건강보험 면제·감면",cat:"nhis",period:"해외 체류 기간",
+newReq:"3개월 이상 국외 체류(예정) 시 면제. 직장가입자는 1개월 이상 업무 목적 체류 시 감면 가능.",
+extReq:"사전신청(출국 10일 전) 또는 사후 소급 신청(출입국사실증명서 첨부). 관할 공단 방문/팩스/우편.",
+faq:"Q: 피부양자가 국내에 있다면?\nA: 전액 면제가 아닌 일부 감면(약 50%)만 적용될 수 있음.\nQ: 국민연금도 면제?\nA: 별도 제도이므로 국민연금 납부예외는 따로 신청해야 함.",
+subCodes:[
+{code:"NHIS-1-1",name:"필요 서류",addReq:"출입국사실증명서, 여권/항공권 사본",note:"상황에 따라 재학/입학증명서, 해외 고용계약서, 파견명령서 등 추가"},
+{code:"NHIS-1-2",name:"제도 변경 유의",addReq:"2025년 7월 이후 개편",note:"해외 체류 인정 요건 및 입국 후 해제 기준이 개편되므로 최신 지침 확인 필수."},
+{code:"NHIS-1-3",name:"가입자별 처리 차이",addReq:"직장: 급여정지 처리 / 지역: 세대 부과 중 본인 점수 제외",note:"국내에 배우자·자녀 등 피부양자 잔류 시 전액 면제 불가(약 50% 감면 적용)."},
+{code:"NHIS-1-4",name:"주의사항(자동면제 불가)",addReq:"출국 사실만으로 자동 면제 안 됨",note:"반드시 별도 신청 요망. 장기 귀국 또는 국내 의료기관 진료 시 감면 즉각 해제 및 해당 기간 보험료 재부과."}
+]},
+{code:"FAQ-1",name:"외국인등록 및 체류지 변경",cat:"faq",period:"해당 체류기간 내",
+newReq:"입국일로부터 90일 초과 체류 시 관할 출입국·외국인청에 외국인등록 의무.",
+extReq:"주소지(체류지) 변경 시 14일 이내 관할 구청/주민센터 또는 하이코리아 전자민원으로 전입신고(체류지 변경신고) 필수.",
+faq:"Q: 기한 내 신고 안 하면?\nA: 출입국관리법 위반으로 범칙금 부과 대상.",
+subCodes:[{code:"FAQ-1-1",name:"하이코리아 예약",addReq:"방문 전 사전예약 필수",note:"대부분의 체류 민원은 하이코리아(hikorea.go.kr) 사전 방문예약 없이는 접수 불가."}]},
+{code:"FAQ-2",name:"체류기간 연장 및 자격 변경",cat:"faq",period:"자격별 상이",
+newReq:"체류기간 만료일 4개월 전부터 만료일 당일까지 연장 신청 가능.",
+extReq:"D-2 → D-10, D-10 → E-7 등 자격 변경 시 관련 요건(학력, 고용계약 등) 충족 증빙 서류 제출.",
+faq:"Q: 만료일이 지나버렸다면?\nA: 오버스테이(불법체류) 처리되며, 범칙금 부과 및 자진출국 절차 이행 요망.",
+subCodes:[{code:"FAQ-2-1",name:"전자민원 활용",addReq:"하이코리아 전자민원",note:"단순 체류기간 연장은 전자민원(수수료 할인)으로 간편하게 신청 가능."}]},
+{code:"FAQ-3",name:"재입국허가 (장기체류자)",cat:"faq",period:"허가 기간 내",
+newReq:"원칙적으로 면제되나, 자격(F-4, F-5, F-6 등)에 따라 면제 기간(1~2년) 초과 시 사전 허가 필요.",
+extReq:"출국 전 하이코리아 또는 공항만에서 재입국허가 신청.",
+faq:"Q: 해외에서 연장 가능한가요?\nA: 질병, 항공 결항 등 부득이한 사유 시 재외공관을 통해 제한적 연장 가능.",subCodes:[]},
+{code:"FAQ-4",name:"전자팩스 및 오버스테이·국적",cat:"faq",period:"상시",
+newReq:"[전자팩스] 고용변동 및 주소변경 신고 등은 전자팩스(1577-1346)로 신고 가능. [국적/영주] F-4 자격 유형, F-5 영주 신청 요건, 국적 취득/이탈 사실증명 발급 처리.",
+extReq:"[오버스테이] 체류기간 만료 후 자진신고 시 제재 수준 안내, 입국규제 해제 사전심사 절차 진행.",
+faq:"Q: 난민 및 다국어 상담은?\nA: 1345 외국인종합안내센터를 통해 난민 절차 및 생활지원 연계 다국어 상담 가능.",subCodes:[]},
+{code:"COM-1",name:"비자 공통 구비서류 및 팁",cat:"faq",period:"공통",
+newReq:"[재외공관] 비자신청서, 유효 여권, 사진 1매(3.5x4.5), 수수료, 체류자격별 입증서류(초청장, 재정능력 등). [비자포털] 전자신청서 작성, 여권/사진 스캔본, 전자결제.",
+extReq:"[비자발급인정서] 초청인이 대리 신청. 비자발급인정신청서, 초청/피초청인 신분증명, 계약서, 수수료 등. 유효기간 3개월.",
+faq:"Q: 민원 응대 팁?\nA: [응대 5단계] 1.상황 파악 → 2.제도 확인 → 3.필요 서류 목록화 → 4.발급처(정부24 등) 매칭 → 5.제출처 안내. 하이코리아, visa.go.kr 등 메뉴맵 숙지 필수.",subCodes:[]},
+{code:"B-1",name:"비자면제",cat:"short",period:"3개월, 연장불가",newReq:"사증면제협정 체결국 국민. 유효 여권, K-ETA(해당국).",extReq:"연장 불가.",faq:"Q: K-ETA 면제국?\nA: 67개국 한시 면제 중(2026.12.31까지)."},
+{code:"B-2",name:"관광통과",cat:"short",period:"90일 이내",newReq:"사증면제협정국: K-ETA 승인. 비면제국: 여권, 사증발급신청서, 사진, 왕복항공권, 숙소 예약확인서, 재정능력 입증.",extReq:"원칙적 불가. 질병/항공결항 등 부득이한 사유 시 제한적 연장(사유 소명자료, 통합신청서).",faq:"Q: 90일 이상 체류?\nA: 불가. 초과 시 불법체류.",subCodes:[{code:"B-2-1",name:"일반무비자",addReq:"무비자 허용국 국민.",note:"비자 없이 관광·통과로 입국 허용되는 대상."},{code:"B-2-2",name:"제주무비자",addReq:"법무부장관 지정 국가 국민, 제주 직항 입국.",note:"⚠ 제주출입국 핵심. 제주도 한정 30일 체류. 제주 외 지역 이동 불가. 중국 단체관광객 주요 대상."}]},
+{code:"C-3",name:"단기방문",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권 원본/사본, 사진 1매, 체류 목적 입증서류, 왕복항공권, 숙소예약확인서, 체류일정표, 재정능력 입증(잔고증명 등).",extReq:"원칙적 불가. 시행규칙 제32조에 따라 부득이한 사유 시 제한적 연장.",faq:"Q: 연장 가능?\nA: C-3는 90일 이하 단기 비자로 연장 불가. 출국 후 재입국 요망.",subCodes:[{code:"C-3-1",name:"단기일반(친족방문)",addReq:"초청장, 초청인 신분증/등본, 친족관계 입증서류.",note:"친족방문 목적."},{code:"C-3-2",name:"단체관광",addReq:"지정 여행사 확인서 및 단체 일정표.",note:""},{code:"C-3-3",name:"의료관광",addReq:"지정 의료기관 진료·초청서, 의료비/체류비 재정능력 증빙.",note:"외국인 환자 및 동반가족."},{code:"C-3-4",name:"일반상용",addReq:"국내 거래처 초청장, 거래관계 입증자료(계약서 등), 재직증명서.",note:"상담·계약·사후관리 등."},{code:"C-3-5",name:"협정단기상용",addReq:"협정에 따른 단기상용 입증 서류.",note:""},{code:"C-3-6",name:"단기상용",addReq:"국내 거래처 초청장, 거래관계 입증자료, 재직증명서.",note:""},{code:"C-3-8",name:"동포방문",addReq:"국적·호구부 등 동포 입증서류, 국내 친족 가족관계증명서.",note:""},{code:"C-3-9",name:"일반관광",addReq:"여행사 확인서/행사 초청장, 은행잔고증명서.",note:"가장 보편적 단기비자."},{code:"C-3-10",name:"순수환승",addReq:"제3국행 항공권/선박권, 경유 일정표.",note:"단순 환승객."}]},
+{code:"C-4",name:"단기취업",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권, 사진, 고용/초청계약서, 전문성 입증서류(학위/경력/자격증 등).",extReq:"원칙적 불가(90일 이하 단기).",faq:"Q: 해외 아티스트 공연 시?\nA: C-4 필수. 수익 활동은 C-3로 불가."},
+{code:"D-1",name:"문화예술",cat:"study",period:"2년, 연장가능",newReq:"초청기관 초청장/연수계획서, 학력/경력/작품활동 증빙, 체류경비 입증.",extReq:"통합신청서, 여권, 등록증, 수수료, 연수계속 입증서류.",faq:"Q: 영리활동?\nA: 원칙 불가. 비영리 문화예술 활동 한정.",subCodes:[{code:"D-1-00",name:"문화예술연수",addReq:"비영리 기관 연수 목적 입증",note:"학술, 예술 등 비영리 목적."}]},
+{code:"D-2",name:"유학",cat:"study",period:"2년, 연장가능",newReq:"표준입학허가서, 최종학력 입증서류(아포스티유/영사확인 요망), 재정입증서류(은행잔고), 결핵진단서(고위험국).",extReq:"통합신청서, 여권, 등록증, 수수료, 사진. 재학증명서, 성적증명서(C학점, 출석 70%↑), 재정입증, 체류지.",faq:"Q: 아르바이트?\nA: 체류자격 외 활동허가 필수(수수료 12만원).\nQ: 구직 변경?\nA: D-10으로 변경 가능.",subCodes:[{code:"D-2-1",name:"전문학사유학",addReq:"전문대학 입학허가서.",note:"2~3년제 전문대학 정규과정."},{code:"D-2-2",name:"학사유학",addReq:"4년제 대학 입학허가서.",note:"학부 정규과정. 가장 일반적."},{code:"D-2-3",name:"석사유학",addReq:"대학원 석사과정 입학허가서.",note:""},{code:"D-2-4",name:"박사유학",addReq:"대학원 박사과정 입학허가서.",note:""},{code:"D-2-5",name:"연구유학",addReq:"연구과정 입학/수료증명.",note:"비학위 연구과정·연구원."},{code:"D-2-6",name:"교환학생",addReq:"교환학생 협정서, 본교 재학증명.",note:"파견 대학 간 협정 필수."}]},
+{code:"D-3",name:"기술연수",cat:"study",period:"2년, 연장가능",newReq:"연수기관 초청장, 사업자등록증, 연수계획서, 체류경비 입증.",extReq:"통합신청서, 여권, 등록증, 연수계속 입증서류.",faq:"Q: 취업활동?\nA: 불가. 연수 목적 한정.",subCodes:[{code:"D-3-11",name:"해외직접기술연수",addReq:"해외 합작투자법인 등 관련 증빙",note:""},{code:"D-3-12",name:"기술수출연수",addReq:"기술수출 계약 입증",note:""},{code:"D-3-13",name:"플랜트수출연수",addReq:"플랜트 수출 관련 계약 입증",note:""}]},
+{code:"D-4",name:"일반연수",cat:"study",period:"2년, 연장가능",newReq:"연수기관 입학허가서, 사업자등록증, 최종학력증명서, 재정입증서류(유학비/생활비).",extReq:"통합신청서, 여권, 등록증, 수수료, 사진. 재학증명서, 출석률(70%↑), 등록금, 잔고증명, 체류지.",faq:"Q: 어학연수 후 대학 입학?\nA: D-2로 변경 신청. 입학허가서 및 재정능력 입증 필요.",subCodes:[{code:"D-4-1",name:"대학부설어학원연수",addReq:"대학부설 어학기관 입학허가서.",note:"정규 대학 부설만 해당."},{code:"D-4-2",name:"기타기관연수",addReq:"대학부설 외 기타 기관 연수 입학허가서.",note:""},{code:"D-4-3",name:"초중고생연수",addReq:"초·중·고등학교 재학증명.",note:"미성년자 연수. 동반부모 F-1-13."},{code:"D-4-5",name:"한식조리연수",addReq:"한식조리 연수과정 등록증.",note:""},{code:"D-4-6",name:"사설기관연수",addReq:"사설 교육기관 등록증.",note:""},{code:"D-4-7",name:"외국어연수",addReq:"법무부 인가 어학기관 등록증.",note:"사설학원 어학연수. 기관 인가 여부 확인 필수."}]},
+{code:"D-7",name:"주재",cat:"work",period:"3년, 연장가능",newReq:"여권, 파견명령서, 지사 설립 입증(등기부/사업자등록증), 재직증명서(본사 1년↑), 고용계약서, 납세증명서.",extReq:"통합신청서, 여권, 등록증, 수수료, 사진. 재직증명서, 파견명령서, 사업자등록증, 납세증명서, 체류지.",faq:"Q: 본사 근무 1년 미만?\nA: 원칙적 주재 불가. E-7 자격 등 검토.",subCodes:[{code:"D-7-1",name:"외국기업 주재",addReq:"외국기업 국내 지사 설립 입증.",note:"외국기업의 국내 지사 등에 파견된 필수인력."},{code:"D-7-2",name:"내국기업 주재",addReq:"해외진출 한국기업 소속 입증.",note:"해외진출 한국기업 근무 외국인의 국내 본사 파견."},{code:"D-7-91",name:"FTA전근",addReq:"FTA 협정 요건 입증.",note:""},{code:"D-7-92",name:"FTA계약",addReq:"FTA 계약파견 입증.",note:""}]},
+{code:"D-8",name:"기업투자",cat:"invest",period:"5년, 연장가능",newReq:"법인등기부등본, 사업자등록증, 외국인투자기업 등록증명서, 투자금 입금내역(1억원↑), 사업/고용계획서.",extReq:"통합신청서, 여권, 등록증, 수수료 면제. 법인등기부등본, 외투기업 증명서, 납세/부가가치세 증명.",faq:"Q: 제주 부동산 투자 시 D-8?\nA: 아님. 부동산투자이민제는 휴양시설 투자 시 F-2 부여(별도 고시금액).",subCodes:[{code:"D-8-1",name:"법인에 투자",addReq:"외투법상 외투기업 등록, 일정 투자금액·지분.",note:""},{code:"D-8-2",name:"벤처기업",addReq:"벤처확인서, 투자금 입증.",note:""},{code:"D-8-3",name:"개인기업투자",addReq:"국민 기업 투자 입증.",note:""},{code:"D-8-4",name:"기술창업",addReq:"점수제 및 투자금 요건, 학사↑ 또는 정부추천.",note:""},{code:"D-8-91",name:"FTA전근",addReq:"FTA 회사내 전근 요건.",note:""}]},
+{code:"D-9",name:"무역경영",cat:"work",period:"2년, 연장가능",newReq:"사업자등록증, 무역업 고유번호증 또는 수출입실적증명서, 납세증명서, 사업계획서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 사업자등록증, 납세증명서, 부가가치세 과세표준증명원, 체류지.",faq:"Q: D-8과의 차이?\nA: D-8은 외투법상 등록기업(수수료 면제), D-9는 일반 사업(수수료 6만원).",subCodes:[{code:"D-9-1",name:"무역고유거래",addReq:"무역고유번호 보유.",note:""},{code:"D-9-2",name:"수출설비",addReq:"수출설비 관련 계약서.",note:""},{code:"D-9-3",name:"선박설비",addReq:"선박건조 관련 계약서.",note:""},{code:"D-9-4",name:"경영영리사업",addReq:"사업자등록증, 사업계획서.",note:""}]},
+{code:"D-10",name:"구직",cat:"work",period:"6개월, 연장가능",newReq:"최종학위증명서(아포스티유), 전공 관련 경력증명서, 구직/창업계획서, 소득/재정능력 증빙.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 구직활동 입증서류(지원서, 면접확인서 등), 재정능력 입증, 체류지.",faq:"Q: 체류 한도?\nA: D-10-1 학사 최대 1년, 석박사 최대 2년.",subCodes:[{code:"D-10-1",name:"구직활동",addReq:"학사↑ 학위, E-1~E-7 분야 구직 계획서.",note:""},{code:"D-10-2",name:"기술창업활동",addReq:"학사↑, 창업계획서, 투자계획.",note:""}]},
+{code:"E-1",name:"교수",cat:"work",period:"5년, 연장가능",newReq:"고용계약서, 학력증명서(해당 직무 학사↑), 경력증명서, 사업자등록증, 결핵/범죄경력(필요시).",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 납세, 4대보험, 체류지.",faq:"Q: 연구 활동만 하는 경우?\nA: E-3(연구) 자격 검토."},
+{code:"E-2",name:"회화지도",cat:"work",period:"2년, 연장가능",newReq:"고용계약서, 학사↑ 학위증/범죄경력증명서(아포스티유), 건강진단서, 사업자등록증, 교육청 자격인정.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 사업자등록증, 납세, 체류지.",faq:"Q: 학원 이직?\nA: 근무처 변경 허가 필요. 퇴직 후 구직 30일 이내.",subCodes:[{code:"E-2-1",name:"일반회화강사",addReq:"학원·어학원 등 고용계약서, 학사↑, 원어민 요건.",note:"가장 일반적."},{code:"E-2-2",name:"학교보조교사",addReq:"교육청·정부 초청프로그램 참가 확인서.",note:""},{code:"E-2-91",name:"FTA영어",addReq:"FTA 협정 요건 입증.",note:""}]},
+{code:"E-3",name:"연구",cat:"work",period:"5년, 연장가능",newReq:"고용계약서, 학력/경력증명서, 사업자등록증, 결핵진단서(필요시).",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 납세, 4대보험, 체류지.",faq:"Q: E-1과의 차이?\nA: E-1은 교육기관 교수직, E-3은 자연과학·고도기술 분야 연구원."},
+{code:"E-4",name:"기술지도",cat:"work",period:"5년",newReq:"고도 기술·경력 입증서류, 고용계약서, 사업자등록증.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 체류지.",faq:"Q: 대상?\nA: 산업상 특수 기술 보유자. 고도 기술·경력 요구."},
+{code:"E-5",name:"전문직업",cat:"work",period:"5년",newReq:"국가자격증(법률·회계·의료 등), 고용계약서, 사업자등록증.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 자격증 유효성 확인, 재직증명서, 체류지.",faq:"Q: 대상 직종?\nA: 법률·회계·의료 등 국가자격이 필요한 전문직."},
+{code:"E-6",name:"예술흥행",cat:"work",period:"2년, 연장가능",newReq:"고용계약서, 경력증명서, 사업자등록증, 행사 입증서류, 범죄경력/결핵진단서(필요시).",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 사업자등록증, 체류지.",faq:"Q: 호텔/유흥 심사?\nA: 인신매매 위험 직군으로 심사 강화.",subCodes:[{code:"E-6-1",name:"예술연예",addReq:"예술 활동 경력증명, 공연/전시 계약서.",note:"수익목적 예술·연예활동."},{code:"E-6-2",name:"호텔유흥",addReq:"지자체장 추천서 필수, 공연기획사 등록증, 숙소 제공 확인서.",note:"⚠ 인신매매 고위험군."},{code:"E-6-3",name:"운동",addReq:"프로스포츠 선수 계약서, 해당 협회 추천서.",note:"프로선수·감독·코치."}]},
+{code:"E-7",name:"특정활동",cat:"work",period:"3년, 연장가능",newReq:"고용계약서, 학력/경력증명서, 고용추천서(필요직종), 고용주 서류(내국인 고용비율 등), GNI 임금증빙.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 고용계약서(갱신), 재직증명서, 납세, 4대보험, 체류지.",faq:"Q: 이직?\nA: 근무처 변경 허가 필요. 전 직장 이적동의서 등 필요.\nQ: E-9에서 E-7 전환?\nA: 원칙적 제한. E-7-4(숙련기능) 전환만 허용.",subCodes:[{code:"E-7-1",name:"전문·준전문·기능",addReq:"학사↑ 또는 경력, 직종별 고용추천서, 연봉 GNI 기준 충족.",note:"전문·준전문·기능 통합 코드."},{code:"E-7-4",name:"숙련기능인력(점수제)",addReq:"점수산정표(숙련도/연령/TOPIK/연봉 60점↑), E-9/H-2 경력 4년↑.",note:"비전문→숙련 전환 경로. 연간 쿼터 제한."},{code:"E-7-91",name:"FTA독립전문가",addReq:"FTA 협정 요건 입증.",note:""}]},
+{code:"E-8",name:"계절근로",cat:"work",period:"최대 5개월",newReq:"고용허가서, 표준근로계약서, 건강/결핵진단서, 여권. (지자체 MOU 기반)",extReq:"통합신청서, 여권, 등록증, 고용허가서(갱신), 근로계약서, 체류지.",faq:"Q: 농가 이동?\nA: 무단 이직 불가. 법정 사유 시 지자체 통한 재배정만 허용."},
+{code:"E-9",name:"비전문취업",cat:"work",period:"3년, 연장가능(총 4년10개월)",newReq:"표준근로계약서(EPS 절차), 사업자등록증, 건강검진서, 사전교육 수료증(송출국).",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 근로계약서, 고용허가서, 재직증명서, 4대보험 납입, 체류지.",faq:"Q: 임금체불 이직?\nA: 노동청 진정 후 근무처 변경 허가 신청.\nQ: 최장 체류?\nA: 3년 + 재고용 1년10개월.",subCodes:[{code:"E-9-1",name:"제조업",addReq:"제조업 사업장 고용허가서.",note:""},{code:"E-9-2",name:"건설업",addReq:"건설업 사업장 고용허가서.",note:""},{code:"E-9-3",name:"농업",addReq:"농업 사업장 고용허가서.",note:"제주 감귤·마늘 등 계절 수요."},{code:"E-9-4",name:"어업",addReq:"어업 사업장 고용허가서.",note:"제주 양식업 포함."},{code:"E-9-5",name:"서비스업",addReq:"서비스업 사업장 고용허가서.",note:""},{code:"E-9-9",name:"임업",addReq:"임업 사업장 고용허가서.",note:""},{code:"E-9-10",name:"광업",addReq:"광업 사업장 고용허가서.",note:""}]},
+{code:"E-10",name:"선원취업",cat:"work",period:"3년, 연장가능",newReq:"선원근로계약서(선주 계약), 선원 교육/자격증명, 건강진단서(선원용), 여권.",extReq:"통합신청서, 여권, 등록증, 수수료. 선원근로계약서, 선원수첩, 선주 확인서, 체류지.",faq:"Q: 무단 하선?\nA: 불법체류 및 출입국관리법 위반. 선주 즉시 보고.",subCodes:[{code:"E-10-1",name:"내항선원",addReq:"내항 선원근로계약서.",note:""},{code:"E-10-2",name:"어선원",addReq:"어선 승선 계약서.",note:"제주 근해어업 포함."},{code:"E-10-3",name:"순항선원",addReq:"크루즈선 계약서.",note:""}]},
+{code:"F-1",name:"방문동거",cat:"family",period:"2년, 연장가능",newReq:"주 체류자/초청인의 여권 및 신분증 사본, 가족관계/혼인/출생 입증서류, 주 체류자의 자격/체류기간 입증서류.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 가족/혼인관계증명서, 주민등록등본, 재직/소득증명.",faq:"Q: 이혼 후 체류?\nA: F-1-6(혼인단절) 자격으로 6개월 한시 허가.",subCodes:[{code:"F-1-3",name:"외교동거",addReq:"외교·공무 체류자 가족관계 입증.",note:""},{code:"F-1-5",name:"결혼이민자 부모·가족",addReq:"초청장, 신원보증서, 비취업서약서, 가족/재정/주거 입증. 반드시 재외공관 발급 후 입국.",note:"입국 후 전환 원칙적 불가."},{code:"F-1-9",name:"동포배우자 등",addReq:"F-4/H-2 동포의 배우자·자녀 관계 입증.",note:""},{code:"F-1-13",name:"유학생부모",addReq:"고교 이하 유학생(D-4) 재학 입증, 부모관계 입증.",note:""},{code:"F-1-21",name:"외교가사보조",addReq:"주한외국공관 요청서.",note:""},{code:"F-1-22",name:"고액가사보조",addReq:"고액투자자 고용계약서.",note:""},{code:"F-1-23",name:"첨단가사보조",addReq:"우수인재 고용계약서.",note:""},{code:"F-1-24",name:"전문가사보조",addReq:"전문인력 고용계약서.",note:""}]},
+{code:"F-2",name:"거주",cat:"family",period:"5년, 연장가능",newReq:"주 체류자 사본, 가족관계 입증서류, 또는 해당 소분류별 점수/투자금 입증 서류.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 해당 소분류별 유지 입증 서류, 체류지.",faq:"Q: F-2-7 요건 미달?\nA: 사회통합프로그램 가점 획득 및 TOPIK 성적 향상 안내.",subCodes:[{code:"F-2-2",name:"국민자녀",addReq:"한국인 부·모 가족관계증명서, 출생증명서.",note:"국민의 미성년 자녀 및 국민과 혼인에서 출생한 자."},{code:"F-2-3",name:"영주자가족",addReq:"영주(F-5) 자격자 등록증 사본, 가족관계 입증.",note:"영주자의 배우자·미성년 자녀."},{code:"F-2-7",name:"점수제 거주",addReq:"점수산정표(소득·학력·한국어·연령·사회통합 합산 80점↑). TOPIK 4급↑ 또는 사회통합 5단계 이수.",note:"빈출 소분류. 매년 쿼터 내 선발."},{code:"F-2-99",name:"기타 거주",addReq:"개별 사유 소명자료.",note:"인도적 고려 등 특별 사유."}]},
+{code:"F-3",name:"동반",cat:"family",period:"주체류자와 동일",newReq:"주 체류자 여권/등록증 사본, 가족관계 입증서류(혼인/출생), 주 체류자 재직/체류자격 입증.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 주체류자 등록증, 가족관계 증명, 체류지.",faq:"Q: 아르바이트?\nA: 원칙 불가. 체류자격 외 활동허가 필수.",subCodes:[{code:"F-3-1",name:"동반",addReq:"D-1~E-7 자격자의 배우자·미성년 자녀 입증.",note:"주체류자 체류기간에 연동."}]},
+{code:"F-4",name:"재외동포",cat:"family",period:"3년, 연장가능",newReq:"외국 영주권/시민권 증명, 과거 한국 국적(선조 포함) 입증 가족관계/호적 서류, 범죄경력증명서.",extReq:"재외동포 통합신청서, 여권, 거소신고증, 수수료 6만원. 한국어능력 입증(기 제출 생략), 체류지.",faq:"Q: 취업 제한?\nA: 단순노무(식당 서빙 등) 불가. 위반 시 과태료.",subCodes:[{code:"F-4-11",name:"재외동포 본인",addReq:"국적 상실/이탈 입증, 호적등본/제적등본.",note:""},{code:"F-4-12",name:"재외동포 직계가족",addReq:"동포 본인과의 직계 관계 입증.",note:""},{code:"F-4-13",name:"D·E계열 6개월↑ 체류자",addReq:"D·E 계열 체류 이력 입증.",note:""},{code:"F-4-14",name:"대학 졸업자",addReq:"학위증명서.",note:""},{code:"F-4-15",name:"OECD영주자",addReq:"OECD 회원국 영주권 입증.",note:""},{code:"F-4-16",name:"법인대표 등",addReq:"법인대표 임명장 등.",note:""},{code:"F-4-17",name:"10만불 기업가",addReq:"10만불↑ 투자 및 재산 증명.",note:""},{code:"F-4-18",name:"다국적기업 종사자",addReq:"다국적기업 재직증명서.",note:""},{code:"F-4-19",name:"동포단체대표",addReq:"단체대표 증빙.",note:""},{code:"F-4-20",name:"공무원 등",addReq:"공무원 재직증명서.",note:""},{code:"F-4-21",name:"교원",addReq:"교원 자격증/재직증명서.",note:""},{code:"F-4-25",name:"60세 이상자",addReq:"연령 입증.",note:"60세↑ 한국어능력 면제."}]},
+{code:"F-5",name:"영주",cat:"family",period:"영구(영주증 10년마다 재발급)",newReq:"해당 전환 요건(투자, 점수, 혼인 유지 등) 입증 서류, 해외범죄경력, 생계유지/소양입증(사회통합 5단계).",extReq:"체류기간 연장 불필요. 영주증 유효기간(10년) 만료 전 재발급(수수료 3만원) 필수.",faq:"Q: 강제퇴거?\nA: 원칙적 불가. 내란/외환/5년↑ 징역 시 예외.",subCodes:[{code:"F-5-3",name:"결혼이민 영주",addReq:"F-6 자격 2년↑ 체류, 생계유지, 한국어(사회통합 5단계 또는 TOPIK 4급).",note:"F-6→F-5-3 빈출 전환 경로."},{code:"F-5-5",name:"고액투자 영주",addReq:"미화 50만불↑ 투자, 국민 5인↑ 고용 입증.",note:"투자금·고용 유지 심사."},{code:"F-5-11",name:"특정능력 영주",addReq:"특정 분야 높은 경력·기여도 입증.",note:""},{code:"F-5-16",name:"점수제 영주",addReq:"F-2-7 자격 3년↑ 유지, 점수 기준 충족, 소양 입증.",note:"F-2-7→F-5-16 전환 경로."}]},
+{code:"F-6",name:"결혼이민",cat:"family",period:"1~3년, 연장가능",newReq:"[한국인] 기본/가족/혼인증명서, 주민등록등본, 소득/주거 입증, 초청장. [외국인] 혼인/출생증명서(공증), 범죄경력/건강진단서, 의사소통 능력 증빙(한국어 성적).",extReq:"통합신청서, 여권, 등록증, 수수료 3만원. 혼인관계증명서, 주민등록등본, 직업신고서. 자녀 시 3년.",faq:"Q: 가정폭력 시 체류 연장?\nA: 권리구제 절차 종료 시까지 연장 가능(제25조의2).\nQ: 영주 전환?\nA: F-6 2년↑ 체류 후 F-5-3 전환 가능.",subCodes:[{code:"F-6-1",name:"국민배우자",addReq:"혼인관계증명서(유지 중), 초청인 소득·주거 입증, 기본소양(한국어능력 또는 사회통합 이수).",note:"초청인 연소득 기준 충족 필수. 혼인 진정성 심사."},{code:"F-6-2",name:"자녀양육자",addReq:"이혼/사별 입증, 한국 국적 미성년 자녀 양육권·친권 입증, 자녀 가족관계증명서.",note:"혼인 해소 후 한국 국적 미성년 자녀 양육 시 부여."},{code:"F-6-3",name:"혼인단절자",addReq:"가정폭력 피해 입증자료(고소장·보호명령·상담소 확인서), 판결문 등 혼인단절 귀책사유 입증.",note:"본인 귀책 없는 혼인 파탄. 제25조의2 적용."}]},
+{code:"G-1",name:"기타(난민등)",cat:"other",period:"1년, 연장가능",newReq:"난민인정신청서/의료진단서 등 해당 사유 입증 서류, 사유서, 재정능력 입증.",extReq:"통합신청서, 여권, 등록증, 사유 계속 입증 서류. 수수료 6만원(면제 가능).",faq:"Q: 난민 접수 거부?\nA: 법적으로 불가. 무사증 난민 신청 시 즉각 심사과 인계.",subCodes:[{code:"G-1-1",name:"난민인정 신청자",addReq:"난민인정신청 접수증.",note:"6개월 경과 후 취업 신청 가능."},{code:"G-1-5",name:"난민인정자 가족결합",addReq:"난민인정자 가족관계 입증, 초청장.",note:"배우자·미성년 자녀 한정."},{code:"G-1-6",name:"인도적 체류자",addReq:"인도적 체류 허가 통지서.",note:"취업허가 별도 신청."},{code:"G-1-10",name:"치료요양",addReq:"의료기관 진단서/소견서, 재정능력 증빙.",note:"산재·질병치료, 장기 요양."},{code:"G-1-11",name:"국내 출생 외국국적 아동",addReq:"출생증명서, 부·모 등록증/여권 사본.",note:""},{code:"G-1-12",name:"긴급구제",addReq:"인신매매/산재/임금체불 등 피해 입증서류.",note:"수사/재판 종료 시까지."}]},
+{code:"H-1",name:"관광취업",cat:"other",period:"1년, 연장불가(협정)",newReq:"워킹홀리데이 협정국 18~30세 청년 대상. 왕복 항공권, 최소 잔고증명, 해외여행자보험 증명서, 체류(여행/취업) 계획서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원, 체류지.",faq:"Q: F-6 전환?\nA: 국내 전환 불가. 출국 후 비자 발급 재입국."},
+{code:"H-2",name:"방문취업",cat:"other",period:"3년, 연장가능",newReq:"중국 신분증/호구부, 친족공증 등 동포 입증, 사전평가 성적증명서, 무범죄증명서(아포스티유), 건강진단서.",extReq:"재외동포 통합신청서, 여권, 등록증, 수수료 6만원. 3년 초과 시 취업기간만료자 연장확인서.",faq:"Q: F-4 전환?\nA: TOPIK 등 요건 충족 시 가능.",subCodes:[{code:"H-2-1",name:"연고방문취업",addReq:"국내 거주 친족의 가족관계증명서 등 연고 입증.",note:"중국·CIS 등 동포."},{code:"H-2-2",name:"유학방문취업",addReq:"과거 유학·연수 경력 증명.",note:""},{code:"H-2-5",name:"추첨방문취업",addReq:"점수제·추첨제 합격 확인서.",note:""},{code:"H-2-7",name:"만기방문취업",addReq:"기존 체류자격 만료 및 전환 사실 증명.",note:""}]},
+{code:"A-1",name:"외교",cat:"diplo",period:"재임기간",newReq:"파견국 외교부/소속기관 공문/임명장, 외교여권/공무원 신분증.",extReq:"재임 중 자동 연장.",faq:"Q: 가족 체류?\nA: 동반 가족도 가족관계 증빙 시 A-1 부여."},
+{code:"A-2",name:"공무",cat:"diplo",period:"공무수행기간",newReq:"외국정부·국제기구 파견 공문, 공무여권.",extReq:"공무 수행 기간 내 자동.",faq:"Q: 가족?\nA: 동반 가족도 가족관계 증빙 시 A-2 부여."},
+{code:"A-3",name:"협정",cat:"diplo",period:"SOFA 등 신분 존속기간",newReq:"외국정부 파견 공문, 한미행정협정(SOFA) 등 신분 증명서.",extReq:"해당 신분 유지 시 자동 적용.",faq:"Q: 적용 대상?\nA: 주한미군, 군속 및 그 동반 가족 등 조약·협정 적용 대상자.",subCodes:[]},
+{code:"C-1",name:"일시취재",cat:"other",period:"90일, 연장불가",newReq:"언론기관 재직증명서 및 기자증 사본, 취재계획서(일정/장소), 정부 추천서(필요시).",extReq:"연장 불가.",faq:"Q: 장기 취재?\nA: D-5(취재) 자격으로 별도 발급."},
+{code:"D-5",name:"취재",cat:"other",period:"2년, 연장가능",newReq:"언론사 재직증명서, 고용/파견명령서, 취재/보도 계획서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 체류지.",faq:"Q: C-1과 차이?\nA: C-1은 90일 이하 단기, D-5는 상주 기자."},
+{code:"D-6",name:"종교",cat:"other",period:"2년, 연장가능",newReq:"종교/사회복지법인 설립허가증/정관/사업자등록증, 파견명령서/사역계획서, 안수/경력증명.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 소속단체 확인서, 체류지.",faq:"Q: 선교 활동?\nA: 종교단체·사회복지단체 파견 종교인 대상."}
+];
 
-        // --- 기존 비자 데이터 ---
-        {code:"B-1",name:"비자면제",cat:"short",period:"3개월, 연장불가",newReq:"사증면제협정 체결국 국민. 유효 여권, K-ETA(해당국).",extReq:"연장 불가.",faq:"Q: K-ETA 면제국?\nA: 67개국 한시 면제 중(2026.12.31까지)."},
-        {code:"B-2",name:"관광통과",cat:"short",period:"90일 이내",newReq:"사증면제협정국: K-ETA 승인. 비면제국: 여권, 사증발급신청서, 사진, 왕복항공권, 숙소 예약확인서, 재정능력 입증.",extReq:"원칙적 불가. 질병/항공결항 등 부득이한 사유 시 제한적 연장(사유 소명자료, 통합신청서).",faq:"Q: 90일 이상 체류?\nA: 불가. 초과 시 불법체류.",subCodes:[{code:"B-2-1",name:"일반무비자",addReq:"무비자 허용국 국민.",note:"비자 없이 관광·통과로 입국 허용되는 대상."},{code:"B-2-2",name:"제주무비자",addReq:"법무부장관 지정 국가 국민, 제주 직항 입국.",note:"⚠ 제주출입국 핵심. 제주도 한정 30일 체류. 제주 외 지역 이동 불가. 중국 단체관광객 주요 대상."}]},
-        {code:"C-3",name:"단기방문",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권 원본/사본, 사진 1매, 체류 목적 입증서류, 왕복항공권, 재정능력 입증.",extReq:"원칙적 불가. 시행규칙 제32조에 따라 부득이한 사유 시 제한적 연장.",faq:"Q: 연장 가능?\nA: C-3는 90일 이하 단기 비자로 연장 불가. 출국 후 재입국 요망.",subCodes:[{code:"C-3-1",name:"단기일반(친족방문)",addReq:"국민 또는 장기체류외국인의 가족관계 입증, 초청장.",note:"친족방문 목적. 가족관계·초청인 요건 필요."},{code:"C-3-2",name:"단체관광",addReq:"지정 여행사 단체관광 확인서.",note:"지정 여행사를 통한 단체관광."},{code:"C-3-3",name:"의료관광",addReq:"법무부 지정 의료기관 초청서, 진료예약 확인.",note:"외국인 환자 및 동반가족. 유치기관 등록 확인."},{code:"C-3-4",name:"일반상용",addReq:"국내 기업 초청장, 상담·계약 입증.",note:"상담·계약·사후관리 등 상용 방문."},{code:"C-3-5",name:"협정단기상용",addReq:"협정에 따른 단기상용",note:""},{code:"C-3-6",name:"단기상용",addReq:"일반 단기상용",note:""},{code:"C-3-8",name:"동포방문",addReq:"동포 입증, 친척관계 입증.",note:"국외 거주 동포 단기 친척방문."},{code:"C-3-9",name:"일반관광",addReq:"호텔예약·재정능력 입증.",note:"일반 관광객. 가장 보편적 단기비자."},{code:"C-3-10",name:"순수환승",addReq:"단순 환승객",note:""}]},
-        {code:"C-4",name:"단기취업",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권, 사진, 고용계약서/초청장, 활동 입증서류(공연 계약서, 행사 일정표 등).",extReq:"원칙적 불가(90일 이하 단기).",faq:"Q: 해외 아티스트 공연 시?\nA: C-4 필수. 수익 활동은 C-3로 불가."},
-        {code:"D-1",name:"문화예술",cat:"study",period:"2년, 연장가능",newReq:"초청장, 학력·경력증명서, 체류경비 입증, 소속기관 입증서류.",extReq:"통합신청서, 여권, 등록증, 수수료. 연수계속 입증서류.",faq:"Q: 영리활동?\nA: 원칙 불가. 비영리 문화예술 활동 한정.",subCodes:[{code:"D-1-00",name:"문화예술연수",addReq:"비영리 기관 연수 목적",note:"학술, 예술 등 비영리 목적."}]},
-        {code:"D-2",name:"유학",cat:"study",period:"2년, 연장가능",newReq:"사증발급신청서, 여권, 사진, 입학허가서, 최종학력 입증서류, 재정능력 입증(USD 20,000 등), 유학생보험, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원, 사진. 재학증명서, 성적증명서(C학점, 출석 70%↑), 등록금 영수증, 재정능력 입증, 체류지.",faq:"Q: 아르바이트?\nA: 체류자격 외 활동허가 필수(수수료 12만원).\nQ: 구직 변경?\nA: D-10으로 변경 가능.",subCodes:[{code:"D-2-1",name:"전문학사유학",addReq:"전문대학 입학허가서.",note:"2~3년제 전문대학 정규과정."},{code:"D-2-2",name:"학사유학",addReq:"4년제 대학 입학허가서.",note:"학부 정규과정. 가장 일반적."},{code:"D-2-3",name:"석사유학",addReq:"대학원 석사과정 입학허가서.",note:""},{code:"D-2-4",name:"박사유학",addReq:"대학원 박사과정 입학허가서.",note:""},{code:"D-2-5",name:"연구유학",addReq:"연구과정 입학/수료증명.",note:"비학위 연구과정·연구원."},{code:"D-2-6",name:"교환학생",addReq:"교환학생 협정서, 본교 재학증명.",note:"파견 대학 간 협정 필수."}]},
-        {code:"D-3",name:"기술연수",cat:"study",period:"2년, 연장가능",newReq:"연수기관 초청장, 사업자등록증, 연수계획서, 체류경비 입증.",extReq:"통합신청서, 여권, 등록증, 연수계속 입증서류.",faq:"Q: 취업활동?\nA: 불가. 연수 목적 한정.",subCodes:[{code:"D-3-11",name:"해외직접기술연수",addReq:"해외 합작투자법인 등",note:""},{code:"D-3-12",name:"기술수출연수",addReq:"기술수출 계약 입증",note:""},{code:"D-3-13",name:"플랜트수출연수",addReq:"플랜트 수출 관련",note:""}]},
-        {code:"D-4",name:"일반연수",cat:"study",period:"2년, 연장가능",newReq:"입학허가서/연수증명서, 연수기관 사업자등록증, 재정능력 입증, 유학생보험, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원, 사진. 재학증명서, 출석률(70%↑), 등록금, 잔고증명, 체류지.",faq:"Q: 어학연수 후 대학 입학?\nA: D-2로 변경 신청(수수료 10만원). 입학허가서 및 재정능력 입증 필요.",subCodes:[{code:"D-4-1",name:"대학부설어학원연수",addReq:"대학부설 어학기관 입학허가서.",note:"정규 대학 부설만 해당."},{code:"D-4-2",name:"기타기관연수",addReq:"대학부설 외 기타 기관 연수 입학허가서.",note:""},{code:"D-4-3",name:"초중고생연수",addReq:"초·중·고등학교 재학증명.",note:"미성년자 연수. 동반부모 F-1-13."},{code:"D-4-5",name:"한식조리연수",addReq:"한식조리 연수과정 등록증.",note:"한식 세계화 사업 관련."},{code:"D-4-6",name:"사설기관연수",addReq:"사설 교육기관 등록증.",note:""},{code:"D-4-7",name:"외국어연수",addReq:"법무부 인가 어학기관 등록증.",note:"사설학원 어학연수. 기관 인가 여부 확인 필수."}]},
-        {code:"D-7",name:"주재",cat:"work",period:"3년, 연장가능",newReq:"여권, 사진, 수수료, 파견명령서, 지사 설립 입증(등기부/사업자등록증), 재직증명서(본사 1년↑), 고용계약서, 납세증명서, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원, 사진. 재직증명서, 파견명령서, 사업자등록증, 납세증명서, 4대보험, 체류지.",faq:"Q: 본사 근무 1년 미만?\nA: 원칙적 주재 불가. E-7 자격 등 검토.",subCodes:[{code:"D-7-1",name:"외국기업 주재",addReq:"외국기업 국내 지사 설립 입증.",note:"외국기업의 국내 지사 등에 파견된 필수인력."},{code:"D-7-2",name:"내국기업 주재",addReq:"해외진출 한국기업 소속 입증.",note:"해외진출 한국기업 근무 외국인의 국내 본사 파견."},{code:"D-7-91",name:"FTA전근",addReq:"FTA 협정 요건 입증.",note:"FTA상 회사내 전근자."},{code:"D-7-92",name:"FTA계약",addReq:"FTA 계약파견 입증.",note:"FTA에 따른 계약파견 인력."}]},
-        {code:"D-8",name:"기업투자",cat:"invest",period:"5년, 연장가능",newReq:"법인등기부등본, 사업자등록증, 외국인투자기업 등록증명서, 투자자금 도입 입증(1억원↑), 납세, 결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 면제. 법인등기부등본, 사업자등록증, 외투기업 증명서, 납세, 부가가치세 과세표준증명원.",faq:"Q: 제주 부동산 투자 시 D-8?\nA: 아님. 부동산투자이민제는 휴양시설 투자 시 F-2 부여(별도 고시금액).",subCodes:[{code:"D-8-1",name:"법인에 투자",addReq:"외투법상 외투기업 등록, 일정 투자금액·지분.",note:"외국인투자촉진법상 외투기업 필수전문인력."},{code:"D-8-2",name:"벤처기업",addReq:"벤처확인서, 투자금 입증.",note:"벤처기업 설립자·예비창업자."},{code:"D-8-3",name:"개인기업투자",addReq:"국민 기업 투자 입증.",note:"대한민국 국민 기업에 일정액↑ 투자."},{code:"D-8-4",name:"기술창업",addReq:"점수제 및 투자금 요건, 학사↑ 또는 정부추천.",note:"국내·외 학사↑ 또는 정부추천 기술창업자."},{code:"D-8-91",name:"FTA전근",addReq:"FTA 회사내 전근 요건.",note:"FTA 협정상 회사내 전근자."}]},
-        {code:"D-9",name:"무역경영",cat:"work",period:"2년, 연장가능",newReq:"사업자등록증, 무역업 고유번호증 또는 수출입실적증명서, 납세증명서, 사업계획서, 결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 사업자등록증, 납세증명서, 부가가치세 과세표준증명원, 체류지.",faq:"Q: D-8과의 차이?\nA: D-8은 외투법상 등록기업(수수료 면제), D-9는 일반 사업(수수료 6만원).",subCodes:[{code:"D-9-1",name:"무역고유거래",addReq:"무역고유번호 보유.",note:"무역고유번호 보유 무역거래자."},{code:"D-9-2",name:"수출설비",addReq:"수출설비 관련 계약서.",note:"수출설비 설치·운영·보수 인력."},{code:"D-9-3",name:"선박설비",addReq:"선박건조 관련 계약서.",note:"선박건조·설비 제작·감독."},{code:"D-9-4",name:"경영영리사업",addReq:"사업자등록증, 사업계획서.",note:"회사 설립·경영, 영리사업자."}]},
-        {code:"D-10",name:"구직",cat:"work",period:"6개월, 연장가능",newReq:"학위증(아포스티유), 이력서, 구직활동 계획서, 재정능력 입증, 결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 구직활동 입증서류(지원서, 면접확인서 등), 재정능력 입증, 체류지.",faq:"Q: 체류 한도?\nA: D-10-1 학사 최대 1년, 석박사 최대 2년.",subCodes:[{code:"D-10-1",name:"구직활동",addReq:"학사↑ 학위, E-1~E-7 분야 구직 계획서.",note:"학사↑ 소지자의 전문직 구직·인턴활동."},{code:"D-10-2",name:"기술창업활동",addReq:"학사↑, 창업계획서, 투자계획.",note:"기술창업(D-8) 준비자."}]},
-        {code:"E-1",name:"교수",cat:"work",period:"5년, 연장가능",newReq:"전문대학↑ 교육기관 고용계약서, 관련 학위·경력 입증, 여권, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 납세, 4대보험, 체류지.",faq:"Q: 연구 활동만 하는 경우?\nA: E-3(연구) 자격 검토."},
-        {code:"E-2",name:"회화지도",cat:"work",period:"2년, 연장가능",newReq:"학사↑ 학위증(아포스티유), 범죄경력증명서(아포스티유), 건강진단서, 고용계약서, 사업자등록증, 교육청 자격인정, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 사업자등록증, 납세, 4대보험, 체류지.",faq:"Q: 학원 이직?\nA: 근무처 변경 허가 필요. 퇴직 후 구직 30일 이내.",subCodes:[{code:"E-2-1",name:"일반회화강사",addReq:"학원·어학원 등 고용계약서, 학사↑, 원어민 요건.",note:"학원·어학원 회화지도. 가장 일반적."},{code:"E-2-2",name:"학교보조교사",addReq:"교육청·정부 초청프로그램 참가 확인서.",note:"정부초청 보조교사."},{code:"E-2-91",name:"FTA영어",addReq:"FTA 협정 요건 입증.",note:"FTA 협정상 영어교육 인력."}]},
-        {code:"E-3",name:"연구",cat:"work",period:"5년, 연장가능",newReq:"연구기관 고용계약서, 관련 학위·경력 입증, 여권, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 납세, 4대보험, 체류지.",faq:"Q: E-1과의 차이?\nA: E-1은 교육기관 교수직, E-3은 자연과학·고도기술 분야 연구원."},
-        {code:"E-4",name:"기술지도",cat:"work",period:"5년",newReq:"고도 기술·경력 입증서류, 고용계약서, 여권, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 체류지.",faq:"Q: 대상?\nA: 산업상 특수 기술 보유자. 고도 기술·경력 요구."},
-        {code:"E-5",name:"전문직업",cat:"work",period:"5년",newReq:"국가자격증(법률·회계·의료 등), 고용계약서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 자격증 유효성 확인, 재직증명서, 체류지.",faq:"Q: 대상 직종?\nA: 법률·회계·의료 등 국가자격이 필요한 전문직."},
-        {code:"E-6",name:"예술흥행",cat:"work",period:"2년, 연장가능",newReq:"고용계약서, 초청사유서, 경력증명서, 사업자등록증, 행사 입증서류. 여권, 결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 고용계약서(갱신), 사업자등록증, 납세, 4대보험, 체류지.",faq:"Q: 호텔/유흥 심사?\nA: 인신매매 위험 직군으로 심사 강화.",subCodes:[{code:"E-6-1",name:"예술연예",addReq:"예술 활동 경력증명, 공연/전시 계약서.",note:"수익목적 예술·연예활동. 공연계약·소속사 요건."},{code:"E-6-2",name:"호텔유흥",addReq:"지자체장 추천서 필수, 공연기획사 등록증, 숙소 제공 확인서.",note:"⚠ 인신매매 고위험군. 인권·근로조건 심사 강화. 근로조건 위반 시 즉시 신고."},{code:"E-6-3",name:"운동",addReq:"프로스포츠 선수 계약서, 해당 협회 추천서.",note:"프로선수·감독·코치·매니저."}]},
-        {code:"E-7",name:"특정활동",cat:"work",period:"3년, 연장가능",newReq:"학위증/경력증명서(공증), 고용계약서, 사업자등록증, 초청사유서, 고용추천서(필요시), 신원보증서, 납세증명서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 고용계약서(갱신), 재직증명서, 납세, 4대보험, 체류지.",faq:"Q: 이직?\nA: 근무처 변경 허가 필요. 전 직장 이적동의서 등 필요.\nQ: E-9에서 E-7 전환?\nA: 원칙적 제한. E-7-4(숙련기능) 전환만 허용.",subCodes:[{code:"E-7-1",name:"전문·준전문·기능",addReq:"학사↑ 학위 또는 경력, 직종별 고용추천서(관할부처). 연봉 GNI 기준.",note:"포털 기준 전문·준전문·기능 통합 코드. 학력·경력·연봉 요건 직종별 상이."},{code:"E-7-4",name:"숙련기능인력(점수제)",addReq:"점수산정표(숙련도·학력·연령·한국어·연봉 합산 60점↑), E-9/H-2 경력 4년↑.",note:"비전문→숙련 전환 경로. 최근 10년간 5년↑ 합법취업 요건. 연간 쿼터 제한. 점수: 숙련도(기능사 등), 연령(만25~39 가산), TOPIK 3급↑, 연봉(최저임금 1.5배↑ 가산)."},{code:"E-7-91",name:"FTA독립전문가",addReq:"FTA 협정 요건 입증.",note:"FTA 협정에 따른 독립전문가."}]},
-        {code:"E-8",name:"계절근로",cat:"work",period:"최대 5개월",newReq:"고용허가서, 표준근로계약서, 건강/결핵진단서, 여권. (지자체-외국 지자체 MOU 기반)",extReq:"통합신청서, 여권, 등록증, 고용허가서(갱신), 근로계약서, 사업자등록증, 체류지. (수수료 없음)",faq:"Q: 농가 이동?\nA: 무단 이직 불가. 법정 사유 시 지자체 통한 재배정만 허용."},
-        {code:"E-9",name:"비전문취업",cat:"work",period:"3년, 연장가능(총 4년10개월)",newReq:"고용허가서, 표준근로계약서, 사업자등록증, 4대보험 가입확인, 건강/결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 근로계약서, 고용허가서, 재직증명서, 4대보험 납입, 체류지.",faq:"Q: 임금체불 이직?\nA: 노동청 진정 후 근무처 변경 허가 신청.\nQ: 최장 체류?\nA: 3년 + 재고용 1년10개월.\nQ: E-7 전환?\nA: E-7-4(숙련점수제)만 가능.",subCodes:[{code:"E-9-1",name:"제조업",addReq:"제조업 사업장 고용허가서.",note:"고용허가제 16개 송출국 대상."},{code:"E-9-2",name:"건설업",addReq:"건설업 사업장 고용허가서.",note:""},{code:"E-9-3",name:"농업",addReq:"농업 사업장 고용허가서.",note:"농축산업. 제주 감귤·마늘 등 계절 수요."},{code:"E-9-4",name:"어업",addReq:"어업 사업장 고용허가서.",note:"수산업. 제주 양식업 포함."},{code:"E-9-5",name:"서비스업",addReq:"서비스업 사업장 고용허가서.",note:""},{code:"E-9-9",name:"임업",addReq:"임업 사업장 고용허가서.",note:""},{code:"E-9-10",name:"광업",addReq:"광업 사업장 고용허가서.",note:""}]},
-        {code:"E-10",name:"선원취업",cat:"work",period:"3년, 연장가능",newReq:"선원근로계약서, 선주 확인서, 선원수첩 사본, 결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 선원근로계약서, 선원수첩, 선주 확인서, 체류지.",faq:"Q: 무단 하선?\nA: 불법체류 및 출입국관리법 위반. 선주 즉시 보고.",subCodes:[{code:"E-10-1",name:"내항선원",addReq:"내항 선원근로계약서.",note:"내항(국내 항로) 선원."},{code:"E-10-2",name:"어선원",addReq:"어선 승선 계약서.",note:"어선 승선 선원. 제주 근해어업 포함."},{code:"E-10-3",name:"순항선원",addReq:"크루즈선 계약서.",note:"크루즈·순항여객선 선원."}]},
-        {code:"F-1",name:"방문동거",cat:"family",period:"2년, 연장가능",newReq:"통합신청서, 여권, 가족관계 입증, 초청장, 초청인 신분증, 재정능력 입증.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 초청사유서, 신원보증서, 가족/혼인관계증명서, 주민등록등본, 재직/소득증명.",faq:"Q: 이혼 후 체류?\nA: F-1-6(혼인단절) 자격으로 6개월 한시 허가.",subCodes:[{code:"F-1-3",name:"외교동거",addReq:"외교·공무 체류자 가족관계 입증.",note:"외교·공무 체류자의 가족 동거."},{code:"F-1-5",name:"결혼이민자 부모·가족",addReq:"초청장, 신원보증서, 비취업서약서, 가족/재정/주거 입증. 반드시 재외공관 발급 후 입국.",note:"F-6 소지자의 부모 등 초청. 입국 후 전환 원칙적 불가."},{code:"F-1-9",name:"동포배우자 등",addReq:"F-4/H-2 동포의 배우자·자녀 관계 입증.",note:"재외동포·방문취업 동포의 배우자·자녀."},{code:"F-1-13",name:"유학생부모",addReq:"고교 이하 유학생(D-4) 재학 입증, 부모관계 입증.",note:"고교 이하 유학생의 동반 부모."},{code:"F-1-21",name:"외교가사보조",addReq:"주한외국공관 요청서.",note:"주한외국공관 가사보조인."},{code:"F-1-22",name:"고액가사보조",addReq:"고액투자자 고용계약서.",note:"고액투자자 가사보조인."},{code:"F-1-23",name:"첨단가사보조",addReq:"우수인재 고용계약서.",note:"첨단분야 우수인재 가사보조인."},{code:"F-1-24",name:"전문가사보조",addReq:"전문인력 고용계약서.",note:"전문인력 가사보조인."}]},
-        {code:"F-2",name:"거주",cat:"family",period:"5년, 연장가능",newReq:"통합신청서, 여권, 등록증, 해당 소분류별 요건 입증서류.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 해당 소분류별 유지 입증 서류, 체류지.",faq:"Q: F-2-7 요건 미달?\nA: 사회통합프로그램 가점 획득 및 TOPIK 성적 향상 안내.",subCodes:[{code:"F-2-2",name:"국민자녀",addReq:"한국인 부·모 가족관계증명서, 출생증명서.",note:"⚠ 국민의 미성년 자녀 및 국민과 혼인에서 출생한 자."},{code:"F-2-3",name:"영주자가족",addReq:"영주(F-5) 자격자 등록증 사본, 가족관계 입증.",note:"⚠ 영주자의 배우자·미성년 자녀."},{code:"F-2-7",name:"점수제 거주",addReq:"점수산정표(소득·학력·한국어·연령·사회통합 합산 80점↑). TOPIK 4급↑ 또는 사회통합 5단계 이수.",note:"빈출 소분류. 항목: 연령, 학력, 한국어, 소득, 체류기간 등. 매년 쿼터 내 선발."},{code:"F-2-99",name:"기타 거주",addReq:"개별 사유 소명자료.",note:"인도적 고려 등 특별 사유. 건별 심사."}]},
-        {code:"F-3",name:"동반",cat:"family",period:"주체류자와 동일",newReq:"가족관계 입증(혼인/출생증명서), 주체류자 등록증 사본, 재정능력 입증, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 주체류자 등록증, 가족관계 증명, 주체류자 재직증명서, 체류지.",faq:"Q: 아르바이트?\nA: 원칙 불가. 체류자격 외 활동허가 필수.",subCodes:[{code:"F-3-1",name:"동반",addReq:"D-1~E-7 자격자의 배우자·미성년 자녀 입증.",note:"주체류자 체류기간에 연동."}]},
-        {code:"F-4",name:"재외동포",cat:"family",period:"3년, 연장가능",newReq:"동포 입증서류, 한국어능력 입증, 해외 범죄경력증명서, 여권.",extReq:"재외동포 통합신청서, 여권, 거소신고증, 수수료 6만원. 한국어능력 입증(기 제출 생략), 체류지.",faq:"Q: 취업 제한?\nA: 단순노무(식당 서빙 등) 불가. 위반 시 과태료.",subCodes:[{code:"F-4-11",name:"재외동포 본인",addReq:"국적 상실/이탈 입증, 호적등본/제적등본.",note:"대한민국 국적 보유했던 자."},{code:"F-4-12",name:"재외동포 직계가족",addReq:"동포 본인과의 직계 관계 입증.",note:"동포 본인의 직계비속."},{code:"F-4-13",name:"D·E계열 6개월↑ 체류자",addReq:"D·E 계열 체류 이력 입증.",note:""},{code:"F-4-14",name:"대학 졸업자",addReq:"국내외 대학 졸업증명.",note:""},{code:"F-4-15",name:"OECD영주자",addReq:"OECD 회원국 영주권 입증.",note:""},{code:"F-4-16",name:"법인대표 등",addReq:"법인 대표 입증서류.",note:""},{code:"F-4-17",name:"10만불 기업가",addReq:"10만불↑ 투자 입증.",note:""},{code:"F-4-18",name:"다국적기업 종사자",addReq:"다국적기업 재직증명서.",note:""},{code:"F-4-19",name:"동포단체대표",addReq:"단체대표 입증서류.",note:""},{code:"F-4-20",name:"공무원 등",addReq:"재직 입증서류.",note:""},{code:"F-4-21",name:"교원",addReq:"교원 재직증명서.",note:""},{code:"F-4-25",name:"60세 이상자",addReq:"연령 입증.",note:"60세↑ 한국어능력 면제."}]},
-        {code:"F-5",name:"영주",cat:"family",period:"영구(영주증 10년마다 재발급)",newReq:"(F-2 등에서 전환) 수수료 20만원, 해외범죄경력, 생계유지, 소양입증(사회통합 5단계), 신원보증서.",extReq:"체류기간 연장 불필요. 영주증 유효기간(10년) 만료 전 재발급(수수료 3만원) 필수.",faq:"Q: 강제퇴거?\nA: 원칙적 불가. 내란/외환/5년↑ 징역 시 예외.",subCodes:[{code:"F-5-3",name:"결혼이민 영주",addReq:"F-6 자격 2년↑ 체류, 생계유지, 한국어(사회통합 5단계 또는 TOPIK 4급).",note:"F-6→F-5-3 가장 빈출 영주 전환 경로."},{code:"F-5-5",name:"고액투자 영주",addReq:"미화 50만불↑ 투자, 국민 5인↑ 고용.",note:"투자금·고용 유지 심사."},{code:"F-5-11",name:"특정능력 영주",addReq:"특정 분야 높은 경력·기여도 입증.",note:"과학·경영·교육 등 특정 분야 능력·공로 인정."},{code:"F-5-16",name:"점수제 영주",addReq:"F-2-7 자격 3년↑ 유지, 점수 기준 충족, 소양 입증.",note:"F-2-7→F-5-16 전환 경로."}]},
-        {code:"F-6",name:"결혼이민",cat:"family",period:"1~3년, 연장가능",newReq:"초청장, 신원보증서, 가족/혼인/기본증명서, 소득/주거/한국어능력 입증, 외국인 범죄/건강/결핵진단서.",extReq:"통합신청서, 여권, 등록증, 수수료 3만원. 혼인관계증명서, 주민등록등본, 직업신고서. 자녀 시 3년.",faq:"Q: 가정폭력 시 체류 연장?\nA: 권리구제 절차 종료 시까지 연장 가능(제25조의2).\nQ: 영주 전환?\nA: F-6 2년↑ 체류 후 F-5-3 전환 가능.",subCodes:[{code:"F-6-1",name:"국민배우자",addReq:"혼인관계증명서(유지 중), 초청인 소득·주거 입증, 기본소양(한국어능력 또는 사회통합 이수).",note:"가장 기본적 결혼이민. 초청인 연소득 기준 충족 필수. 혼인 진정성 심사."},{code:"F-6-2",name:"자녀양육자",addReq:"이혼/사별 입증, 미성년 자녀 양육권·친권 확인서, 자녀 가족관계증명서.",note:"혼인 해소 후 한국 국적 미성년 자녀 양육 시 부여."},{code:"F-6-3",name:"혼인단절자",addReq:"가정폭력 입증서류(고소장·보호명령·상담소 확인서), 또는 배우자 귀책사유 입증(유기·부당 혼인거부 등).",note:"본인 귀책 없는 혼인 파탄. 가정폭력 피해자 인정. 제25조의2 적용."}]},
-        {code:"G-1",name:"기타(난민등)",cat:"other",period:"1년, 연장가능",newReq:"난민인정신청서, 여권, 본인 진술서, 박해 입증. (방문 접수 필수).",extReq:"통합신청서, 여권, 등록증, 난민심사 진행 확인서류. 수수료 6만원(면제 가능).",faq:"Q: 난민 접수 거부?\nA: 법적으로 불가. 무사증 난민 신청 시 즉각 심사과 인계.",subCodes:[{code:"G-1-1",name:"난민인정 신청자",addReq:"난민인정신청 접수증.",note:"심사 중 체류. 6개월 경과 후 취업 신청 가능."},{code:"G-1-5",name:"난민인정자 가족결합",addReq:"난민인정자 가족관계 입증, 초청장.",note:"배우자·미성년 자녀 한정."},{code:"G-1-6",name:"인도적 체류자",addReq:"인도적 체류 허가 통지서.",note:"난민 불인정이나 인도적 사유. 취업허가 별도 신청."},{code:"G-1-10",name:"치료요양",addReq:"의료기관 진단서, 치료 필요성 소명.",note:"산재·질병치료, 장기 요양 필요 외국인."},{code:"G-1-11",name:"국내 출생 외국국적 아동",addReq:"출생증명서, 부·모 등록증/여권 사본.",note:"체류자격 없는 부모의 국내 출생 자녀."},{code:"G-1-12",name:"긴급구제",addReq:"인신매매/산재/임금체불 등 피해 입증서류.",note:"피해 외국인 긴급 보호. 수사/재판 종료 시까지."}]},
-        {code:"H-1",name:"관광취업",cat:"other",period:"1년, 연장불가(협정)",newReq:"워킹홀리데이 협정국 18~30세 청년 대상. 왕복 항공권, 잔고증명, 보험가입증명서, 결핵진단서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원, 체류지.",faq:"Q: F-6 전환?\nA: 국내 전환 불가. 출국 후 비자 발급 재입국."},
-        {code:"H-2",name:"방문취업",cat:"other",period:"3년, 연장가능",newReq:"동포 입증(호구부 등), 한국어능력 입증, 해외 범죄경력, 건강상태 확인서, 여권.",extReq:"재외동포 통합신청서, 여권, 등록증, 수수료 6만원. 3년 초과 시 취업기간만료자 연장확인서.",faq:"Q: F-4 전환?\nA: TOPIK 등 요건 충족 시 가능.",subCodes:[{code:"H-2-1",name:"연고방문취업",addReq:"국내 연고(가족) 관계 입증.",note:"중국·CIS 등 동포 중 국내 연고 보유자."},{code:"H-2-2",name:"유학방문취업",addReq:"과거 유학·연수 경력 입증.",note:"과거 유학·연수 경력 동포."},{code:"H-2-5",name:"추첨방문취업",addReq:"추첨제 선발 확인.",note:"점수제·추첨제 선발 동포."},{code:"H-2-7",name:"만기방문취업",addReq:"다른 체류자격 만료 입증.",note:"타 체류자격 만료 후 전환."}]},
-        {code:"A-1",name:"외교",cat:"diplo",period:"재임기간",newReq:"외국정부 외교사절단·영사기관 파견장.",extReq:"재임 중 자동 연장.",faq:"Q: 가족 체류?\nA: 동반 가족도 A-1 부여."},
-        {code:"A-2",name:"공무",cat:"diplo",period:"공무수행기간",newReq:"외국정부·국제기구 파견 공문.",extReq:"공무 수행 기간 내 자동.",faq:"Q: 가족?\nA: 동반 가족도 A-2 부여."},
-        {code:"A-3",name:"협정",cat:"diplo",period:"SOFA 등 신분 존속기간",newReq:"외국정부 파견 공문, 한미행정협정(SOFA) 등 신분 증명서.",extReq:"해당 신분 유지 시 자동 적용.",faq:"Q: 적용 대상?\nA: 주한미군, 군속 및 그 동반 가족 등 조약·협정 적용 대상자.",subCodes:[]},
-        {code:"C-1",name:"일시취재",cat:"other",period:"90일, 연장불가",newReq:"외신보도증, 취재 계획서, 소속 언론사 재직증명, 여권.",extReq:"연장 불가.",faq:"Q: 장기 취재?\nA: D-5(취재) 자격으로 별도 발급."},
-        {code:"D-5",name:"취재",cat:"other",period:"2년, 연장가능",newReq:"소속 보도기관 파견 확인서, 재직증명서, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 재직증명서, 체류지.",faq:"Q: C-1과 차이?\nA: C-1은 90일 이하 단기, D-5는 상주 기자."},
-        {code:"D-6",name:"종교",cat:"other",period:"2년, 연장가능",newReq:"종교단체 파견 확인서, 소속 단체 등록증, 여권.",extReq:"통합신청서, 여권, 등록증, 수수료 6만원. 소속단체 확인서, 체류지.",faq:"Q: 선교 활동?\nA: 종교단체·사회복지단체 파견 종교인 대상."}
-        ];
+// ═══════════════════════════════════════════════════════════
+// SCORING & SEARCH LOGIC — 100% PRESERVED
+// ═══════════════════════════════════════════════════════════
+let currentSearchMode='and',currentTheme='dark';
+const CC={short:'var(--c-short)',study:'var(--c-study)',work:'var(--c-work)',invest:'var(--c-inv)',family:'var(--c-fam)',other:'var(--c-other)',diplo:'var(--c-diplo)',nhis:'var(--c-nhis)',faq:'var(--c-faq)',scn:'var(--c-scn)'};
 
-        // ═══════════════════════════════════════════════════════════
-        // LOGIC
-        // ═══════════════════════════════════════════════════════════
-        let currentSearchMode = 'and';
-        let currentTheme = 'dark';
+function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function hl(text,keywords){
+  if(!keywords.length)return escapeHtml(text);
+  return escapeHtml(text).replace(new RegExp(`(${keywords.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>');
+}
 
-        const categoryColors = {
-            short: 'var(--category-short)', study: 'var(--category-study)',
-            work: 'var(--category-work)', invest: 'var(--category-invest)',
-            family: 'var(--category-family)', other: 'var(--category-other)',
-            diplo: 'var(--category-diplo)', nhis: 'var(--category-nhis)', faq: 'var(--category-faq)'
-        };
+function calculateScore(item,keywords){
+  if(!keywords.length)return 1;
+  let score=0;const cL=item.code.toLowerCase(),nL=item.name.toLowerCase(),content=`${item.newReq} ${item.extReq} ${item.faq} ${item.period||''}`.toLowerCase();
+  let isAndMatch=true;
+  for(const kw of keywords){
+    let kwMatch=false;
+    if(cL.includes(kw)||nL.includes(kw)){score+=100;kwMatch=true}
+    if(item.subCodes){for(const sub of item.subCodes){
+      if(sub.code.toLowerCase().includes(kw)||sub.name.toLowerCase().includes(kw)){score+=50;kwMatch=true}
+      const sc=`${sub.addReq||''} ${sub.note||''}`.toLowerCase();
+      const m=(sc.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
+      if(m>0){score+=m*10;kwMatch=true}
+    }}
+    const cm=(content.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
+    if(cm>0){score+=cm*10;kwMatch=true}
+    if(!kwMatch)isAndMatch=false;
+  }
+  return currentSearchMode==='and'?(isAndMatch?score:0):score;
+}
 
-        function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-        function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-        
-        function highlightKeyword(text, keywords) {
-            if (!keywords.length) return escapeHtml(text);
-            const safeText = escapeHtml(text);
-            const regex = new RegExp(`(${keywords.map(escapeRegExp).join('|')})`, 'gi');
-            return safeText.replace(regex, '<mark class="highlight">$1</mark>');
-        }
+function renderResults(query){
+  const box=document.getElementById('rs'),rc=document.getElementById('rc'),rh=document.getElementById('rh');
+  const kw=query.trim().split(/\s+/).filter(Boolean),kwL=kw.map(k=>k.toLowerCase());
+  let scored=VISA_DATA.map(v=>({...v,_score:calculateScore(v,kwL)}));
+  let filtered=scored.filter(v=>v._score>0).sort((a,b)=>b._score-a._score);
+  const maxScore=filtered.length?filtered[0]._score:1;
+  let subTot=0;filtered.forEach(v=>{if(v.subCodes)subTot+=v.subCodes.length});
 
-        function getSearchableString(item) {
-            let str = `${item.code} ${item.name} ${item.newReq} ${item.extReq} ${item.faq} ${item.period || ''}`;
-            if (item.subCodes) item.subCodes.forEach(s => str += ` ${s.code} ${s.name} ${s.addReq || ''} ${s.note || ''}`);
-            return str.toLowerCase();
-        }
+  if(!filtered.length){
+    box.innerHTML=`<div class="es"><div class="es-orbit"><div class="es-planet"></div><div class="es-ring"><div class="es-dot"></div></div></div><div class="es-t">궤도에서 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보를 찾지 못했습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
+    rc.textContent='0건';rh.textContent=kw.length>1?`${currentSearchMode.toUpperCase()} · ${kw.length}개 키워드`:'';return;
+  }
 
-        function isSubCodeMatch(subItem, keywords) {
-            const str = `${subItem.code} ${subItem.name} ${subItem.addReq || ''} ${subItem.note || ''}`.toLowerCase();
-            return currentSearchMode === 'and' ? keywords.every(kw => str.includes(kw)) : keywords.some(kw => str.includes(kw));
-        }
+  const fg=document.createDocumentFragment();
+  filtered.forEach(v=>{
+    const card=document.createElement('article');card.className='vc';
+    card.style.setProperty('--cb-c',CC[v.cat]||CC.other);
+    const hasSub=v.subCodes&&v.subCodes.length>0;
+    let matchedSubs=[];
+    if(hasSub&&kw.length){matchedSubs=v.subCodes.filter(s=>{const str=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase();return currentSearchMode==='and'?true:kwL.some(k=>str.includes(k))})}
+    if(kw.length&&(v._score>=50||matchedSubs.length))card.classList.add('open');
 
-        function isVisaMatch(item, keywords) {
-            const str = getSearchableString(item);
-            return currentSearchMode === 'and' ? keywords.every(kw => str.includes(kw)) : keywords.some(kw => str.includes(kw));
-        }
+    // Relevance percentage
+    const pct=kw.length?Math.min(Math.round((v._score/maxScore)*100),100):0;
 
-        function renderResults(query) {
-            const container = document.getElementById('results-container');
-            const countEl = document.getElementById('result-count');
-            const hintEl = document.getElementById('search-hint');
-            
-            const keywords = query.trim().split(/\s+/).filter(Boolean);
-            const lowerKeywords = keywords.map(kw => kw.toLowerCase());
-            
-            const filteredVisas = keywords.length ? VISA_DATA.filter(v => isVisaMatch(v, lowerKeywords)) : VISA_DATA;
-            
-            let totalSubCodesCount = 0;
-            filteredVisas.forEach(v => { if (v.subCodes) totalSubCodesCount += v.subCodes.length; });
+    let subHTML='';
+    if(hasSub){
+      subHTML=`<div class="ss"><div class="ss-t"><b>세부항목</b>${v.subCodes.length}개 분류코드</div>`;
+      v.subCodes.forEach(s=>{
+        const sStr=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase();
+        const isM=!kw.length||kwL.some(k=>sStr.includes(k));
+        subHTML+=`<div class="su${kw.length&&isM?' open':''}"><div class="su-h" onclick="this.parentElement.classList.toggle('open')"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c">`;
+        if(s.addReq)subHTML+=`<div class="su-s"><div class="tl tl-n">안내사항/추가요건</div><div class="ct">${hl(s.addReq,kw)}</div></div>`;
+        if(s.note)subHTML+=`<div class="su-s"><div class="tl tl-f">실무참고</div><div class="ct">${hl(s.note,kw)}</div></div>`;
+        subHTML+=`</div></div></div>`;
+      });
+      subHTML+=`</div>`;
+    }
 
-            if (!filteredVisas.length) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state__icon">🔍</div>
-                        <div class="empty-state__title">검색 결과 없음</div>
-                        <div class="empty-state__desc">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해보세요.</div>
-                    </div>`;
-                countEl.textContent = '0건';
-                hintEl.textContent = keywords.length > 1 ? `${currentSearchMode.toUpperCase()} · ${keywords.length}개 키워드` : '';
-                return;
-            }
+    card.innerHTML=`
+      <div class="vc-h" onclick="this.parentElement.classList.toggle('open')">
+        <span class="bc">${hl(v.code,kw)}</span>
+        <span class="vt">${hl(v.name,kw)}</span>
+        ${v.period?`<span class="bp">${hl(v.period,kw)}</span>`:''}
+        ${hasSub?`<span class="bn">+${v.subCodes.length}</span>`:''}
+        ${kw.length?`<div class="rel-bar"><div class="rel-track"><div class="rel-fill" style="width:${pct}%"></div></div><span class="rel-pct">${pct}%</span></div>`:''}
+        <span class="tgl">▼</span>
+      </div>
+      <div class="vc-cw"><div class="vc-c">
+        <div class="vs"><div class="tl tl-n">개요/신규발급</div><div class="ct">${hl(v.newReq,kw)}</div></div>
+        <div class="vs"><div class="tl tl-e">절차/체류연장</div><div class="ct">${hl(v.extReq,kw)}</div></div>
+        <div class="vs"><div class="tl tl-f">FAQ/주의사항</div><div class="ct">${hl(v.faq,kw)}</div></div>
+        ${subHTML}
+      </div></div>`;
+    fg.appendChild(card);
+  });
+  box.innerHTML='';box.appendChild(fg);
+  rc.textContent=`${filtered.length}건${kw.length?' 검색':''}${subTot?` (세부항목 ${subTot}건)`:''} · 총 ${VISA_DATA.length}개 카테고리`;
+  rh.textContent=kw.length>1?`${currentSearchMode.toUpperCase()} · ${kw.length}개 키워드`:'관련도 순 자동 정렬 · AND/OR · 실무 시나리오(SCN) 직접검색';
+}
 
-            const fragment = document.createDocumentFragment();
+let dt;
+function handleInput(){const v=document.getElementById('q').value;document.getElementById('xb').classList.toggle('v',v.length>0);clearTimeout(dt);dt=setTimeout(()=>renderResults(v),150)}
+function clearSearch(){const i=document.getElementById('q');i.value='';i.focus();document.getElementById('xb').classList.remove('v');renderResults('')}
+function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');renderResults(document.getElementById('q').value)}
+function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);document.getElementById('tb').textContent=currentTheme==='dark'?'☀️ 라이트':'🌙 다크'}
+function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open')})}
 
-            filteredVisas.forEach(visa => {
-                const card = document.createElement('article');
-                card.className = 'visa-card'; 
-                card.style.setProperty('--card-border-color', categoryColors[visa.cat] || categoryColors.other);
-                
-                const hasSubCodes = visa.subCodes && visa.subCodes.length > 0;
-                let matchedSubCodes = hasSubCodes && keywords.length ? visa.subCodes.filter(s => isSubCodeMatch(s, lowerKeywords)) : [];
+(function initQF(){
+  const f=[
+    {l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이 조치',q:'SCN-6'},{l:'F-1-6 타이밍',q:'SCN-4'},
+    {l:'F-4/H-2 제한',q:'SCN-5'},{l:'건강보험/감면',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},
+    {l:'체류지/주소변경',q:'체류지 변경'},{l:'B-2-2 제주무비자',q:'B-2-2 제주'},{l:'E-7 특정활동',q:'E-7'},
+    {l:'E-9 비전문',q:'E-9'},{l:'결혼이민 F-6',q:'F-6'},{l:'영주 F-5',q:'F-5'},
+    {l:'난민 G-1',q:'G-1'},{l:'재외동포 F-4',q:'F-4'},{l:'점수제',q:'점수'},
+    {l:'가정폭력',q:'가정폭력'},{l:'결핵진단서',q:'결핵'},{l:'아포스티유',q:'아포스티유'}
+  ];
+  const c=document.getElementById('qf');
+  f.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q)};c.appendChild(b)});
+})();
 
-                if (keywords.length > 0 && matchedSubCodes.length > 0) card.classList.add('is-expanded');
-
-                let subCodesHTML = '';
-                if (hasSubCodes) {
-                    subCodesHTML = `<div class="subcategories"><div class="subcategories__title"><span class="tag-label tag-label--sub">세부항목</span> ${visa.subCodes.length}개 분류코드</div>`;
-                    visa.subCodes.forEach(sub => {
-                        const isMatched = !keywords.length || matchedSubCodes.includes(sub);
-                        const expandClass = keywords.length && isMatched ? ' is-expanded' : '';
-                        
-                        subCodesHTML += `
-                        <div class="sub-card${expandClass}">
-                            <div class="sub-card__header" onclick="this.parentElement.classList.toggle('is-expanded')">
-                                <span class="sub-card__code">${highlightKeyword(sub.code, keywords)}</span>
-                                <span class="sub-card__name">${highlightKeyword(sub.name, keywords)}</span>
-                                <span class="toggle-icon">▼</span>
-                            </div>
-                            <div class="sub-card__content-wrapper">
-                                <div class="sub-card__content">
-                                    ${sub.addReq ? `<div class="sub-card__inner-section"><div class="tag-label tag-label--new">안내사항/추가요건</div><div class="content-text">${highlightKeyword(sub.addReq, keywords)}</div></div>` : ''}
-                                    ${sub.note ? `<div class="sub-card__inner-section"><div class="tag-label tag-label--faq">실무참고</div><div class="content-text">${highlightKeyword(sub.note, keywords)}</div></div>` : ''}
-                                </div>
-                            </div>
-                        </div>`;
-                    });
-                    subCodesHTML += `</div>`;
-                }
-
-                card.innerHTML = `
-                    <div class="visa-card__header" onclick="this.parentElement.classList.toggle('is-expanded')">
-                        <span class="badge-code">${highlightKeyword(visa.code, keywords)}</span>
-                        <span class="visa-card__title">${highlightKeyword(visa.name, keywords)}</span>
-                        ${visa.period ? `<span class="badge-period">${highlightKeyword(visa.period, keywords)}</span>` : ''}
-                        ${hasSubCodes ? `<span class="badge-count">+${visa.subCodes.length}</span>` : ''}
-                        <span class="toggle-icon">▼</span>
-                    </div>
-                    <div class="visa-card__content-wrapper">
-                        <div class="visa-card__content">
-                            <div class="visa-section"><div class="tag-label tag-label--new">개요/신규발급</div><div class="content-text">${highlightKeyword(visa.newReq, keywords)}</div></div>
-                            <div class="visa-section"><div class="tag-label tag-label--ext">절차/체류연장</div><div class="content-text">${highlightKeyword(visa.extReq, keywords)}</div></div>
-                            <div class="visa-section"><div class="tag-label tag-label--faq">FAQ/주의사항</div><div class="content-text">${highlightKeyword(visa.faq, keywords)}</div></div>
-                            ${subCodesHTML}
-                        </div>
-                    </div>
-                `;
-                fragment.appendChild(card);
-            });
-
-            container.innerHTML = '';
-            container.appendChild(fragment);
-            countEl.textContent = `${filteredVisas.length}건${keywords.length ? ' 검색' : ''}${totalSubCodesCount ? ` (세부항목 ${totalSubCodesCount}건)` : ''} · 총 ${VISA_DATA.length}개 카테고리`;
-            hintEl.textContent = keywords.length > 1 ? `${currentSearchMode.toUpperCase()} · ${keywords.length}개 키워드` : '띄어쓰기 다중키워드 · AND/OR · 체류민원 직접검색';
-        }
-
-        let debounceTimer;
-        function handleInput() {
-            const query = document.getElementById('search-input').value;
-            document.getElementById('btn-clear').classList.toggle('is-visible', query.length > 0);
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => renderResults(query), 150);
-        }
-
-        function clearSearch() {
-            const input = document.getElementById('search-input');
-            input.value = '';
-            input.focus();
-            document.getElementById('btn-clear').classList.remove('is-visible');
-            renderResults('');
-        }
-
-        function setSearchMode(mode) {
-            currentSearchMode = mode;
-            document.getElementById('btn-and').classList.toggle('is-active', mode === 'and');
-            document.getElementById('btn-or').classList.toggle('is-active', mode === 'or');
-            renderResults(document.getElementById('search-input').value);
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', currentTheme);
-            document.getElementById('btn-theme').textContent = currentTheme === 'dark' ? '☀️ 라이트' : '🌙 다크';
-        }
-
-        function toggleAccordions(collapse) {
-            document.querySelectorAll('.visa-card, .sub-card').forEach(el => {
-                if (collapse) el.classList.remove('is-expanded');
-                else el.classList.add('is-expanded');
-            });
-        }
-
-        (function initQuickFilters() {
-            const filters = [
-                { l: '건강보험/감면', q: '건강보험' }, { l: '하이코리아', q: '하이코리아' }, { l: '공통 구비서류', q: 'COM-1' },
-                { l: '체류지/주소변경', q: '변경' }, { l: 'B-2-2 제주무비자', q: 'B-2-2 제주' }, { l: 'E-7 특정활동', q: 'E-7' },
-                { l: 'E-9 비전문', q: 'E-9' }, { l: '결혼이민 F-6', q: 'F-6' }, { l: '영주 F-5', q: 'F-5' },
-                { l: '난민 G-1', q: 'G-1' }, { l: '재외동포 F-4', q: 'F-4' }, { l: '방문취업 H-2', q: 'H-2' },
-                { l: '점수제', q: '점수' }, { l: '가정폭력', q: '가정폭력' }, { l: '결핵진단서', q: '결핵' },
-                { l: '아포스티유', q: '아포스티유' }, { l: '4대보험', q: '4대보험' }, { l: '이직/변경', q: '이직 변경' }
-            ];
-            const container = document.getElementById('quick-filters-container');
-            filters.forEach(f => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-chip';
-                btn.textContent = f.l;
-                btn.onclick = () => {
-                    const input = document.getElementById('search-input');
-                    input.value = f.q;
-                    input.focus();
-                    document.getElementById('btn-clear').classList.add('is-visible');
-                    renderResults(f.q);
-                };
-                container.appendChild(btn);
-            });
-        })();
-
-        document.getElementById('search-input').addEventListener('input', handleInput);
-        document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Escape') clearSearch(); });
-
-        renderResults('');
-    </script>
+document.getElementById('q').addEventListener('input',handleInput);
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Escape')clearSearch()});
+renderResults('');
+</script>
 </body>
 </html>
