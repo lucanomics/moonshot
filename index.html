@@ -447,7 +447,7 @@ const PREDEF_KEYWORDS = [
     "F-3 소득요건 개편", "E-7-4 숙련기능", "건강보험 면제 및 감면", "K-ETA 면제조건", "K-ETA 국가 목록",
     "F-6-3 혼인단절", "B-2-2 제주무비자", "결핵 고위험 35개국", "오버스테이 자진신고",
     "D-2 유학 아르바이트", "D-10 구직활동", "F-5 영주권 점수제", "하이코리아 방문예약",
-    "제주 무사증 제외국","난민신청 필요서류","불법체류다발국가 목록","H-2 F-4 동포비자 통합"
+    "제주 무사증 제외국","난민신청 필요서류","중점관리국가 21개국","H-2 F-4 동포비자 통합"
 ];
 
 function showSuggestions(val) {
@@ -594,7 +594,7 @@ function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';documen
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
 (function(){
-    const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'},{l:'난민신청',q:'RF-1'},{l:'K-ETA 국가 목록',q:'K-ETA 국가'},{l:'난민신청 서류',q:'RF-1'},{l:'불체다발국가',q:'OVS-1'}];
+    const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'},{l:'난민신청',q:'RF-1'},{l:'K-ETA 국가 목록',q:'K-ETA 국가'},{l:'난민신청 서류',q:'RF-1'},{l:'숙련기능점수제',q:'E-7-4'}];
     const lc=document.getElementById('landingHints');
     lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{document.getElementById('q').value=x.q;executeSearch();};lc.appendChild(b);});
     
