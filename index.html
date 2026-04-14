@@ -527,7 +527,7 @@ function renderResults(query){
     let st=0; filtered.forEach(v=>{if(v.subCodes) st+=v.subCodes.length;});
     
     if(!filtered.length){
-        box.innerHTML=`<div class="es"><div class="es-t">궤도에서 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
+        box.innerHTML=`<div class="es"><div class="es-t">궤도를 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
         rc.textContent='0건'; return;
     }
     
