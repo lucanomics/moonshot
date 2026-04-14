@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonshot AI — 민원 안내 도우미</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', system-ui, sans-serif;
+            --ff-logo: 'Jua', sans-serif;
+            
+            --bg0: #0f172a; --bg1: #1e293b; --bg2: #334155;
+            --bd: #334155; 
+            --t1: #cbd5e1; --t2: #94a3b8; --t3: #64748b;
+            --ac: #6366f1; --cy: #38bdf8;
+            --shD: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: var(--ff) !important; background: var(--bg0); color: var(--t1); display: flex; flex-direction: column; }
+
+        header { background: var(--bg1); padding: 1rem 1.5rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shD); z-index: 10; }
+        .back-btn { background: none; border: none; color: var(--t2); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; text-decoration: none; font-family: var(--ff) !important; }
+        .back-btn:hover { color: var(--t1); }
+        h1 { font-family: var(--ff-logo) !important; font-size: 1.5rem; font-weight: 400; background: linear-gradient(135deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; }
+
+        .chat-container { flex: 1; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; position: relative; }
+        
+        .messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .msg { padding: 1rem 1.2rem; border-radius: 12px; max-width: 85%; line-height: 1.6; font-size: 0.95rem; word-break: keep-all; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .msg.ai { background: var(--bg1); color: var(--t1); border: 1px solid var(--bd); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg.user { background: var(--ac); color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg-disc { display: block; margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px dashed var(--bd); font-size: 0.75rem; color: var(--t3); }
+
+        .input-area { padding: 1.5rem; background: var(--bg1); border-top: 1px solid var(--bd); display: flex; gap: 0.5rem; }
+        .input-area input { flex: 1; padding: 1rem 1.2rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 1rem; font-family: var(--ff) !important; outline: none; transition: border-color 0.2s; }
+        .input-area input:focus { border-color: var(--ac); }
+        .input-area button { background: var(--ac); color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; font-family: var(--ff) !important; transition: background 0.2s; white-space: nowrap; }
+        .input-area button:hover { background: #4f46e5; }
+        .input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 600px) {
+            .msg { max-width: 95%; font-size: 0.9rem; padding: 0.8rem 1rem; }
+            .input-area { padding: 1rem; }
+            .input-area input { padding: 0.8rem 1rem; font-size: 0.9rem; }
+            .input-area button { padding: 0 1rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">← 검색으로 돌아가기</a>
+        <h1>Moonshot AI</h1>
+    </header>
+
+    <div class="chat-container">
+        <div class="messages" id="aiMsgs">
+            <div class="msg ai">
+                출입국 민원 안내 도우미 Moonshot AI입니다. 자연어로 질문해 주세요.<br>
+                예시: "베트남 사람인데 제주도 갈 수 있어요?"
+                <span class="msg-disc">⚠ AI 응답은 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.</span>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="aiQ" placeholder="질문을 입력하세요..." onkeydown="if(event.key==='Enter') sendAi()" autocomplete="off">
+            <button id="aiSend" onclick="sendAi()">전송</button>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = "https://moonshot-ai-proxy.seonjae-k02.workers.dev";
+        const DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
+
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        async function sendAi() {
+            const inp = document.getElementById('aiQ');
+            const q = inp.value.trim();
+            if(!q) return;
+            
+            const msgs = document.getElementById('aiMsgs');
+            const btn = document.getElementById('aiSend');
+
+            msgs.innerHTML += `<div class="msg user">${escapeHtml(q)}</div>`;
+            inp.value = '';
+            btn.disabled = true;
+            btn.textContent = '...';
+
+            const lid = 'ld-' + Date.now();
+            msgs.innerHTML += `<div class="msg ai" id="${lid}">답변을 생성 중입니다...</div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: q })
+                });
+                if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
+                
+                const data = await res.json();
+                const answer = data.candidates?.[0]?.content?.parts?.[0]?.text 
+                            || data.error?.message 
+                            || "응답을 처리할 수 없습니다.";
+
+                const le = document.getElementById(lid);
+                if(le) le.remove();
+                msgs.innerHTML += `<div class="msg ai">${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span></div>`;
+            } catch(err) {
+                const le = document.getElementById(lid);
+                if(le) le.remove();
+                msgs.innerHTML += `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span></div>`;
+            }
+            btn.disabled = false;
+            btn.textContent = '전송';
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+        
+        // 초기 포커스
+        document.getElementById('aiQ').focus();
+    </script>
+</body>
+</html>
