@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moonshot — 출입국 민원·비자 통합 검색</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         
         :root {
-            /* 전면 기본 폰트: Pretendard */
+            /* 전면 기본 폰트: Pretendard 강제 통일 */
             --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', system-ui, sans-serif;
+            /* 로고 폰트: 배달의민족 주아 */
+            --ff-logo: 'Jua', sans-serif;
             --fs: clamp(14px, 1.35vw, 16px);
             
             /* Soft Light Mode */
@@ -50,7 +58,9 @@
         }
         
         html { font-size: var(--fs); scroll-behavior: smooth; }
-        body { font-family: var(--ff); background: var(--bg0); color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+        /* 본문 전체, 버튼, 인풋 폰트 Pretendard 강제 */
+        body, input, button { font-family: var(--ff); }
+        body { background: var(--bg0); color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
 
         .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; transition: opacity 0.8s ease; }
         .star { position: absolute; background: #cbd5e1; border-radius: 50%; animation: twk var(--d, 4s) infinite alternate; }
@@ -72,9 +82,9 @@
         .logo-text { display: flex; flex-direction: column; align-items: center; transition: all 0.7s ease; }
         body.searched .logo-text { align-items: flex-start; }
         
+        /* 로고 폰트: 배달의민족 주아체 적용 */
         .logo-brand { 
-            /* 로고 전용 폰트: 배달의민족 주아 */
-            font-family: 'Jua', sans-serif; 
+            font-family: var(--ff-logo); 
             font-size: 3.2rem; 
             font-weight: 400; 
             letter-spacing: -0.02em; 
@@ -82,6 +92,7 @@
             background: linear-gradient(135deg, var(--ac), var(--cy)); 
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
+            background-clip: text;
             transition: font-size 0.7s ease; 
         }
         body.searched .logo-brand { font-size: 1.4rem; }
@@ -106,7 +117,7 @@
         .sbar-icon { position: absolute; left: 1.2rem; color: var(--t3); width: 22px; height: 22px; transition: all 0.2s; }
         .sbar:focus-within .sbar-icon { color: var(--ac); transform: scale(1.1); }
 
-        #q { flex: 1; border: 0; outline: 0; background: 0; padding: 1.1rem 1rem 1.1rem 3.2rem; font-size: 1.1rem; color: var(--t1); font-family: var(--ff); transition: all 0.7s ease; }
+        #q { flex: 1; border: 0; outline: 0; background: 0; padding: 1.1rem 1rem 1.1rem 3.2rem; font-size: 1.1rem; color: var(--t1); transition: all 0.7s ease; }
         body.searched #q { padding: 0.75rem 0.8rem 0.75rem 2.8rem; font-size: 0.95rem; }
         #q::placeholder { color: var(--t3); font-weight: 400; }
 
@@ -120,7 +131,7 @@
         /* ══ AUTO SUGGEST ══ */
         .auto-list { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--shD); max-height: 300px; overflow-y: auto; z-index: 999; display: none; opacity: 0; transform: translateY(-10px); transition: opacity 0.2s, transform 0.2s; }
         .auto-list.active { display: block; opacity: 1; transform: translateY(0); }
-        .auto-item { padding: 0.75rem 1.2rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--t1); border-bottom: 1px solid var(--bd2); transition: background 0.2s; font-family: var(--ff); }
+        .auto-item { padding: 0.75rem 1.2rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--t1); border-bottom: 1px solid var(--bd2); transition: background 0.2s; }
         .auto-item:last-child { border-bottom: none; }
         .auto-item:hover { background: var(--bg2); }
         .auto-item svg { color: var(--t3); width: 16px; height: 16px; flex-shrink: 0; }
@@ -131,20 +142,20 @@
         .ctrls { display: flex; align-items: center; gap: 0.4rem; opacity: 0; pointer-events: none; max-width: 0; overflow: hidden; transition: opacity 0.4s ease; }
         body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overflow: visible; flex-shrink: 0; }
 
-        .cb { background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px; padding: 0.3rem 0.7rem; font-size: 0.75rem; color: var(--t2); cursor: pointer; font-family: var(--ff); font-weight: 600; white-space: nowrap; transition: all 0.2s; }
+        .cb { background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px; padding: 0.3rem 0.7rem; font-size: 0.75rem; color: var(--t2); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.2s; }
         .cb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
         .cb.on { background: var(--ac2); color: #fff; border-color: var(--ac2); box-shadow: 0 2px 8px rgba(99,102,241,.3); }
 
         .landing-hints { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 2rem; max-width: 650px; transition: opacity 0.4s, max-height 0.4s; overflow: hidden; }
         body.searched .landing-hints { opacity: 0; max-height: 0; margin: 0; pointer-events: none; }
-        .lh { background: var(--bg2); border: 1px solid var(--bd); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.8rem; font-family: var(--ff); color: var(--t3); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .lh { background: var(--bg2); border: 1px solid var(--bd); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.8rem; color: var(--t3); cursor: pointer; transition: all 0.2s; font-weight: 500; }
         .lh:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); transform: translateY(-2px); }
 
         .results-area { max-width: 1160px; margin: 0 auto; padding: 0 1rem; opacity: 0; transform: translateY(40px); pointer-events: none; transition: opacity 0.6s ease 0.1s, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s; }
         body.searched .results-area { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
         .qf { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.2rem 0 1rem; }
-        .qb { background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px; padding: 0.25rem 0.7rem; font-size: 0.7rem; font-family: var(--ff); color: var(--t3); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .qb { background: var(--bg3); border: 1px solid var(--bd); border-radius: 999px; padding: 0.25rem 0.7rem; font-size: 0.7rem; color: var(--t3); cursor: pointer; transition: all 0.2s; font-weight: 500; }
         .qb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
 
         .rlist { display: flex; flex-direction: column; gap: 0.7rem; padding-bottom: 3rem; }
@@ -155,7 +166,8 @@
 
         .vc-h { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; background: var(--bg2); cursor: pointer; user-select: none; border-radius: 0 10px 10px 0; transition: background 0.2s; }
         .vc-h:hover { background: var(--acL); }
-        .bc { font-family: var(--ff); font-weight: 700; font-size: 0.9rem; color: var(--ac); background: var(--acL); padding: 3px 8px; border-radius: 6px; }
+        /* 코드 뱃지 폰트도 Pretendard 통일 (fm 제거) */
+        .bc { font-weight: 700; font-size: 0.9rem; color: var(--ac); background: var(--acL); padding: 3px 8px; border-radius: 6px; }
         .vt { font-weight: 700; font-size: 0.9rem; color: var(--t1); }
         .bp { font-size: 0.65rem; color: var(--tPt); background: var(--tPb); padding: 3px 8px; border-radius: 5px; white-space: nowrap; font-weight: 600; }
         .bn { font-size: 0.65rem; color: var(--t3); background: var(--bg3); padding: 3px 8px; border-radius: 5px; font-weight: 700; }
@@ -177,7 +189,8 @@
         .su { border-top: 1px solid var(--bd3); }
         .su-h { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem 0.5rem 1.5rem; cursor: pointer; transition: background 0.2s; }
         .su-h:hover { background: var(--bg2); }
-        .s-c { font-family: var(--ff); font-size: 0.8rem; font-weight: 700; color: var(--ac); min-width: 3.5rem; }
+        /* 서브코드 뱃지 폰트도 통일 */
+        .s-c { font-size: 0.8rem; font-weight: 700; color: var(--ac); min-width: 3.5rem; }
         .s-n { font-size: 0.8rem; font-weight: 600; color: var(--t1); }
         .su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg2); }
         .su.open .su-cw { grid-template-rows: 1fr; }
@@ -193,6 +206,8 @@
 
         .ft { text-align: center; padding: 2rem 1rem; font-size: 0.7rem; color: var(--t3); border-top: 1px solid var(--bd); max-width: 1160px; margin: 0 auto; opacity: 0; transition: opacity 0.5s 0.3s; }
         body.searched .ft { opacity: 1; }
+        /* 푸터 로고에도 주아체 적용 */
+        .ft-logo { font-family: var(--ff-logo); font-size: 0.8rem; font-weight: 400; background: linear-gradient(90deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
         @media (max-width: 640px) {
             .logo-brand { font-size: 2.2rem; }
@@ -202,10 +217,6 @@
             .ctrls { display: none; }
         }
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 </head>
 <body class="landing" data-theme="dark">
 
@@ -250,7 +261,7 @@
         <div class="search-wrap" id="search-wrap">
             <div class="sbar">
                 <svg class="sbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-                <input type="text" id="q" placeholder="비자코드, F-3 소득요건, K-ETA, 결핵 등 키워드 검색" autocomplete="off" spellcheck="false">
+                <input type="text" id="q" placeholder="제주 무사증, 사증면제협정국, B-2-2, K-ETA, D-2 서류 등 검색" autocomplete="off" spellcheck="false">
                 <button class="xb" id="xb" onclick="clearSearch()">✕</button>
                 <button class="sbar-go" onclick="executeSearch()" title="검색">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -259,7 +270,7 @@
             
             <div class="auto-list" id="auto-list"></div>
 
-            <div class="smeta"><span id="rc"></span><span id="rh">관련도 순 자동 정렬 · 연관검색어 지원</span></div>
+            <div class="smeta"><span id="rc"></span><span id="rh">관련도 순 자동 정렬 · 제주 무사증/사증면제협정국 연관검색 강화</span></div>
         </div>
 
         <div class="ctrls">
@@ -279,7 +290,7 @@
 </div>
 
 <footer class="ft">
-    <strong style="font-family:'Jua',sans-serif; background:linear-gradient(90deg,var(--ac),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Moonshot</strong> v12.2 · 배민 주아체 & Pretendard 적용 완료 · 실무 교차검증 필수
+    <span class="ft-logo">Moonshot</span> v12.3 · 폰트(주아/Pretendard) 일관성 강제 적용 완료 · 실무 교차검증 필수
 </footer>
 
 <script>
@@ -351,32 +362,57 @@ function hl(t,k){if(!k.length)return escapeHtml(t);return escapeHtml(t).replace(
 function calculateScore(item,keywords){
     if(!keywords.length) return 1;
     let score=0;
-    const cL=item.code.toLowerCase(), nL=item.name.toLowerCase();
-    const content=`${item.newReq} ${item.extReq} ${item.faq} ${item.period||''}`.toLowerCase();
+    const cL=(item.code||'').toLowerCase(), nL=(item.name||'').toLowerCase();
+    const aliasL=(item.aliases||[]).map(x=>String(x).toLowerCase());
+    const content=`${item.newReq||''} ${item.extReq||''} ${item.faq||''} ${item.period||''}`.toLowerCase();
     let isAnd=true;
-    
     for(const kw of keywords){
         let m=false;
-        if(cL.includes(kw)||nL.includes(kw)){score+=100; m=true;}
+        if(cL===kw||nL===kw){score+=220; m=true;}
+        else if(cL.includes(kw)||nL.includes(kw)){score+=120; m=true;}
+        aliasL.forEach(a=>{ if(a===kw){score+=180; m=true;} else if(a.includes(kw)||kw.includes(a)){score+=90; m=true;} });
         if(item.subCodes){
             for(const s of item.subCodes){
-                if(s.code.toLowerCase().includes(kw)||s.name.toLowerCase().includes(kw)){score+=50; m=true;}
-                const sc=`${s.addReq||''} ${s.note||''}`.toLowerCase();
+                const sCode=(s.code||'').toLowerCase(), sName=(s.name||'').toLowerCase();
+                const sAliases=(s.aliases||[]).join(' ').toLowerCase();
+                if(sCode===kw||sName===kw){score+=90; m=true;}
+                else if(sCode.includes(kw)||sName.includes(kw)){score+=60; m=true;}
+                const sc=`${s.addReq||''} ${s.note||''} ${sAliases}`.toLowerCase();
                 const n=(sc.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
-                if(n>0){score+=n*10; m=true;}
+                if(n>0){score+=n*16; m=true;}
             }
         }
         const cn=(content.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
-        if(cn>0){score+=cn*10; m=true;}
+        if(cn>0){score+=cn*12; m=true;}
         if(!m) isAnd=false;
     }
     return currentSearchMode==='and' ? (isAnd?score:0) : score;
 }
 
-// ═══ AUTO SUGGESTION ═══
+// ═══ AUTO SUGGESTION (연관검색어) ═══
+const ALIAS_MAP = {
+    "제주무사증":"B-2-2","제주 무사증":"B-2-2","제주무비자":"B-2-2","제주 무비자":"B-2-2","제주직항":"B-2-2","제주입도":"B-2-2",
+    "사증면제협정국":"B-1","사증면제협정":"B-1","비자면제협정":"B-1","무사증협정":"B-1","협정국":"B-1",
+    "전자여행허가":"K-ETA","케이이티에이":"K-ETA","무사증":"B-2","무비자":"B-2"
+};
+function expandKeywords(keywords){
+    const expanded = new Set(keywords.map(k=>k.toLowerCase()));
+    const joined = keywords.join('').toLowerCase();
+    const joinedNoSpace = joined.replace(/\s+/g,'');
+    if(ALIAS_MAP[joined]) expanded.add(ALIAS_MAP[joined].toLowerCase());
+    if(ALIAS_MAP[joinedNoSpace]) expanded.add(ALIAS_MAP[joinedNoSpace].toLowerCase());
+    keywords.forEach(k=>{
+        const nk = k.replace(/\s+/g,'').toLowerCase();
+        if(ALIAS_MAP[nk]) expanded.add(ALIAS_MAP[nk].toLowerCase());
+        if(nk==='제주') expanded.add('b-2-2');
+        if(nk==='협정') expanded.add('b-1');
+    });
+    return [...expanded];
+}
 const PREDEF_KEYWORDS = [
+    "제주 무사증","제주무사증 입국","사증면제협정국","비자면제협정","K-ETA 제주","B-2-2 제주 무사증","B-1 사증면제협정",
     "F-3 소득요건 개편", "E-7-4 숙련기능", "건강보험 면제 및 감면", "K-ETA 면제조건",
-    "F-6-3 혼인단절", "B-2-2 제주무비자", "결핵 고위험 35개국", "오버스테이 자진신고",
+    "F-6-3 혼인단절", "결핵 고위험 35개국", "오버스테이 자진신고",
     "D-2 유학 아르바이트", "D-10 구직활동", "F-5 영주권 점수제", "하이코리아 방문예약"
 ];
 
@@ -384,19 +420,24 @@ function showSuggestions(val) {
     const list = document.getElementById('auto-list');
     list.innerHTML = '';
     if(!val) { list.classList.remove('active'); return; }
-    
     const lowerVal = val.toLowerCase();
     const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
-    
     VISA_DATA.forEach(v => {
-        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal)) {
+        const aliasHit = (v.aliases||[]).some(a => String(a).toLowerCase().includes(lowerVal));
+        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal) || aliasHit) {
             const str = `${v.code} ${v.name}`;
             if(!matches.includes(str)) matches.push(str);
         }
+        (v.subCodes||[]).forEach(s=>{
+            const subAliasHit=(s.aliases||[]).some(a=>String(a).toLowerCase().includes(lowerVal));
+            if(subAliasHit){
+                const str = `${v.code} ${v.name}`;
+                if(!matches.includes(str)) matches.push(str);
+            }
+        });
     });
-
     if(matches.length > 0) {
-        matches.slice(0, 7).forEach(m => {
+        matches.slice(0, 9).forEach(m => {
             const div = document.createElement('div');
             div.className = 'auto-item';
             div.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg> <span>${hl(m, [val])}</span>`;
@@ -413,6 +454,7 @@ function showSuggestions(val) {
     }
 }
 
+// Close suggestion list when clicked outside
 document.addEventListener('click', function(e) {
     if(!document.getElementById('search-wrap').contains(e.target)){
         document.getElementById('auto-list').classList.remove('active');
@@ -449,7 +491,7 @@ function resetToLanding(){
 
 function renderResults(query){
     const box=document.getElementById('rlist'), rc=document.getElementById('rc');
-    const kw=query.trim().split(/\s+/).filter(Boolean), kwL=kw.map(k=>k.toLowerCase());
+    const kw=query.trim().split(/\s+/).filter(Boolean), kwL=expandKeywords(kw.map(k=>k.toLowerCase()));
     
     let scored=VISA_DATA.map(v=>({...v,_score:calculateScore(v,kwL)}));
     let filtered=scored.filter(v=>v._score>0).sort((a,b)=>b._score-a._score);
@@ -457,7 +499,7 @@ function renderResults(query){
     let st=0; filtered.forEach(v=>{if(v.subCodes) st+=v.subCodes.length;});
     
     if(!filtered.length){
-        box.innerHTML=`<div class="es"><div class="es-t">궤도에서 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
+        box.innerHTML=`<div class="es"><div class="es-t">검색어를 다시 잡아보세요</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
         rc.textContent='0건'; return;
     }
     
@@ -518,11 +560,11 @@ function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{i
 
 // ═══ INIT FILTERS ═══
 (function(){
-    const lf=[{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'K-ETA 가이드',q:'K-ETA'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'제주무비자',q:'B-2-2 제주'},{l:'가정폭력',q:'가정폭력'}];
+    const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'}];
     const lc=document.getElementById('landingHints');
     lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{document.getElementById('q').value=x.q;executeSearch();};lc.appendChild(b);});
     
-    const rf=[{l:'F-3 소득',q:'F-3 소득'},{l:'K-ETA',q:'K-ETA'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
+    const rf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-2-2 제주무사증',q:'B-2-2 제주무사증'},{l:'B-1 협정국',q:'B-1 협정국'},{l:'F-3 소득',q:'F-3 소득'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
     const qc=document.getElementById('qf');
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
 })();
