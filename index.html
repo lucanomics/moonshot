@@ -166,7 +166,6 @@
         .vt { font-weight: 700; font-size: 0.9rem; color: var(--t1); }
         .bp { font-size: 0.65rem; color: var(--tPt); background: var(--tPb); padding: 3px 8px; border-radius: 5px; white-space: nowrap; font-weight: 600; }
         .bn { font-size: 0.65rem; color: var(--t3); background: var(--bg3); padding: 3px 8px; border-radius: 5px; font-weight: 700; }
-        /* v22: 데이터 배지 */
         .bd { font-size: 0.6rem; color: #065f46; background: #d1fae5; padding: 3px 8px; border-radius: 5px; font-weight: 700; white-space: nowrap; }
         [data-theme="dark"] .bd { color: #6ee7b7; background: #064e3b; }
         .tgl { margin-left: auto; color: var(--t3); font-size: 0.7rem; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -181,7 +180,6 @@
         .tl-n { background: var(--tNb); color: var(--tNt); } .tl-e { background: var(--tEb); color: var(--tEt); } .tl-f { background: var(--tFb); color: var(--tFt); } .tl-s { background: var(--tSb); color: var(--tSt); }
         .ct { font-size: 0.85rem; color: var(--t2); line-height: 1.65; white-space: pre-line; word-break: keep-all; }
 
-        /* v22: 데이터 기준일 */
         .data-date { font-size: 0.65rem; color: var(--t3); padding: 0.4rem 1rem; border-top: 1px dashed var(--bd3); text-align: right; }
 
         .ss { background: var(--bg3); border-top: 1px solid var(--bd3); }
@@ -230,27 +228,12 @@
             .ctrls { display: none; }
         }
 
-        /* ═══ AI CHAT ═══ */
-        .ai-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; background: linear-gradient(135deg, var(--ac), var(--cy)); color: #fff; border: none; border-radius: 999px; padding: 0.8rem 1.2rem; font-size: 0.85rem; font-weight: 700; font-family: var(--ff) !important; box-shadow: var(--shD); cursor: pointer; z-index: 1000; transition: transform 0.2s, opacity 0.3s; display: flex; align-items: center; gap: 0.4rem; }
+        /* ═══ AI LINK BUTTON ═══ */
+        .ai-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; background: linear-gradient(135deg, var(--ac), var(--cy)); color: #fff; border: none; border-radius: 999px; padding: 0.8rem 1.2rem; font-size: 0.85rem; font-weight: 700; font-family: var(--ff) !important; box-shadow: var(--shD); cursor: pointer; z-index: 1000; transition: transform 0.2s, opacity 0.3s; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
         .ai-fab:hover { transform: scale(1.05); }
         body.landing .ai-fab { opacity: 0; pointer-events: none; }
         body.searched .ai-fab { opacity: 1; pointer-events: auto; }
-        .ai-panel { position: fixed; bottom: 4.5rem; right: 1.5rem; width: 380px; max-height: 520px; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--shD); display: flex; flex-direction: column; z-index: 1001; transform: translateY(20px); opacity: 0; pointer-events: none; transition: all 0.3s ease; }
-        .ai-panel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-        .ai-panel-hd { background: var(--bg2); padding: 0.8rem 1rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
-        .ai-panel-hd span { font-weight: 800; font-size: 0.85rem; background: linear-gradient(90deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .ai-panel-hd button { background: none; border: none; color: var(--t3); cursor: pointer; font-size: 1.1rem; padding: 0.2rem; }
-        .ai-msgs { flex: 1; padding: 0.8rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; min-height: 200px; max-height: 360px; }
-        .ai-m { padding: 0.7rem 0.9rem; border-radius: 10px; max-width: 88%; line-height: 1.55; font-size: 0.82rem; word-break: keep-all; }
-        .ai-m.u { background: var(--ac); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .ai-m.a { background: var(--bg2); color: var(--t2); border: 1px solid var(--bd); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .ai-m.a .ai-disc { display: block; margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px dashed var(--bd); font-size: 0.68rem; color: var(--t3); }
-        .ai-iw { padding: 0.7rem; border-top: 1px solid var(--bd); display: flex; gap: 0.4rem; background: var(--bg0); border-radius: 0 0 12px 12px; }
-        .ai-iw input { flex: 1; padding: 0.65rem 0.8rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg1); color: var(--t1); font-size: 0.85rem; font-family: var(--ff) !important; outline: none; }
-        .ai-iw input:focus { border-color: var(--ac); }
-        .ai-iw button { background: var(--ac); color: #fff; border: none; padding: 0 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.8rem; font-family: var(--ff) !important; white-space: nowrap; }
-        .ai-iw button:disabled { opacity: 0.5; cursor: not-allowed; }
-        @media (max-width: 480px) { .ai-panel { width: calc(100% - 1.5rem); right: 0.75rem; bottom: 4.5rem; max-height: 65vh; } .ai-fab { bottom: 1rem; right: 1rem; padding: 0.7rem 1rem; font-size: 0.8rem; } }
+        @media (max-width: 480px) { .ai-fab { bottom: 1rem; right: 1rem; padding: 0.7rem 1rem; font-size: 0.8rem; } }
     </style>
 </head>
 <body class="landing" data-theme="dark">
@@ -325,38 +308,19 @@
 </div>
 
 <footer class="ft">
-    <span class="ft-logo">Moonshot</span> v23 · 데이터 JSON 분리 + AI 챗(Gemini) 탑재 + OVS-1 불법체류다발국가 + D-2·E-7·E-9·F-4·F-6·H-2 매뉴얼 기반 서류 정밀화 + H-2→F-4 통합 반영 · 실무 교차검증 필수
+    <span class="ft-logo">Moonshot</span> v23 · 데이터 JSON 분리 + OVS-1 불법체류다발국가 + D-2·E-7·E-9·F-4·F-6·H-2 매뉴얼 기반 서류 정밀화 + H-2→F-4 통합 반영 · 실무 교차검증 필수
 </footer>
 
-<button class="ai-fab" id="aiFab" onclick="toggleAiChat()">🤖 AI 질문</button>
-<div id="aiPanel" class="ai-panel">
-    <div class="ai-panel-hd">
-        <span>Moonshot AI</span>
-        <button onclick="toggleAiChat()">✕</button>
-    </div>
-    <div id="aiMsgs" class="ai-msgs">
-        <div class="ai-m a">자연어로 질문하세요.<br>"베트남 사람인데 제주도 갈 수 있어요?" 처럼 물어보시면 됩니다.<span class="ai-disc">⚠ AI 응답은 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.</span></div>
-    </div>
-    <div class="ai-iw">
-        <input type="text" id="aiQ" placeholder="질문을 입력하세요..." onkeydown="if(event.key==='Enter')sendAi()">
-        <button id="aiSend" onclick="sendAi()">전송</button>
-    </div>
-</div>
+<a href="ai.html" class="ai-fab">🤖 Moonshot AI</a>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// DATA v23 — 외부 JSON 로드 (data/visa_data.json)
-// ═══════════════════════════════════════════════════════════
 let VISA_DATA=[];
 (async function loadVisaData(){
     try{
         const res=await fetch('data/visa_data.json');
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         VISA_DATA=await res.json();
-        console.log(`[Moonshot] ${VISA_DATA.length}개 항목 로드 완료`);
     }catch(e){
-        console.error('[Moonshot] visa_data.json 로드 실패, 인라인 폴백 시도:',e);
-        // 폴백: 인라인 데이터가 없으면 에러 표시
         if(!VISA_DATA.length){
             const hero=document.getElementById('landingHints');
             if(hero) hero.innerHTML='<span style="color:var(--cFq);font-size:0.85rem;">⚠ 데이터 로드 실패. 페이지를 새로고침하거나 인터넷 연결을 확인하세요.</span>';
@@ -364,7 +328,6 @@ let VISA_DATA=[];
     }
 })();
 
-// ═══ SCORING ALGORITHM ═══
 let currentSearchMode='and', currentTheme='dark';
 const CC={short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
 const CL={short:['입국 요건','연장/제한','FAQ'],study:['신규 발급 요건','연장 구비서류','FAQ'],work:['신규 발급 요건','연장 구비서류','FAQ'],invest:['신규 발급 요건','연장 구비서류','FAQ'],family:['신규 발급 요건','연장 구비서류','FAQ'],other:['개요/요건','연장/절차','FAQ'],diplo:['부여 요건','유지','FAQ'],nhis:['적용 대상','신청 절차','FAQ'],faq:['개요','절차/유의','FAQ'],scn:['적용 기준','상세/대상','FAQ']};
@@ -404,7 +367,6 @@ function calculateScore(item,keywords){
     return currentSearchMode==='and' ? (isAnd?score:0) : score;
 }
 
-// ═══ AUTO SUGGESTION ═══
 const ALIAS_MAP = {
     "제주무사증":"B-2-2","제주 무사증":"B-2-2","제주무비자":"B-2-2","제주 무비자":"B-2-2","제주직항":"B-2-2","제주입도":"B-2-2",
     "사증면제협정국":"B-1","사증면제협정":"B-1","비자면제협정":"B-1","무사증협정":"B-1","협정국":"B-1",
@@ -469,7 +431,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// ═══ STATE MACHINE ═══
 function executeSearch(){
     document.getElementById('auto-list').classList.remove('active');
     const q=document.getElementById('q').value.trim();
@@ -534,9 +495,7 @@ function renderResults(query){
             sh+=`</div>`;
         }
         
-        // v22: dataBadge 렌더링
         const dbHtml = v.dataBadge ? `<span class="bd">${escapeHtml(v.dataBadge)}</span>` : '';
-        // v22: dataDate 렌더링
         const ddHtml = v.dataDate ? `<div class="data-date">데이터 기준: ${escapeHtml(v.dataDate)}</div>` : '';
         
         const lb=getLabels(v);
@@ -552,7 +511,6 @@ function renderResults(query){
     rh.textContent=`관련도 순 정렬 · ${modeStr} · 상위 분류: ${topCats.join(', ')}`;
 }
 
-// ═══ CONTROLS ═══
 let dt;
 function handleInput(){
     const v=document.getElementById('q').value;
@@ -575,7 +533,6 @@ function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').clas
 function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);}
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
-// ═══ INIT FILTERS ═══
 (function(){
     const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'},{l:'난민신청',q:'RF-1'},{l:'K-ETA 국가 목록',q:'K-ETA 국가'},{l:'난민신청 서류',q:'RF-1'},{l:'불체다발국가',q:'OVS-1'}];
     const lc=document.getElementById('landingHints');
@@ -586,7 +543,6 @@ function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{i
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
 })();
 
-// ═══ PLACEHOLDER 무작위 순환 ═══
 const PH_LIST=[
 "제주 무사증, B-2-2, K-ETA 등 검색",
 "사증면제협정국, B-1, 무비자 차이 검색",
@@ -605,59 +561,6 @@ document.getElementById('q').placeholder=PH_LIST[Math.floor(Math.random()*PH_LIS
 
 document.getElementById('q').addEventListener('input',handleInput);
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();executeSearch();}if(e.key==='Escape')clearSearch();});
-
-// ═══ AI CHAT (Gemini via Cloudflare Workers proxy) ═══
-const AI_WORKER_URL = "https://moonshot-ai-proxy.seonjae-k02.workers.dev";
-const AI_DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
-
-function toggleAiChat(){
-    const p=document.getElementById('aiPanel');
-    p.classList.toggle('open');
-    if(p.classList.contains('open')) document.getElementById('aiQ').focus();
-}
-
-async function sendAi(){
-    const inp=document.getElementById('aiQ');
-    const q=inp.value.trim();
-    if(!q) return;
-    const msgs=document.getElementById('aiMsgs');
-    const btn=document.getElementById('aiSend');
-
-    // 사용자 메시지 표시
-    msgs.innerHTML+=`<div class="ai-m u">${escapeHtml(q)}</div>`;
-    inp.value='';
-    btn.disabled=true;
-    btn.textContent='...';
-
-    // 로딩 표시
-    const lid='ld-'+Date.now();
-    msgs.innerHTML+=`<div class="ai-m a" id="${lid}">답변을 생성 중입니다...</div>`;
-    msgs.scrollTop=msgs.scrollHeight;
-
-    try{
-        const res=await fetch(AI_WORKER_URL,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({question:q})
-        });
-        if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
-        const data=await res.json();
-        const answer=data.candidates?.[0]?.content?.parts?.[0]?.text
-            || data.error?.message
-            || "응답을 처리할 수 없습니다. 다시 시도해 주세요.";
-
-        const le=document.getElementById(lid);
-        if(le) le.remove();
-        msgs.innerHTML+=`<div class="ai-m a">${escapeHtml(answer).replace(/\n/g,'<br>')}<span class="ai-disc">${AI_DISCLAIMER}</span></div>`;
-    }catch(err){
-        const le=document.getElementById(lid);
-        if(le) le.remove();
-        msgs.innerHTML+=`<div class="ai-m a" style="border-color:#ef4444;">오류: ${escapeHtml(err.message)}<br>네트워크 연결 또는 Workers 엔드포인트를 확인하세요.<span class="ai-disc">${AI_DISCLAIMER}</span></div>`;
-    }
-    btn.disabled=false;
-    btn.textContent='전송';
-    msgs.scrollTop=msgs.scrollHeight;
-}
 </script>
 </body>
 </html>
