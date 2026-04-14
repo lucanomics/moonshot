@@ -59,7 +59,7 @@
         
         html { font-size: var(--fs); scroll-behavior: smooth; }
         /* 본문 전체, 버튼, 인풋 폰트 Pretendard 강제 */
-        body, input, button { font-family: var(--ff); }
+        body, input, button { font-family: var(--ff) !important; }
         body { background: var(--bg0); color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
 
         .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; transition: opacity 0.8s ease; }
@@ -82,9 +82,9 @@
         .logo-text { display: flex; flex-direction: column; align-items: center; transition: all 0.7s ease; }
         body.searched .logo-text { align-items: flex-start; }
         
-        /* 로고 폰트: 배달의민족 주아체 적용 */
+        /* 로고 폰트: 배달의민족 주아체 적용 및 강제 */
         .logo-brand { 
-            font-family: var(--ff-logo); 
+            font-family: var(--ff-logo) !important; 
             font-size: 3.2rem; 
             font-weight: 400; 
             letter-spacing: -0.02em; 
@@ -166,7 +166,8 @@
 
         .vc-h { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; background: var(--bg2); cursor: pointer; user-select: none; border-radius: 0 10px 10px 0; transition: background 0.2s; }
         .vc-h:hover { background: var(--acL); }
-        /* 코드 뱃지 폰트도 Pretendard 통일 (fm 제거) */
+        
+        /* 뱃지 폰트 등 기타 요소들도 Pretendard 영향 받도록 */
         .bc { font-weight: 700; font-size: 0.9rem; color: var(--ac); background: var(--acL); padding: 3px 8px; border-radius: 6px; }
         .vt { font-weight: 700; font-size: 0.9rem; color: var(--t1); }
         .bp { font-size: 0.65rem; color: var(--tPt); background: var(--tPb); padding: 3px 8px; border-radius: 5px; white-space: nowrap; font-weight: 600; }
@@ -189,7 +190,6 @@
         .su { border-top: 1px solid var(--bd3); }
         .su-h { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem 0.5rem 1.5rem; cursor: pointer; transition: background 0.2s; }
         .su-h:hover { background: var(--bg2); }
-        /* 서브코드 뱃지 폰트도 통일 */
         .s-c { font-size: 0.8rem; font-weight: 700; color: var(--ac); min-width: 3.5rem; }
         .s-n { font-size: 0.8rem; font-weight: 600; color: var(--t1); }
         .su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg2); }
@@ -206,8 +206,17 @@
 
         .ft { text-align: center; padding: 2rem 1rem; font-size: 0.7rem; color: var(--t3); border-top: 1px solid var(--bd); max-width: 1160px; margin: 0 auto; opacity: 0; transition: opacity 0.5s 0.3s; }
         body.searched .ft { opacity: 1; }
-        /* 푸터 로고에도 주아체 적용 */
-        .ft-logo { font-family: var(--ff-logo); font-size: 0.8rem; font-weight: 400; background: linear-gradient(90deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        
+        /* 푸터 로고 폰트 강제 적용 */
+        .ft-logo { 
+            font-family: var(--ff-logo) !important; 
+            font-size: 0.8rem; 
+            font-weight: 400; 
+            background: linear-gradient(90deg, var(--ac), var(--cy)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+        }
 
         @media (max-width: 640px) {
             .logo-brand { font-size: 2.2rem; }
@@ -295,7 +304,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// DATA v12.0
+// DATA v21.0 (표현 중립화 + 제주 무사증/사증면제협정국/VW-1 고도화)
 // ═══════════════════════════════════════════════════════════
 const VISA_DATA=[
 {code:"K-ETA",name:"전자여행허가 (K-ETA) 종합 가이드",cat:"faq",period:"유효기간 3년 (여권 만료일 우선)",newReq:"무사증 입국 전 항공기·선박 탑승 전 신청 필수. 17세 이하·65세 이상 면제. 복수국적자(한국여권) 신청 제외. 수수료 1만원(결제수수료 3% 별도, 환불 불가).",extReq:"여권 재발급, 분실 새 여권, 이름·여권번호 변경 시 재신청 필수. 체류지, 연락처, 입국목적 변경 시 여행정보 업데이트 가능.",faq:"Q: 취업·유학 목적?\nA: 불가. 관광, 친지방문, 비영리 상용만 가능.\nQ: 심사 기간?\nA: 통상 72시간 이내, 급행 없음.",subCodes:[{code:"K-ETA-1",name:"대상 및 면제조건",addReq:"관광, 친지, 회의, 비영리 상용 목적 한정.",note:"입국일 기준 17세 이하 또는 65세 이상 면제(18세 도달 시 신청 필수). 외국인등록증 소지자 해당 체류자격 우선."},{code:"K-ETA-2",name:"신청 및 입력 규정",addReq:"여권, 이메일, 숙소(영문도로명, 특수문자 제외), 얼굴사진(히잡 등 허용, 이마~턱 노출).",note:"가족/지인 대리 신청 가능. 연도만 있는 생일은 00월 00일 입력. 임시저장 7일 유효."},{code:"K-ETA-3",name:"수정 및 재신청",addReq:"재신청: 여권 재발급, 이름/여권번호 변경.",note:"업데이트 가능: 입국목적, 체류지, 연락처, 동반인. 직업 변경 시 재신청 불필요."},{code:"K-ETA-4",name:"주의 및 제한사항",addReq:"탑승 후/국내 체류 중 신청 시 불이익. 공식 사이트(k-eta.go.kr) 외 대행 주의.",note:"허위 정보 시 입국제한(동반인 포함). 입국신고서 면제. 국내 체류자격 변경 절대 불가."}]},
@@ -311,9 +320,10 @@ const VISA_DATA=[
 {code:"FAQ-2",name:"체류기간 연장·자격 변경",cat:"faq",period:"자격별 상이",newReq:"만료일 4개월 전~당일까지 연장 가능.",extReq:"자격 변경 시 요건 충족 증빙 제출.",faq:"Q: 만료 후?\nA: 오버스테이 처리, 범칙금 부과.",subCodes:[{code:"FAQ-2-1",name:"전자민원",addReq:"하이코리아 전자민원",note:"수수료 할인"}]},
 {code:"FAQ-3",name:"재입국허가",cat:"faq",period:"허가 기간 내",newReq:"원칙 면제, 면제 기간 초과 시 사전 허가.",extReq:"출국 전 하이코리아 또는 공항에서 신청.",faq:"Q: 해외 연장?\nA: 부득이한 사유 시 재외공관 통해 가능.",subCodes:[]},
 {code:"FAQ-4",name:"전자팩스·오버스테이·국적",cat:"faq",period:"상시",newReq:"[전자팩스] 1577-1346. [국적/영주] F-4/F-5 요건, 국적 취득/이탈 증명.",extReq:"[오버스테이] 자진신고 시 제재 안내, 입국규제 해제 사전심사.",faq:"Q: 다국어 상담?\nA: 1345 외국인종합안내센터.",subCodes:[]},
+{code:"VW-1",name:"무사증·사증면제 구분",cat:"faq",period:"입국 전 확인",newReq:"1) 국적 확인 → 2) 사증면제협정국·상호주의·일방면제 여부 확인 → 3) 제주 무사증인지 일반 무사증인지 구분 → 4) K-ETA 적용 여부 확인 → 5) 취업·영리활동 여부 별도 검토.",extReq:"국적, 입국 경로, 제주 한정 여부, 체류 목적에 따라 적용 체계가 달라질 수 있음.",faq:"Q: 민원인이 무비자라고 말하면 무엇부터 확인해야 하나?\nA: 협정국 기반 일반 무사증인지, 제주 무사증인지, K-ETA 대상인지 순서대로 확인.",aliases:["사증면제협정국","무사증 차이","제주 무사증 차이","B-1 B-2-2 차이","K-ETA 무사증","무비자 차이"],subCodes:[{code:"VW-1-1",name:"B-1 사증면제협정",addReq:"협정국·상호주의·일방면제 여부를 본다.",note:"일반적인 단기 비영리 방문 체계 이해에 유용."},{code:"VW-1-2",name:"B-2-1 일반 무사증",addReq:"일반 무사증 허용 여부와 K-ETA 적용 여부를 본다.",note:"제주 특례와 분리해서 설명."},{code:"VW-1-3",name:"B-2-2 제주 무사증",addReq:"제주 입도 경로, 제주 한정 체계, 타 지역 이동 문제를 본다.",note:"혼동 문의가 많은 항목."},{code:"VW-1-4",name:"K-ETA",addReq:"무사증 입국 전 사전 허가 단계인지 확인.",note:"무사증과 동일 개념이 아님."}]},
 {code:"COM-1",name:"비자 공통 구비서류·팁",cat:"faq",period:"공통",newReq:"[재외공관] 비자신청서, 여권, 사진(3.5x4.5), 수수료, 입증서류. [비자포털] 전자신청, 전자결제.",extReq:"[비자발급인정서] 초청인 대리 신청, 유효기간 3개월.",faq:"Q: 응대 팁?\nA: 상황파악→제도확인→서류목록→발급처매칭→제출처안내.",subCodes:[]},
-{code:"B-1",name:"비자면제",cat:"short",period:"3개월, 연장불가",newReq:"사증면제협정국 국민. 유효 여권, K-ETA.",extReq:"연장 불가.",faq:"Q: K-ETA 면제?\nA: 67개국 한시 면제(2026.12.31)."},
-{code:"B-2",name:"관광통과",cat:"short",period:"90일 이내",newReq:"K-ETA 승인 또는 사증발급신청서, 여권, 사진, 왕복항공권, 숙소, 재정능력.",extReq:"원칙 불가. 부득이한 사유 시 제한적 연장.",faq:"Q: 90일↑?\nA: 불가. 초과 시 불법체류.",subCodes:[{code:"B-2-1",name:"일반무비자",addReq:"무비자 허용국 국민.",note:""},{code:"B-2-2",name:"제주무비자",addReq:"법무부장관 지정국, 제주 직항.",note:"⚠ 제주 한정 30일. 타 지역 이동 불가."}]},
+{code:"B-1",name:"사증면제협정",cat:"short",period:"3개월, 연장불가",newReq:"사증면제협정국, 상호주의, 일방면제 대상 여부를 먼저 확인하고 유효 여권 및 K-ETA 적용 여부를 점검.",extReq:"원칙적으로 연장 불가. 체류 목적·국적별 예외는 별도 확인.",faq:"Q: 사증면제협정국이면 취업이나 영리활동도 가능한가?\nA: 아니오. 단기 비영리 방문 중심으로 보며, 취업·영리활동은 별도 체류자격 또는 사증 필요 여부를 심사해야 함.",aliases:["사증면제협정국","사증면제협정","비자면제협정","무사증협정","협정국","상호주의","일방면제","비자면제국"]},
+{code:"B-2",name:"관광통과·무사증",cat:"short",period:"90일 이내",newReq:"일반 무사증(B-2-1)과 제주 무사증 입국(B-2-2)을 구분해 확인. 입국 전 K-ETA 적용 여부, 항공 탑승 가능 여부, 국적별 제한 여부, 입국 경로를 함께 검토.",extReq:"원칙적으로 연장 불가 또는 제한적. 체류기간 초과 시 불법체류 문제로 이어질 수 있음.",faq:"Q: 제주 무사증과 사증면제협정국은 같은 제도인가?\nA: 아니오. 제주 무사증은 제주 한정 체계이므로 일반 사증면제협정과 분리해 안내해야 함.",aliases:["무사증","무비자","제주무사증","제주 무사증","제주무비자","제주 무비자","제주 직항","제주 입도","B-2-2","제주 무사증 입국"],subCodes:[{code:"B-2-1",name:"일반 무사증",addReq:"사증면제협정, 상호주의, 일방 면제 여부와 K-ETA 적용 여부 확인.",note:"일반 무사증은 제주 특례와 구분해서 안내.",aliases:["일반무비자","일반 무비자","일반 무사증"]},{code:"B-2-2",name:"제주 무사증 입국",addReq:"법무부장관 지정국 여부, 제주 직항 또는 제주 입도 경로, K-ETA 적용 여부를 먼저 확인.",note:"⚠ 제주 한정 체계로 안내되므로, 타 지역 이동 가능 여부는 별도 확인 필요.",aliases:["제주무사증","제주 무사증","제주무비자","제주 무비자","제주 직항","제주도 무사증"]}]},
 {code:"C-3",name:"단기방문",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권, 사진, 목적 입증, 왕복항공권, 숙소, 일정표, 재정능력.",extReq:"원칙 불가. 시행규칙 제32조 제한적 연장.",faq:"Q: 연장?\nA: 불가. 출국 후 재입국.",subCodes:[{code:"C-3-1",name:"단기일반(친족)",addReq:"초청장, 신분증/등본, 친족관계.",note:""},{code:"C-3-2",name:"단체관광",addReq:"지정 여행사 확인서.",note:""},{code:"C-3-3",name:"의료관광",addReq:"지정 의료기관 초청서, 재정능력.",note:""},{code:"C-3-4",name:"일반상용",addReq:"거래처 초청장, 재직증명서.",note:""},{code:"C-3-5",name:"협정단기상용",addReq:"협정 입증.",note:""},{code:"C-3-6",name:"단기상용",addReq:"거래관계 입증.",note:""},{code:"C-3-8",name:"동포방문",addReq:"동포 입증, 친족관계.",note:""},{code:"C-3-9",name:"일반관광",addReq:"잔고증명서.",note:""},{code:"C-3-10",name:"순수환승",addReq:"제3국행 항공권.",note:""}]},
 {code:"C-4",name:"단기취업",cat:"short",period:"90일 이내",newReq:"사증발급신청서, 여권, 사진, 고용계약서, 전문성 입증.",extReq:"원칙 불가.",faq:"Q: 공연?\nA: C-4 필수. 수익활동은 C-3 불가."},
 {code:"D-1",name:"문화예술",cat:"study",period:"2년, 연장가능",newReq:"초청장/연수계획서, 학력/경력 증빙, 체류경비.",extReq:"통합신청서, 여권, 등록증, 연수계속 입증.",faq:"Q: 영리활동?\nA: 원칙 불가.",subCodes:[{code:"D-1-00",name:"문화예술연수",addReq:"비영리 기관 연수 입증",note:""}]},
@@ -410,9 +420,9 @@ function expandKeywords(keywords){
     return [...expanded];
 }
 const PREDEF_KEYWORDS = [
-    "제주 무사증","제주무사증 입국","사증면제협정국","비자면제협정","K-ETA 제주","B-2-2 제주 무사증","B-1 사증면제협정",
+    "제주 무사증", "제주무사증 입국", "사증면제협정국", "비자면제협정", "K-ETA 제주", "B-2-2 제주 무사증", "B-1 사증면제협정",
     "F-3 소득요건 개편", "E-7-4 숙련기능", "건강보험 면제 및 감면", "K-ETA 면제조건",
-    "F-6-3 혼인단절", "결핵 고위험 35개국", "오버스테이 자진신고",
+    "F-6-3 혼인단절", "B-2-2 제주무비자", "결핵 고위험 35개국", "오버스테이 자진신고",
     "D-2 유학 아르바이트", "D-10 구직활동", "F-5 영주권 점수제", "하이코리아 방문예약"
 ];
 
@@ -420,24 +430,19 @@ function showSuggestions(val) {
     const list = document.getElementById('auto-list');
     list.innerHTML = '';
     if(!val) { list.classList.remove('active'); return; }
+    
     const lowerVal = val.toLowerCase();
     const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
+    
     VISA_DATA.forEach(v => {
-        const aliasHit = (v.aliases||[]).some(a => String(a).toLowerCase().includes(lowerVal));
-        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal) || aliasHit) {
+        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal)) {
             const str = `${v.code} ${v.name}`;
             if(!matches.includes(str)) matches.push(str);
         }
-        (v.subCodes||[]).forEach(s=>{
-            const subAliasHit=(s.aliases||[]).some(a=>String(a).toLowerCase().includes(lowerVal));
-            if(subAliasHit){
-                const str = `${v.code} ${v.name}`;
-                if(!matches.includes(str)) matches.push(str);
-            }
-        });
     });
+
     if(matches.length > 0) {
-        matches.slice(0, 9).forEach(m => {
+        matches.slice(0, 7).forEach(m => {
             const div = document.createElement('div');
             div.className = 'auto-item';
             div.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg> <span>${hl(m, [val])}</span>`;
@@ -499,7 +504,7 @@ function renderResults(query){
     let st=0; filtered.forEach(v=>{if(v.subCodes) st+=v.subCodes.length;});
     
     if(!filtered.length){
-        box.innerHTML=`<div class="es"><div class="es-t">검색어를 다시 잡아보세요</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
+        box.innerHTML=`<div class="es"><div class="es-t">궤도에서 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.<br>키워드를 줄이거나 OR 모드로 전환해 보세요.</div></div>`;
         rc.textContent='0건'; return;
     }
     
@@ -564,7 +569,7 @@ function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{i
     const lc=document.getElementById('landingHints');
     lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{document.getElementById('q').value=x.q;executeSearch();};lc.appendChild(b);});
     
-    const rf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-2-2 제주무사증',q:'B-2-2 제주무사증'},{l:'B-1 협정국',q:'B-1 협정국'},{l:'F-3 소득',q:'F-3 소득'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
+    const rf=[{l:'F-3 소득',q:'F-3 소득'},{l:'K-ETA',q:'K-ETA'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
     const qc=document.getElementById('qf');
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
 })();
