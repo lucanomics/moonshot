@@ -1,6 +1,3 @@
-// Moonshot visa-data.js — 자동 생성
-// 백엔드 HTTPS 배포 후 fetch 방식으로 전환 예정
-const VISA_DATA = [
   {
     "code": "K-ETA",
     "name": "전자여행허가 (K-ETA) 종합 가이드",
