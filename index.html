@@ -324,18 +324,43 @@ for(let i=0;i<60;i++){
 }
 
 // ═══════════════════════════════════════════════════════════
-// DATA v25 — FastAPI 백엔드 연동 (하드코딩 삭제 완료)
+// DATA v26 — FastAPI 백엔드 연동 (JSON 파싱 안전망 추가)
 // ═══════════════════════════════════════════════════════════
 let VISA_DATA = [];
 
+// 백엔드 데이터 실시간 페칭 및 데이터 정제
 (async function loadVisaDataFromBackend(){
     try {
         const res = await fetch('http://127.0.0.1:8000/api/visas'); 
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         
-        VISA_DATA = await res.json();
-        console.log(`[Moonshot] 백엔드 연동 성공: ${VISA_DATA.length}개 항목 로드 완료`);
+        const rawData = await res.json();
         
+        // [핵심] 문자열로 넘어온 aliases와 subCodes를 강제로 배열 객체로 파싱
+        VISA_DATA = rawData.map(item => {
+            let parsedAliases = [];
+            let parsedSubCodes = [];
+            
+            if (typeof item.aliases === 'string') {
+                try { parsedAliases = JSON.parse(item.aliases); } catch(e) {}
+            } else if (Array.isArray(item.aliases)) {
+                parsedAliases = item.aliases;
+            }
+
+            if (typeof item.subCodes === 'string') {
+                try { parsedSubCodes = JSON.parse(item.subCodes); } catch(e) {}
+            } else if (Array.isArray(item.subCodes)) {
+                parsedSubCodes = item.subCodes;
+            }
+
+            return {
+                ...item,
+                aliases: parsedAliases,
+                subCodes: parsedSubCodes
+            };
+        });
+
+        console.log(`[Moonshot] 백엔드 연동 및 정제 성공: ${VISA_DATA.length}개 항목 로드 완료`);
         document.getElementById('q').disabled = false;
         document.getElementById('rc').textContent = `DB 연동 완료 (${VISA_DATA.length}개)`;
     } catch(e) {
@@ -453,7 +478,6 @@ function executeSearch(){
     const q=document.getElementById('q').value.trim();
     if(!q) return;
 
-    // SCN 패턴 감지 및 법적 면책 경고 팝업 강제 호출
     if(/scn/i.test(q)) {
         alert("⚠ [경고] 해당 시나리오 검색 결과는 실무자 사전 안내 및 단순 참고용입니다. 어떠한 법적 효력도 갖지 않으며, 실제 행정 처리 및 최종 판단은 관할 출입국관서에 귀속됩니다.");
     }
