@@ -286,7 +286,7 @@
             
             <div class="auto-list" id="auto-list"></div>
 
-            <div class="smeta"><span id="rc">데이터 로드 완료</span><span id="rh"></span></div>
+            <div class="smeta"><span id="rc">데이터 로딩 중…</span><span id="rh"></span></div>
         </div>
 
         <div class="ctrls">
@@ -311,7 +311,6 @@
 
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
-<script src="visa-data.js"></script>
 <script>
 // 별 애니메이션
 const stC=document.getElementById('stars');
@@ -325,14 +324,25 @@ for(let i=0;i<60;i++){
 }
 
 // ═══════════════════════════════════════════════════════════
-// DATA v26-hotfix — JSON 직접 내장 (Mixed Content 응급 복구)
-// 백엔드 HTTPS 배포 완료 후 fetch 방식으로 복원 예정
+// DATA — visa_data (1).json fetch 방식
 // ═══════════════════════════════════════════════════════════
-// ═══ [HOTFIX] visa_data 외부 파일 로드 — 백엔드 HTTPS 배포 후 fetch로 복원 예정 ═══
-// visa-data.js에서 VISA_DATA 배열이 전역으로 선언됨
-// 즉시 활성화
-document.getElementById('rc').textContent = `로컬 데이터 로드 완료 (${VISA_DATA.length}개)`;
-console.log(`[Moonshot] 로컬 데이터 로드 완료: ${VISA_DATA.length}개 항목`);
+let VISA_DATA = [];
+
+fetch('./visa_data%20(1).json')
+    .then(res => {
+        if (!res.ok) throw new Error('fetch 실패: ' + res.status);
+        return res.json();
+    })
+    .then(data => {
+        VISA_DATA = data;
+        document.getElementById('rc').textContent = `데이터 로드 완료 (${VISA_DATA.length}개)`;
+        console.log(`[Moonshot] JSON 데이터 로드 완료: ${VISA_DATA.length}개 항목`);
+        initUI();
+    })
+    .catch(err => {
+        document.getElementById('rc').textContent = '⚠ 데이터 로드 실패 — 새로고침 해주세요';
+        console.error('[Moonshot] 데이터 로드 오류:', err);
+    });
 
 let currentSearchMode='and', currentTheme='dark';
 const CC={short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
@@ -465,7 +475,7 @@ function resetToLanding(){
     document.getElementById('q').value='';
     document.getElementById('xb').classList.remove('v');
     document.getElementById('rlist').innerHTML='';
-    document.getElementById('rc').textContent=`로컬 데이터 로드 완료 (${VISA_DATA.length}개)`;
+    document.getElementById('rc').textContent=`데이터 로드 완료 (${VISA_DATA.length}개)`;
 }
 
 function renderResults(query){
@@ -544,15 +554,17 @@ function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').clas
 function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);}
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
-(function(){
+function initUI(){
     const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'},{l:'난민신청',q:'RF-1'},{l:'K-ETA 국가 목록',q:'K-ETA 국가'},{l:'난민신청 서류',q:'RF-1'},{l:'숙련기능점수제',q:'E-7-4'}];
     const lc=document.getElementById('landingHints');
+    lc.innerHTML='';
     lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{document.getElementById('q').value=x.q;executeSearch();};lc.appendChild(b);});
     
     const rf=[{l:'F-3 소득',q:'F-3 소득'},{l:'K-ETA',q:'K-ETA'},{l:'K-ETA 국가',q:'K-ETA 국가'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'제주 제외국',q:'제주 무사증 제외'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
     const qc=document.getElementById('qf');
+    qc.innerHTML='';
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
-})();
+}
 
 const PH_LIST=[
 "제주 무사증, B-2-2, K-ETA 등 검색",
