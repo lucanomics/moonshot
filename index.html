@@ -112,12 +112,14 @@
         #q { flex: 1; border: 0; outline: 0; background: 0; padding: 1.1rem 1rem 1.1rem 3.2rem; font-size: 1.1rem; color: var(--t1); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         body.searched #q { padding: 0.75rem 0.8rem 0.75rem 2.8rem; font-size: 0.95rem; }
         #q::placeholder { color: var(--t3); font-weight: 400; }
+        #q:disabled { cursor: not-allowed; }
 
         .xb { background: 0; border: 0; color: var(--t3); cursor: pointer; padding: 0.5rem; font-size: 1.2rem; display: none; transition: color 0.3s ease-in-out; }
         .xb:hover { color: var(--t1); } .xb.v { display: block; }
 
         .sbar-go { background: 0; border: 0; cursor: pointer; color: var(--t3); padding: 0 1.2rem 0 0.5rem; display: flex; align-items: center; transition: all 0.3s ease-in-out; }
         .sbar-go:hover { color: var(--ac); transform: scale(1.1); }
+        .sbar-go:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .sbar-go svg { width: 22px; height: 22px; }
 
         .auto-list { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--shD); max-height: 300px; overflow-y: auto; z-index: 999; display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease-in-out; }
@@ -277,9 +279,9 @@
         <div class="search-wrap" id="search-wrap">
             <div class="sbar">
                 <svg class="sbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-                <input type="text" id="q" placeholder="제주 무사증, 사증면제협정국, B-2-2, K-ETA, D-2 서류 등 검색" autocomplete="off" spellcheck="false">
+                <input type="text" id="q" placeholder="데이터 로딩 중…" autocomplete="off" spellcheck="false" disabled>
                 <button class="xb" id="xb" onclick="clearSearch()">✕</button>
-                <button class="sbar-go" onclick="executeSearch()" title="검색">
+                <button class="sbar-go" onclick="executeSearch()" title="검색" disabled>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
             </div>
@@ -324,25 +326,74 @@ for(let i=0;i<60;i++){
 }
 
 // ═══════════════════════════════════════════════════════════
-// DATA — visa_data (1).json fetch 방식
+// DATA STATE
 // ═══════════════════════════════════════════════════════════
 let VISA_DATA = [];
+let dataReady = false;
 
-fetch('./visa_data%20(1).json')
-    .then(res => {
-        if (!res.ok) throw new Error('fetch 실패: ' + res.status);
-        return res.json();
-    })
-    .then(data => {
-        VISA_DATA = data;
-        document.getElementById('rc').textContent = `데이터 로드 완료 (${VISA_DATA.length}개)`;
-        console.log(`[Moonshot] JSON 데이터 로드 완료: ${VISA_DATA.length}개 항목`);
-        initUI();
-    })
-    .catch(err => {
-        document.getElementById('rc').textContent = '⚠ 데이터 로드 실패 — 새로고침 해주세요';
-        console.error('[Moonshot] 데이터 로드 오류:', err);
-    });
+const qEl = document.getElementById('q');
+const goBtn = document.querySelector('.sbar-go');
+const rcEl = document.getElementById('rc');
+
+function setSearchEnabled(enabled) {
+    qEl.disabled = !enabled;
+    goBtn.disabled = !enabled;
+    qEl.style.opacity = enabled ? '1' : '0.6';
+}
+
+async function loadVisaData() {
+    const candidates = [
+        './visa_data%20(1).json',
+        './visa_data%20%281%29.json',
+        './visa_data (1).json',
+        './visa_data.json'
+    ];
+
+    for (const url of candidates) {
+        try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`${res.status}`);
+            const raw = await res.json();
+            const arr = Array.isArray(raw) ? raw : (Array.isArray(raw.data) ? raw.data : null);
+            if (!arr || arr.length === 0) throw new Error('빈 배열');
+
+            VISA_DATA = arr;
+            dataReady = true;
+            rcEl.textContent = `데이터 로드 완료 (${VISA_DATA.length}개)`;
+            console.log(`[Moonshot] 로드 성공: ${url} / ${VISA_DATA.length}개`);
+            setSearchEnabled(true);
+            initUI();
+
+            const PH_LIST=[
+                "제주 무사증, B-2-2, K-ETA 등 검색",
+                "사증면제협정국, B-1, 무비자 차이 검색",
+                "F-6 결혼이민, 가정폭력, 혼인단절 검색",
+                "E-7 특정활동, E-9 비전문취업 검색",
+                "D-2 유학, 아르바이트 활동허가 검색",
+                "건강보험 면제, NHIS, 국외체류 검색",
+                "난민신청 서류, G-1, RF-1 검색",
+                "F-5 영주권, 점수제, F-2-7 검색",
+                "오버스테이, 자진신고, 입국규제 검색",
+                "K-ETA 국가 목록, 116개국 검색",
+                "결핵 고위험국, TB-1, 진단서 검색",
+                "F-3 동반 소득요건, 25.7.1 개편 검색"
+            ];
+            qEl.placeholder = PH_LIST[Math.floor(Math.random()*PH_LIST.length)];
+            return;
+        } catch(e) {
+            console.warn(`[Moonshot] 로드 실패 (${url}):`, e.message);
+        }
+    }
+
+    // 모든 경로 실패
+    dataReady = false;
+    rcEl.textContent = '⚠ 데이터 로드 실패 — 새로고침 해주세요';
+    qEl.placeholder = '데이터 로드 실패 — 새로고침 후 다시 시도';
+    setSearchEnabled(false);
+    console.error('[Moonshot] 모든 경로에서 데이터 로드 실패');
+}
+
+loadVisaData();
 
 let currentSearchMode='and', currentTheme='dark';
 const CC={short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
@@ -350,8 +401,12 @@ const CL={short:['입국 요건','연장/제한','FAQ'],study:['신규 발급 �
 function getLabels(v){return v.labels||CL[v.cat]||['개요','상세','FAQ'];}
 
 function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function hl(t,k){if(!k.length)return escapeHtml(t);return escapeHtml(t).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>')}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s ?? '';return d.innerHTML}
+function hl(t,k){
+    const text = String(t ?? '');
+    if(!k.length) return escapeHtml(text);
+    return escapeHtml(text).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>')
+}
 
 function calculateScore(item,keywords){
     if(!keywords.length) return 1;
@@ -413,13 +468,14 @@ const PREDEF_KEYWORDS = [
 ];
 
 function showSuggestions(val) {
+    if(!dataReady) return;
     const list = document.getElementById('auto-list');
     list.innerHTML = '';
     if(!val) { list.classList.remove('active'); return; }
     const lowerVal = val.toLowerCase();
     const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
     VISA_DATA.forEach(v => {
-        if(v.code.toLowerCase().includes(lowerVal) || v.name.toLowerCase().includes(lowerVal)) {
+        if((v.code||'').toLowerCase().includes(lowerVal) || (v.name||'').toLowerCase().includes(lowerVal)) {
             const str = `${v.code} ${v.name}`;
             if(!matches.includes(str)) matches.push(str);
         }
@@ -448,6 +504,10 @@ document.addEventListener('click', function(e) {
 });
 
 function executeSearch(){
+    if(!dataReady) {
+        rcEl.textContent = '⚠ 데이터 로딩 중입니다. 잠시 후 다시 시도하세요.';
+        return;
+    }
     document.getElementById('auto-list').classList.remove('active');
     const q=document.getElementById('q').value.trim();
     if(!q) return;
@@ -475,10 +535,11 @@ function resetToLanding(){
     document.getElementById('q').value='';
     document.getElementById('xb').classList.remove('v');
     document.getElementById('rlist').innerHTML='';
-    document.getElementById('rc').textContent=`데이터 로드 완료 (${VISA_DATA.length}개)`;
+    rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
 }
 
 function renderResults(query){
+    if(!dataReady) return;
     const box=document.getElementById('rlist'), rc=document.getElementById('rc');
     const kw=query.trim().split(/\s+/).filter(Boolean), kwL=expandKeywords(kw.map(k=>k.toLowerCase()));
     
@@ -537,7 +598,7 @@ function handleInput(){
     const v=document.getElementById('q').value;
     document.getElementById('xb').classList.toggle('v',v.length>0);
     showSuggestions(v);
-    if(document.body.classList.contains('searched')){
+    if(document.body.classList.contains('searched') && dataReady){
         clearTimeout(dt);
         dt=setTimeout(()=>renderResults(v),150);
     }
@@ -548,9 +609,9 @@ function clearSearch(){
     i.focus();
     document.getElementById('xb').classList.remove('v');
     document.getElementById('auto-list').classList.remove('active');
-    if(document.body.classList.contains('searched'))renderResults('');
+    if(document.body.classList.contains('searched') && dataReady) renderResults('');
 }
-function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched'))renderResults(document.getElementById('q').value);}
+function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(document.getElementById('q').value);}
 function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);}
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
@@ -565,22 +626,6 @@ function initUI(){
     qc.innerHTML='';
     rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{const i=document.getElementById('q');i.value=x.q;i.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
 }
-
-const PH_LIST=[
-"제주 무사증, B-2-2, K-ETA 등 검색",
-"사증면제협정국, B-1, 무비자 차이 검색",
-"F-6 결혼이민, 가정폭력, 혼인단절 검색",
-"E-7 특정활동, E-9 비전문취업 검색",
-"D-2 유학, 아르바이트 활동허가 검색",
-"건강보험 면제, NHIS, 국외체류 검색",
-"난민신청 서류, G-1, RF-1 검색",
-"F-5 영주권, 점수제, F-2-7 검색",
-"오버스테이, 자진신고, 입국규제 검색",
-"K-ETA 국가 목록, 116개국 검색",
-"결핵 고위험국, TB-1, 진단서 검색",
-"F-3 동반 소득요건, 25.7.1 개편 검색"
-];
-document.getElementById('q').placeholder=PH_LIST[Math.floor(Math.random()*PH_LIST.length)];
 
 document.getElementById('q').addEventListener('input',handleInput);
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();executeSearch();}if(e.key==='Escape')clearSearch();});
