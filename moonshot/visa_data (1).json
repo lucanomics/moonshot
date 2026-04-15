@@ -1,4 +1,3 @@
-const VISA_DATA = [
   {
     "code": "K-ETA",
     "name": "전자여행허가 (K-ETA) 종합 가이드",
