@@ -113,8 +113,10 @@
                 if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
                 
                 const data = await res.json();
-                const answer = data.candidates?.[0]?.content?.parts?.[0]?.text 
-                            || data.error?.message 
+
+                // Groq / OpenAI 호환 응답 파싱
+                const answer = data.choices?.[0]?.message?.content
+                            || data.error?.message
                             || "응답을 처리할 수 없습니다.";
 
                 const le = document.getElementById(lid);
