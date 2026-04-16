@@ -414,6 +414,9 @@ body.searched .ft { opacity: 1; }
 <body class="landing" data-theme="dark">
 
 <canvas id="starCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></canvas>
+<button id="mainThemeBtn" onclick="toggleTheme()" style="position:fixed; top:1.2rem; right:1.2rem; z-index:100; background:var(--bg2); border:1px solid var(--bd); color:var(--t1); padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:700; transition:all 0.2s;">
+  🌗 테마 변경
+</button>
 
 <div class="hero-container" id="hero">
     <div class="header-inner">
@@ -556,19 +559,23 @@ body.searched .ft { opacity: 1; }
   // 4. 애니메이션 루프
   function draw(ts) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const theme = document.documentElement.getAttribute('data-theme');
+    
+    // 버그 수정: documentElement가 아니라 body에서 테마를 읽어옴
+    const theme = document.body.getAttribute('data-theme');
     const color = theme === 'dark' ? '232,230,225' : '15,23,42';
+    
+    // 낮에도 별이 보이게 최저 투명도를 0.3으로 임시 상향 (원래는 0.04)
+    const displayOpacity = Math.max(skyOpacity, 0.3); 
 
     stars.forEach(s => {
       const twinkle = 0.6 + 0.4 * Math.sin(ts / 1000 / s.d * Math.PI * 2 + s.phase);
       ctx.beginPath();
       ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${color}, ${skyOpacity * twinkle})`;
+      ctx.fillStyle = `rgba(${color}, ${displayOpacity * twinkle})`;
       ctx.fill();
     });
     requestAnimationFrame(draw);
   }
-  requestAnimationFrame(draw);
 
   // 테마 변경 시 즉시 반영
   const _origToggle = window.toggleTheme;
