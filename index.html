@@ -296,7 +296,7 @@ body.searched .results-area {
 
 .rlist { display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 3rem; }
 
-/* ── 결과 카드 (컬러 left-border 제거) ── */
+/* ── 결과 카드 ── */
 .vc {
   background: var(--bg1); border: 1px solid var(--bd2);
   border-radius: 8px; box-shadow: var(--sh1);
@@ -414,6 +414,7 @@ body.searched .ft { opacity: 1; }
 <body class="landing" data-theme="dark">
 
 <canvas id="starCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></canvas>
+
 <button id="mainThemeBtn" onclick="toggleTheme()" style="position:fixed; top:1.2rem; right:1.2rem; z-index:100; background:var(--bg2); border:1px solid var(--bd); color:var(--t1); padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:700; transition:all 0.2s;">
   🌗 테마 변경
 </button>
@@ -492,9 +493,10 @@ body.searched .ft { opacity: 1; }
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
 <script>
-// ── 별 시스템 ──
+// ── 별 시스템 (IP 기반 태양 고도 연동) ──
 (async function initStars() {
   const canvas = document.getElementById('starCanvas');
+  if(!canvas) return;
   const ctx = canvas.getContext('2d');
   let stars = [];
   let skyOpacity = 0.8; // 기본값
@@ -506,7 +508,6 @@ body.searched .ft { opacity: 1; }
   resize();
   window.addEventListener('resize', resize);
 
-  // 1. 별 데이터 생성
   function generateStars(count = 150) {
     stars = Array.from({ length: count }, () => ({
       x: Math.random(), y: Math.random(),
@@ -517,16 +518,13 @@ body.searched .ft { opacity: 1; }
   }
   generateStars();
 
-  // 2. IP 기반 위경도 및 태양 고도 계산 핵심 로직
   async function updateStarOpacity() {
     try {
-      // IP로 위치 파악 (실패 시 제주도 33.4, 126.5)
       const res = await fetch('https://ip-api.com/json/?fields=lat,lon,status');
       const { lat, lon, status } = await res.json();
       const targetLat = status === 'success' ? lat : 33.4;
       const targetLon = status === 'success' ? lon : 126.5;
 
-      // 태양 고도 계산
       const now = new Date();
       const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
       const utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
@@ -538,34 +536,29 @@ body.searched .ft { opacity: 1; }
       const sinAlt = Math.sin(latRad) * Math.sin(declination) + Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngle);
       const altitude = Math.asin(sinAlt) * 180 / Math.PI;
 
-      // 3. 고도에 따른 투명도 맵핑
       if (altitude > 6) {
-        skyOpacity = 0.04; // 낮
+        skyOpacity = 0.04;
       } else if (altitude > -6) {
-        // 시민 박명 (~±6도)
         skyOpacity = 0.04 + (0.46 * (6 - altitude) / 12);
       } else {
-        skyOpacity = 0.85; // 밤
+        skyOpacity = 0.85;
       }
       
-      console.log(`[Moonshot] 위치: ${targetLat}, ${targetLon} | 태양 고도: ${altitude.toFixed(2)}° | 별 투명도: ${skyOpacity.toFixed(2)}`);
+      console.log(`[Moonshot] 위치: ${targetLat}, ${targetLon} | 태양 고도: ${altitude.toFixed(2)}° | 원래 투명도: ${skyOpacity.toFixed(2)} (테스트용 강제 상향 0.4 적용됨)`);
     } catch (e) {
-      skyOpacity = 0.7; // 에러 시 기본 밤 설정
+      skyOpacity = 0.7; 
     }
   }
 
   await updateStarOpacity();
 
-  // 4. 애니메이션 루프
   function draw(ts) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // 버그 수정: documentElement가 아니라 body에서 테마를 읽어옴
-    const theme = document.body.getAttribute('data-theme');
+    const theme = document.body.getAttribute('data-theme') || 'dark';
     const color = theme === 'dark' ? '232,230,225' : '15,23,42';
     
-    // 낮에도 별이 보이게 최저 투명도를 0.3으로 임시 상향 (원래는 0.04)
-    const displayOpacity = Math.max(skyOpacity, 0.3); 
+    // 낮이어도 테스트를 위해 무조건 보이도록 하한선 0.4 적용
+    const displayOpacity = Math.max(skyOpacity, 0.4); 
 
     stars.forEach(s => {
       const twinkle = 0.6 + 0.4 * Math.sin(ts / 1000 / s.d * Math.PI * 2 + s.phase);
@@ -576,17 +569,11 @@ body.searched .ft { opacity: 1; }
     });
     requestAnimationFrame(draw);
   }
+  requestAnimationFrame(draw);
 
-  // 테마 변경 시 즉시 반영
-  const _origToggle = window.toggleTheme;
-  window.toggleTheme = function() {
-    _origToggle && _origToggle();
-  };
 })();
 
-// ═══════════════════════════════════════════════════════════
-// DATA STATE
-// ═══════════════════════════════════════════════════════════
+// ── 데이터 로딩 및 검색 로직 ──
 let VISA_DATA = [];
 let dataReady = false;
 
@@ -644,12 +631,10 @@ async function loadVisaData() {
         }
     }
 
-    // 모든 경로 실패
     dataReady = false;
     rcEl.textContent = '⚠ 데이터 로드 실패 — 새로고침 해주세요';
     qEl.placeholder = '데이터 로드 실패 — 새로고침 후 다시 시도';
     setSearchEnabled(false);
-    console.error('[Moonshot] 모든 경로에서 데이터 로드 실패');
 }
 
 loadVisaData();
@@ -763,10 +748,7 @@ document.addEventListener('click', function(e) {
 });
 
 function executeSearch(){
-    if(!dataReady) {
-        rcEl.textContent = '⚠ 데이터 로딩 중입니다. 잠시 후 다시 시도하세요.';
-        return;
-    }
+    if(!dataReady) return;
     document.getElementById('auto-list').classList.remove('active');
     const q=document.getElementById('q').value.trim();
     if(!q) return;
@@ -871,7 +853,17 @@ function clearSearch(){
     if(document.body.classList.contains('searched') && dataReady) renderResults('');
 }
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(document.getElementById('q').value);}
-function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.body.setAttribute('data-theme',currentTheme);}
+
+// ── 테마 토글 ──
+function toggleTheme(){
+    const currentTheme = document.body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', newTheme);
+    
+    const btn = document.getElementById('mainThemeBtn');
+    if(btn) btn.innerHTML = newTheme === 'dark' ? '☀️ 라이트 모드' : '🌙 다크 모드';
+}
+
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
 function initUI(){
