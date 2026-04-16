@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonshot Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --ff-logo: 'Jua', sans-serif;
+            --bg0: #0f172a; --bg1: #1e293b; --bg2: #334155;
+            --bd: #334155;
+            --t1: #cbd5e1; --t2: #94a3b8; --t3: #64748b;
+            --ac: #6366f1; --cy: #38bdf8;
+            --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+        }
+        body { font-family: var(--ff); background: var(--bg0); color: var(--t1); min-height: 100vh; padding: 2rem 1rem; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-family: var(--ff-logo); font-size: 1.6rem; font-weight: 400; background: linear-gradient(135deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .back-btn { color: var(--t2); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+        .back-btn:hover { color: var(--t1); }
+        .refresh-btn { background: var(--bg2); border: 1px solid var(--bd); color: var(--t1); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-family: var(--ff); font-size: 0.85rem; }
+        .refresh-btn:hover { background: var(--ac); border-color: var(--ac); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .card { background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; padding: 1.5rem; }
+        .card .label { font-size: 0.8rem; color: var(--t3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .card .value { font-size: 2rem; font-weight: 700; color: var(--t1); }
+        .card .sub { font-size: 0.8rem; color: var(--t2); margin-top: 0.3rem; }
+
+        .section { background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .section h2 { font-size: 1rem; color: var(--t2); margin-bottom: 1.2rem; font-weight: 600; }
+
+        /* 카테고리 바 */
+        .cat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+        .cat-label { width: 80px; font-size: 0.85rem; color: var(--t1); flex-shrink: 0; }
+        .cat-bar-wrap { flex: 1; background: var(--bg2); border-radius: 99px; height: 10px; overflow: hidden; }
+        .cat-bar { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+        .cat-count { width: 50px; text-align: right; font-size: 0.85rem; color: var(--t2); flex-shrink: 0; }
+        .cat-pct { width: 42px; text-align: right; font-size: 0.8rem; color: var(--t3); flex-shrink: 0; }
+
+        /* 시간대 차트 */
+        .hour-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; }
+        .hour-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
+        .hour-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+        .hour-bar { width: 100%; border-radius: 3px 3px 0 0; background: var(--ac); transition: height 0.5s ease; min-height: 2px; }
+        .hour-tick { font-size: 0.6rem; color: var(--t3); text-align: center; }
+
+        /* 성공률 */
+        .success-ring { display: flex; align-items: center; gap: 1.5rem; }
+        .ring-svg { flex-shrink: 0; }
+        .ring-info .rate { font-size: 2rem; font-weight: 700; color: var(--green); }
+        .ring-info .desc { font-size: 0.8rem; color: var(--t3); margin-top: 0.2rem; }
+
+        .empty { color: var(--t3); font-size: 0.9rem; text-align: center; padding: 2rem 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Moonshot Admin</h1>
+        <div style="display:flex;gap:1rem;align-items:center;">
+            <button class="refresh-btn" onclick="loadLogs()">새로고침</button>
+            <a href="index.html" class="back-btn">← 메인으로</a>
+        </div>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <div class="label">오늘 총 질문</div>
+            <div class="value" id="totalToday">—</div>
+            <div class="sub" id="totalAll"></div>
+        </div>
+        <div class="card">
+            <div class="label">성공률</div>
+            <div class="value" id="successRate">—</div>
+            <div class="sub" id="successSub"></div>
+        </div>
+        <div class="card">
+            <div class="label">가장 많은 카테고리</div>
+            <div class="value" id="topCat">—</div>
+            <div class="sub" id="topCatSub"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>카테고리별 비율</h2>
+        <div id="catChart"><div class="empty">데이터 없음</div></div>
+    </div>
+
+    <div class="section">
+        <h2>시간대별 요청 수 (오늘)</h2>
+        <div class="hour-chart" id="hourChart"></div>
+    </div>
+
+    <script>
+        const CAT_COLORS = {
+            '비자문의': '#6366f1',
+            '체류문의': '#38bdf8',
+            '기타': '#64748b',
+        };
+
+        const TODAY = new Date().toISOString().slice(0, 10);
+
+        async function loadLogs() {
+            let logs = [];
+            try {
+                const res = await fetch('/api/logs');
+                if (!res.ok) throw new Error(res.status);
+                logs = await res.json();
+            } catch (e) {
+                document.querySelector('.grid').innerHTML = `<div class="card"><div class="label">오류</div><div class="value" style="font-size:1rem;color:#ef4444">${e.message}</div></div>`;
+                return;
+            }
+
+            const todayLogs = logs.filter(l => l.timestamp && l.timestamp.startsWith(TODAY));
+            const totalToday = todayLogs.length;
+            const totalAll = logs.length;
+            const successCount = logs.filter(l => l.success).length;
+            const successRate = totalAll ? Math.round(successCount / totalAll * 100) : 0;
+
+            document.getElementById('totalToday').textContent = totalToday.toLocaleString();
+            document.getElementById('totalAll').textContent = `전체 ${totalAll.toLocaleString()}건`;
+            document.getElementById('successRate').textContent = `${successRate}%`;
+            document.getElementById('successSub').textContent = `성공 ${successCount} / 실패 ${totalAll - successCount}`;
+
+            // 카테고리 집계 (전체)
+            const cats = {};
+            for (const l of logs) {
+                cats[l.category] = (cats[l.category] || 0) + 1;
+            }
+            const sortedCats = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+            if (sortedCats.length) {
+                document.getElementById('topCat').textContent = sortedCats[0][0];
+                document.getElementById('topCatSub').textContent = `${sortedCats[0][1]}건 (전체 기준)`;
+            }
+
+            renderCatChart(sortedCats, totalAll);
+            renderHourChart(todayLogs);
+        }
+
+        function renderCatChart(sortedCats, total) {
+            const el = document.getElementById('catChart');
+            if (!sortedCats.length) { el.innerHTML = '<div class="empty">데이터 없음</div>'; return; }
+            const maxVal = sortedCats[0][1];
+            el.innerHTML = sortedCats.map(([cat, count]) => {
+                const pct = total ? Math.round(count / total * 100) : 0;
+                const barPct = maxVal ? Math.round(count / maxVal * 100) : 0;
+                const color = CAT_COLORS[cat] || '#6366f1';
+                return `<div class="cat-row">
+                    <div class="cat-label">${cat}</div>
+                    <div class="cat-bar-wrap"><div class="cat-bar" style="width:${barPct}%;background:${color}"></div></div>
+                    <div class="cat-count">${count}건</div>
+                    <div class="cat-pct">${pct}%</div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderHourChart(todayLogs) {
+            const el = document.getElementById('hourChart');
+            const hours = Array(24).fill(0);
+            for (const l of todayLogs) {
+                if (l.timestamp) {
+                    const h = parseInt(l.timestamp.slice(11, 13), 10);
+                    if (h >= 0 && h < 24) hours[h]++;
+                }
+            }
+            const maxH = Math.max(...hours, 1);
+            el.innerHTML = hours.map((count, h) => {
+                const heightPct = Math.round(count / maxH * 100);
+                const label = h % 3 === 0 ? `${h}시` : '';
+                return `<div class="hour-col">
+                    <div class="hour-bar-wrap"><div class="hour-bar" style="height:${heightPct}%" title="${h}시: ${count}건"></div></div>
+                    <div class="hour-tick">${label}</div>
+                </div>`;
+            }).join('');
+        }
+
+        loadLogs();
+    </script>
+</body>
+</html>

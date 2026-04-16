@@ -1,4 +1,7 @@
 fastapi
 uvicorn
-psycopg2-binary
 httpx
+python-dotenv
+requests
+beautifulsoup4
+pypdf
