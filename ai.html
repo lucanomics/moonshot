@@ -102,81 +102,79 @@
         </div>
     </div>
 
-    <script>
-        const API_URL = "/api/ask"; // 같은 서버이므로 상대 경로면 충분하다!
-        const DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
+<script>
+    const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서(1345)에 확인하시기 바랍니다.";
+    const API_URL = "/api/ask"; // 백엔드 라우터와 완벽 일치
+    let userConsent = null;
 
-        let userConsent = null;
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
 
-        function handleConsent(agreed) {
-            userConsent = agreed;
-            sessionStorage.setItem('consent', agreed ? 'true' : 'false');
-            document.getElementById('consentOverlay').style.display = 'none';
-            if (!agreed) {
-                const msgs = document.getElementById('aiMsgs');
-                msgs.innerHTML += `<div class="msg ai">통계 수집에 동의하지 않으셨습니다. 질문은 가능하지만 통계에 포함되지 않습니다.<span class="msg-disc">${DISCLAIMER}</span></div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }
+    function handleConsent(agreed) {
+        userConsent = agreed;
+        document.getElementById('consentBox').style.display = 'none';
+        const msgs = document.getElementById('aiMsgs');
+        
+        if(agreed) {
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg ai">동의가 완료되었습니다. 무엇을 도와드릴까요?</div>`);
+            document.getElementById('aiQ').disabled = false;
+            document.getElementById('aiSend').disabled = false;
             document.getElementById('aiQ').focus();
+        } else {
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">동의하지 않으시면 AI 상담을 이용할 수 없습니다. 화면을 새로고침하여 다시 선택해주세요.</div>`);
         }
+        setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 50);
+    }
 
-        // 이미 동의 여부가 저장된 경우 팝업 생략
-        (function () {
-            const stored = sessionStorage.getItem('consent');
-            if (stored !== null) {
-                userConsent = stored === 'true';
-                document.getElementById('consentOverlay').style.display = 'none';
-            }
-        })();
+    async function sendAi() {
+        const inp = document.getElementById('aiQ');
+        const q = inp.value.trim();
+        if(!q) return;
+        
+        const msgs = document.getElementById('aiMsgs');
+        const btn = document.getElementById('aiSend');
 
-        function escapeHtml(s) {
-            const d = document.createElement('div');
-            d.textContent = s;
-            return d.innerHTML;
-        }
+        // 메모리 효율적인 insertAdjacentHTML 사용
+        msgs.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(q)}</div>`);
+        inp.value = '';
+        btn.disabled = true;
+        btn.textContent = '...';
 
-        async function sendAi() {
-            const inp = document.getElementById('aiQ');
-            const q = inp.value.trim();
-            if(!q) return;
+        const lid = 'ld-' + Date.now();
+        msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" id="${lid}">답변을 생성 중입니다... (최대 10초 소요)</div>`);
+        setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 50);
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST', // 405 에러 해결의 핵심
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: q, consent: userConsent, context: "" }) // RAG를 위한 context 필드 명시
+            });
             
-            const msgs = document.getElementById('aiMsgs');
-            const btn = document.getElementById('aiSend');
+            if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
+            
+            const data = await res.json();
+            const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
 
-            msgs.innerHTML += `<div class="msg user">${escapeHtml(q)}</div>`;
-            inp.value = '';
-            btn.disabled = true;
-            btn.textContent = '...';
-
-            const lid = 'ld-' + Date.now();
-            msgs.innerHTML += `<div class="msg ai" id="${lid}">답변을 생성 중입니다...</div>`;
-            msgs.scrollTop = msgs.scrollHeight;
-
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q, consent: userConsent !== false })
-                });
-                if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
-                
-                const data = await res.json();
-                const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
-
-                const le = document.getElementById(lid);
-                if(le) le.remove();
-                msgs.innerHTML += `<div class="msg ai">${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span></div>`;
-            } catch(err) {
-                const le = document.getElementById(lid);
-                if(le) le.remove();
-                msgs.innerHTML += `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span></div>`;
-            }
-            btn.disabled = false;
-            btn.textContent = '전송';
-            msgs.scrollTop = msgs.scrollHeight;
+            document.getElementById(lid)?.remove();
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg ai">${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span></div>`);
+        } catch(err) {
+            document.getElementById(lid)?.remove();
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span></div>`);
         }
         
-        // 팝업이 표시 중일 때는 포커스 이동 생략 (handleConsent에서 처리)
-    </script>
+        btn.disabled = false;
+        btn.textContent = '전송';
+        inp.focus();
+        setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 50);
+    }
+
+    document.getElementById('aiQ').addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAi(); }
+    });
+</script>
 </body>
 </html>
