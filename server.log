@@ -1,0 +1,7 @@
+nohup: ignoring input
+INFO:     Started server process [88994]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[Moonshot] visa_data.json에서 54개의 비자 데이터를 로드했습니다.
+INFO:     127.0.0.1:60934 - "POST /api/ask HTTP/1.1" 200 OK
