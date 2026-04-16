@@ -191,17 +191,13 @@ async def ask(req: AskRequest):
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-# 서버가 현재 폴더의 HTML 파일들을 직접 읽어서 보내주도록 설정
+# 서버가 현재 폴더의 파일들을 서비스하도록 설정
 app.mount("/static", StaticFiles(directory="."), name="static")
 
-@app.get("/")
-async def read_index():
-    return FileResponse("index.html")
-
-@app.get("/ai.html")
+@app.get("/ai") # 브라우저 주소창에 /ai 입력 시 접속
 async def read_ai():
     return FileResponse("ai.html")
 
-@app.get("/admin.html")
-async def read_admin():
-    return FileResponse("admin.html")
+@app.get("/") # 메인 화면
+async def read_index():
+    return FileResponse("index.html")
