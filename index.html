@@ -402,10 +402,10 @@ body.searched .ft { opacity: 1; }
 #starCanvas { 
   position: fixed; 
   inset: 0; 
-  z-index: -1; 
-  background: var(--bg0); /* 투명화 제거 및 테마 배경색 강제 지정 */
+  z-index: -1; /* 이제 캔버스가 배경판 역할을 한다! */
+  background: var(--bg0); /* 테마에 맞춰 배경색이 자동으로 바뀜 */
   opacity: 1; 
-  transition: background 0.3s, opacity 2s ease; /* 배경색 전환 애니메이션 추가 */
+  transition: background 0.3s ease, opacity 2s ease; 
 }
 body { background: transparent !important; } 
 .hero-container { background: transparent; }
