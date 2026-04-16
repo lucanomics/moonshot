@@ -402,12 +402,12 @@ body.searched .ft { opacity: 1; }
 #starCanvas { 
   position: fixed; 
   inset: 0; 
-  z-index: -1; /* 배경색보다 뒤로 보냄 */
-  background: transparent; 
+  z-index: -1; 
+  background: var(--bg0); /* 투명화 제거 및 테마 배경색 강제 지정 */
   opacity: 1; 
-  transition: opacity 2s ease; 
+  transition: background 0.3s, opacity 2s ease; /* 배경색 전환 애니메이션 추가 */
 }
-body { background: transparent !important; } /* 바디 배경을 투명하게 해서 별이 보이게 함 */
+body { background: transparent !important; } 
 .hero-container { background: transparent; }
 
 @media (max-width: 640px) {
