@@ -127,60 +127,73 @@ class AskRequest(BaseModel):
 
 
 @app.post("/api/ask")
-async def ask(req: AskRequest):
+async def ask_ai(req: AskRequest):
+    if not req.consent:
+        raise HTTPException(status_code=400, detail="개인정보 처리 동의가 필요합니다.")
+    
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY 환경변수가 설정되지 않았습니다.")
+        logger.error("GROQ_API_KEY is not set.")
+        raise HTTPException(status_code=500, detail="서버에 AI API 키가 설정되지 않았습니다.")
 
-    if not req.question.strip():
-        return {"answer": "질문을 입력해주세요."}
-
-    category = classify_category(req.question)
-
-    # 관련 법령 검색
+    # [핵심] RAG를 위한 법령 실시간 검색
     law_context = await search_law(req.question)
 
+    # [핵심] 4대 제약 조건이 명문화된 강력한 시스템 프롬프트
     system_prompt = (
-        "당신은 제주출입국·외국인청 민원 안내 AI입니다.\n"
-        "한국 비자, 체류, 출입국 관련 질문에 한국어와 영어로 답변합니다.\n"
-        "사용자가 문법이 틀리거나 질문이 불완전해도 의도를 최대한 파악해서 친절하게 답변하세요.\n"
-        "예: '비자 어떻게?' → 어떤 비자를 물어보는지 맥락으로 추론해서 답변.\n"
-        "답변은 간결하게, 핵심만, 마지막에 '정확한 사항은 공식 창구에서 확인하세요' 안내 추가."
+        "당신은 대한민국 제주출입국·외국인청 소속의 최고위급 민원 안내 전문 AI 'Moonshot'이다.\n"
+        "[절대 규칙]\n"
+        "1. 철저히 건조하고 기계적이며 객관적인 문체(~이다, ~한다)만 사용할 것.\n"
+        "2. 인사말, 사과, 감정적 표현, 친절한 수식어는 일절 배제할 것.\n"
+        "3. 제공된 [관련 법령] 및 [참고 비자 정보]에만 기반하여 답변하고, 정보가 없으면 '데이터 부족으로 추측할 수 없음'이라고 단호히 명시할 것.\n"
+        "4. 핵심 요건, 절차, 서류는 반드시 글머리 기호(-)를 사용하여 가독성 있게 구조화할 것."
     )
     if law_context:
-        system_prompt += f"\n\n관련 법령:\n{law_context}"
+        system_prompt += f"\n\n[관련 법령]:\n{law_context}"
     if req.context:
-        system_prompt += f"\n\n참고 비자 정보:\n{req.context}"
+        system_prompt += f"\n\n[참고 비자 정보]:\n{req.context}"
 
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": req.question},
-        ],
-        "max_tokens": 1024,
-        "temperature": 0.7,
+    # [핵심] 다중 LLM 폴백 라우팅 아키텍처 (우선순위 배열)
+    models_to_try = [
+        "llama-3.3-70b-versatile", # 1순위: 메인 추론 엔진
+        "mixtral-8x7b-32768",      # 2순위: 속도 및 검열 저항 백업
+        "gemma2-9b-it"             # 3순위: 서버 과부하 대비 경량 생존 모델
+    ]
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
     }
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    # 순차적 폴백(Fallback) 실행 루프
+    for model_name in models_to_try:
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": req.question},
+            ],
+            "max_tokens": 1024,
+            "temperature": 0.1,  # 환각 억제를 위한 극저온 설정
+            "top_p": 0.9,
+        }
+        
         try:
-            resp = await client.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-            )
-            resp.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            if req.consent:
-                append_log(category, success=False)
-            raise HTTPException(status_code=502, detail=f"Groq API 오류: {e.response.text}")
-        except httpx.RequestError as e:
-            if req.consent:
-                append_log(category, success=False)
-            raise HTTPException(status_code=502, detail=f"Groq API 연결 오류: {str(e)}")
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+                resp.raise_for_status()
+                data = resp.json()
+                answer = data["choices"][0]["message"]["content"]
+                logger.info(f"AI 응답 성공 (사용 모델: {model_name})")
+                return {"answer": answer}
+                
+        except Exception as e:
+            logger.warning(f"모델 [{model_name}] 호출 실패: {str(e)}. 다음 모델로 우회합니다.")
+            continue # 실패 시 다음 모델로 이동
+            
+    # 배열 내의 모든 모델이 실패했을 경우
+    logger.error("모든 AI 모델 라우팅 실패 (API 장애)")
+    raise HTTPException(status_code=503, detail="현재 모든 AI 서버가 응답하지 않습니다. 잠시 후 다시 시도해주세요.")
 
     data = resp.json()
     answer = data["choices"][0]["message"]["content"]
