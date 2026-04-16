@@ -103,21 +103,7 @@
     </div>
 
     <script>
-        const API_URL = (function(){
-          const h = window.location.hostname;
-          // 로컬 개발 환경
-          if (h === 'localhost' || h === '127.0.0.1') {
-            return 'http://localhost:8000/api/ask';
-          }
-          // GitHub Codespaces 환경
-          // 현재 페이지 URL에서 포트 부분을 8000으로 교체
-          if (h.includes('.app.github.dev')) {
-            const base = h.replace(/^(\d+)-(\d+)(\.app\.github\.dev)$/, '$1-8000$3');
-            return 'https://' + base + '/api/ask';
-          }
-          // 기타 (같은 서버에서 서빙되는 경우)
-          return window.location.origin + '/api/ask';
-        })();
+        const API_URL = "/api/ask"; // 같은 서버이므로 상대 경로면 충분하다!
         const DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
 
         let userConsent = null;
