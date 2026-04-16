@@ -195,10 +195,11 @@ from fastapi.responses import FileResponse
 app.mount("/static", StaticFiles(directory="."), name="static")
 
 @app.get("/ai")
-@app.get("/ai.html") # 이 라인을 반드시 추가해라
+@app.get("/ai.html")
 async def read_ai():
     return FileResponse("ai.html")
 
 @app.get("/")
+@app.get("/index.html")
 async def read_index():
     return FileResponse("index.html")
