@@ -563,11 +563,24 @@ body { background: transparent !important; }
 
   function draw(ts) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const theme = document.body.getAttribute('data-theme') || 'dark';
-    const color = theme === 'dark' ? '232,230,225' : '15,23,42';
     
-    // 낮이어도 테스트를 위해 무조건 보이도록 하한선 0.4 적용
-    const displayOpacity = Math.max(skyOpacity, 0.4); 
+    // body의 data-theme를 정확히 읽어옴
+    const theme = document.body.getAttribute('data-theme') || 'dark';
+    const color = theme === 'dark' ? '232,230,225' : '30, 41, 59'; // 라이트 모드 별색을 좀 더 진하게 변경
+
+    // 라이트 모드에서는 별이 더 잘 보여야 하므로 하한선 상향
+    const minOpacity = theme === 'dark' ? 0.4 : 0.6;
+    const displayOpacity = Math.max(skyOpacity, minOpacity); 
+
+    stars.forEach(s => {
+      const twinkle = 0.6 + 0.4 * Math.sin(ts / 1000 / s.d * Math.PI * 2 + s.phase);
+      ctx.beginPath();
+      ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${color}, ${displayOpacity * twinkle})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
 
     stars.forEach(s => {
       const twinkle = 0.6 + 0.4 * Math.sin(ts / 1000 / s.d * Math.PI * 2 + s.phase);
