@@ -187,3 +187,21 @@ async def ask(req: AskRequest):
     if req.consent:
         append_log(category, success=True)
     return {"answer": answer}
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# 서버가 현재 폴더의 HTML 파일들을 직접 읽어서 보내주도록 설정
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse("index.html")
+
+@app.get("/ai.html")
+async def read_ai():
+    return FileResponse("ai.html")
+
+@app.get("/admin.html")
+async def read_admin():
+    return FileResponse("admin.html")
