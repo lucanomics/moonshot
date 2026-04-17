@@ -3,6 +3,8 @@ import json
 import logging
 import httpx
 import asyncpg
+from datetime import datetime
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,7 +12,7 @@ from pydantic import BaseModel
 from typing import Optional
 from dotenv import load_dotenv
 
-# [핵심] 환경 변수 강제 로드
+# 환경 변수 강제 로드
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -18,6 +20,7 @@ logger = logging.getLogger("MoonshotBackend")
 
 app = FastAPI(title="Moonshot API")
 
+# 보안 통제: 허용된 메서드만 개방
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,6 +31,7 @@ app.add_middleware(
 
 # 비동기 DB 커넥션 풀
 db_pool = None
+LOGS_FILE = Path("logs.json")
 
 @app.on_event("startup")
 async def startup_event():
@@ -51,10 +55,43 @@ async def shutdown_event():
         await db_pool.close()
         logger.info("PostgreSQL 커넥션 풀 해제 완료.")
 
+# [보안 패치 1] consent 속성을 필수로 강제하여 동의 우회 원천 차단
 class AskRequest(BaseModel):
     question: str
-    consent: bool
+    consent: bool  # 기본값(=True) 제거. 무조건 입력받아야 함.
     context: Optional[str] = ""
+
+def classify_category(question: str) -> str:
+    q = question.lower()
+    if any(k in q for k in ["비자", "visa", "사증"]):
+        return "비자문의"
+    if any(k in q for k in ["체류", "연장", "등록"]):
+        return "체류문의"
+    return "기타"
+
+def append_log(category: str, success: bool):
+    entry = {
+        "timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "category": category,
+        "success": success,
+    }
+    logs = []
+    if LOGS_FILE.exists():
+        try:
+            logs = json.loads(LOGS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            logs = []
+    logs.append(entry)
+    LOGS_FILE.write_text(json.dumps(logs, ensure_ascii=False, indent=2), encoding="utf-8")
+
+@app.get("/api/logs")
+def get_logs():
+    if not LOGS_FILE.exists():
+        return []
+    try:
+        return json.loads(LOGS_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 async def search_law(query: str) -> str:
     law_api_key = os.environ.get("LAW_API_KEY")
@@ -67,7 +104,6 @@ async def get_visas():
     if not db_pool:
         raise HTTPException(status_code=500, detail="데이터베이스 연결이 초기화되지 않았습니다.")
         
-    # [핵심] DB 단에서 완벽한 중첩 JSON 구조로 직접 조립하여 I/O 비용 극단적 최소화
     query = """
     SELECT json_agg(
         json_strip_nulls(
@@ -113,6 +149,7 @@ async def get_visas():
 
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
+    # [보안 패치 1 검증] 동의하지 않은 요청 서버 단에서 원천 차단
     if not req.consent:
         raise HTTPException(status_code=400, detail="개인정보 처리 동의가 필요합니다.")
     
@@ -120,6 +157,7 @@ async def ask_ai(req: AskRequest):
     if not api_key:
         raise HTTPException(status_code=500, detail="서버 내부 오류: AI API 키 누락")
 
+    category = classify_category(req.question)
     law_context = await search_law(req.question)
 
     system_prompt = (
@@ -135,16 +173,8 @@ async def ask_ai(req: AskRequest):
     if req.context:
         system_prompt += f"\n\n[참고 비자 정보]:\n{req.context}"
 
-    models_to_try = [
-        "llama-3.3-70b-versatile",
-        "mixtral-8x7b-32768",
-        "gemma2-9b-it"
-    ]
-
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+    models_to_try = ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "gemma2-9b-it"]
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     for model_name in models_to_try:
         payload = {
@@ -165,15 +195,19 @@ async def ask_ai(req: AskRequest):
                 data = resp.json()
                 answer = data["choices"][0]["message"]["content"]
                 logger.info(f"AI 추론 성공 (사용 모델: {model_name})")
+                append_log(category, success=True)
                 return {"answer": answer}
                 
         except Exception as e:
             logger.warning(f"모델 [{model_name}] 추론 실패: {str(e)}. 다음 모델로 우회 시도.")
             continue
             
+    append_log(category, success=False)
     logger.error("치명적 오류: 가용 가능한 모든 AI 모델 호출에 실패했습니다.")
     raise HTTPException(status_code=503, detail="현재 AI 서버 트래픽 폭주로 응답할 수 없습니다. 잠시 후 시도하십시오.")
 
+# [보안 패치 2] app.mount("/static", ...) 코드 완전 삭제
+# 화이트리스트 방식으로 딱 필요한 파일 두 개만 정밀 서빙하여 디렉토리 노출 원천 차단
 @app.get("/")
 @app.get("/index.html")
 async def serve_index():
