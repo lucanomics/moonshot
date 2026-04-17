@@ -46,7 +46,6 @@ html { font-size: var(--fs); scroll-behavior: smooth; }
 body, input, button { font-family: var(--ff) !important; }
 body { background: transparent !important; color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: color 0.3s; }
 
-/* 맹꽁이 레이아웃 붕괴 방지용 절대 계층 고정 */
 #starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.3s ease, opacity 2s ease; }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); }
@@ -240,7 +239,7 @@ body.searched .ft { opacity: 1; }
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
 <script>
-// 1. 별자리 배경 시스템 (최적화 버전)
+// 1. 별자리 배경 시스템
 (async function initStars() {
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
@@ -285,6 +284,7 @@ body.searched .ft { opacity: 1; }
 })();
 
 // 2. 비자 데이터 엔진
+const API_BASE = "https://web-production-14f9a.up.railway.app";
 let VISA_DATA = [];
 let dataReady = false;
 
@@ -302,7 +302,6 @@ function setSearchEnabled(enabled) {
 async function loadVisaData() {
     try {
         rcEl.textContent = '데이터 동기화 중...';
-        const API_BASE = "https://web-production-14f9a.up.railway.app"; // Railway 주소
         const res = await fetch(`${API_BASE}/api/visas?t=${Date.now()}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         
@@ -573,7 +572,6 @@ function initUI(){
     }
 }
 
-// 이벤트 바인딩
 document.addEventListener('DOMContentLoaded', () => {
     loadVisaData();
     if(qEl) {
