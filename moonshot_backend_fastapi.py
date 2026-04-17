@@ -175,7 +175,7 @@ async def ask_ai(req: AskRequest):
     elif req.context:
         system_prompt += f"\n\n[참고 비자 정보 (화면 전달)]:\n{req.context}"
 
-    models_to_try = ["llama-3.3-70b-versatile", "mixtral-8x7b-32768", "gemma2-9b-it"]
+    models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     for model_name in models_to_try:
