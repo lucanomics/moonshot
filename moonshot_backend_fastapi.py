@@ -198,6 +198,7 @@ async def ask_ai(req: AskRequest):
                 append_log(category, success=True)
                 return {"answer": answer}
         except Exception as e:
+            logger.error(f"[{model_name}] 호출 실패: {e}")
             continue
             
     append_log(category, success=False)
