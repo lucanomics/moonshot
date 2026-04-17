@@ -302,7 +302,8 @@ function setSearchEnabled(enabled) {
 async function loadVisaData() {
     try {
         rcEl.textContent = '데이터 동기화 중...';
-        const res = await fetch(`/api/visas?t=${Date.now()}`);
+        const API_BASE = "https://web-production-14f9a.up.railway.app"; // Railway 주소
+        const res = await fetch(`${API_BASE}/api/visas?t=${Date.now()}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         
         const raw = await res.json();
