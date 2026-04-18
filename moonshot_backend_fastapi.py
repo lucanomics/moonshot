@@ -7,8 +7,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import httpx
+import logging
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger("MoonshotBackend")
 
 app = FastAPI()
 
@@ -174,10 +178,12 @@ async def ask(req: AskRequest):
             )
             resp.raise_for_status()
         except httpx.HTTPStatusError as e:
+            logger.error(f"[Groq HTTP {e.response.status_code}] {e.response.text[:500]}")
             if req.consent:
                 append_log(category, success=False)
             raise HTTPException(status_code=502, detail=f"Groq API 오류: {e.response.text}")
         except httpx.RequestError as e:
+            logger.error(f"[Groq 연결 오류] {type(e).__name__}: {e}")
             if req.consent:
                 append_log(category, success=False)
             raise HTTPException(status_code=502, detail=f"Groq API 연결 오류: {str(e)}")
