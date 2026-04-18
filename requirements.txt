@@ -2,7 +2,7 @@ fastapi
 uvicorn
 httpx
 python-dotenv
-asyncpg
 requests
 beautifulsoup4
 pypdf
+asyncpg
