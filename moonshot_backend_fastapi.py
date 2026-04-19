@@ -35,12 +35,14 @@ async def startup_event():
     global db_pool
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
-        raise RuntimeError("DATABASE_URL is missing in environment variables.")
+        logger.warning("DATABASE_URL 미설정 — DB 기능 비활성화, JSON 폴백 모드로 실행")
+        return
     try:
         db_pool = await asyncpg.create_pool(db_url)
         logger.info("PostgreSQL 비동기 커넥션 풀 적재 완료.")
     except Exception as e:
-        raise RuntimeError(f"Database connection failed: {e}")
+        logger.error(f"Database connection failed: {e}")
+        logger.warning("DB 연결 실패 — JSON 폴백 모드로 실행")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -78,7 +80,7 @@ def append_log(category: str, success: bool):
 @app.get("/api/health")
 async def health_check():
     if not db_pool:
-        return JSONResponse(status_code=503, content={"status": "error", "db": "pool not initialized"})
+        return JSONResponse(status_code=200, content={"status": "ok", "db": "json fallback mode"})
     try:
         async with db_pool.acquire() as conn:
             await conn.fetchval("SELECT 1")
@@ -100,7 +102,6 @@ async def search_law(query: str) -> str:
     if not law_api_key: return ""
     return ""
 
-# [추가됨] DB 기반 비자 정보 동적 검색 (Backend RAG Pipeline)
 async def search_visa_db(query: str) -> str:
     if not db_pool: return ""
     sql = """
@@ -127,7 +128,12 @@ async def search_visa_db(query: str) -> str:
 @app.get("/api/visas")
 async def get_visas():
     if not db_pool:
-        raise HTTPException(status_code=500, detail="데이터베이스 연결이 초기화되지 않았습니다.")
+        for fname in ["visa_data.json", "visa_data (1).json"]:
+            p = Path(fname)
+            if p.exists():
+                data = json.loads(p.read_text(encoding="utf-8"))
+                return data if isinstance(data, list) else data.get("data", data)
+        raise HTTPException(status_code=500, detail="데이터베이스 및 JSON 파일 모두 없음")
     query = """
     SELECT json_agg(
         json_strip_nulls(
@@ -164,11 +170,8 @@ async def ask_ai(req: AskRequest):
 
     category = classify_category(req.question)
     law_context = await search_law(req.question)
-    
-    # 텅 빈 프론트엔드 컨텍스트를 대체할 백엔드 데이터 강제 추출
     db_context = await search_visa_db(req.question)
 
-    # [수정됨] 절대 규칙 하드닝: 오버스테이 방어벽 구축
     system_prompt = (
         "당신은 대한민국 출입국·외국인청 소속의 최고위급 민원 안내 전문 AI 'Moonshot'이다.\n"
         "[절대 규칙]\n"
@@ -181,8 +184,6 @@ async def ask_ai(req: AskRequest):
     )
     if law_context:
         system_prompt += f"\n\n[관련 법령]:\n{law_context}"
-    
-    # 추출된 DB 컨텍스트 최우선 주입
     if db_context:
         system_prompt += f"\n\n[참고 비자 정보 (DB 검색 결과)]:\n{db_context}"
     elif req.context:
