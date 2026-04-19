@@ -6,7 +6,7 @@ import asyncpg
 from datetime import datetime
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -73,6 +73,19 @@ def append_log(category: str, success: bool):
             pass
     logs.append(entry)
     LOGS_FILE.write_text(json.dumps(logs, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+@app.get("/api/health")
+async def health_check():
+    if not db_pool:
+        return JSONResponse(status_code=503, content={"status": "error", "db": "pool not initialized"})
+    try:
+        async with db_pool.acquire() as conn:
+            await conn.fetchval("SELECT 1")
+        return {"status": "ok", "db": "connected"}
+    except Exception as e:
+        logger.error(f"Health check DB 오류: {e}")
+        return JSONResponse(status_code=503, content={"status": "error", "db": "unreachable"})
 
 @app.get("/api/logs")
 def get_logs():
