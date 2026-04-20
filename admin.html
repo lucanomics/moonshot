@@ -105,11 +105,12 @@
         };
 
         const TODAY = new Date().toISOString().slice(0, 10);
+        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
 
         async function loadLogs() {
             let logs = [];
             try {
-                const res = await fetch('/api/logs');
+                const res = await fetch(`${API_BASE}/api/logs`);
                 if (!res.ok) throw new Error(res.status);
                 logs = await res.json();
             } catch (e) {
