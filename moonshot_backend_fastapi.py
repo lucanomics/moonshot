@@ -227,8 +227,8 @@ async def ask_ai(req: AskRequest):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": req.question},
             ],
-            "max_tokens": 1024,
-            "temperature": 0.1,
+            "max_tokens": 2048,
+            "temperature": 0.4,
             "top_p": 0.9,
         }
         try:
