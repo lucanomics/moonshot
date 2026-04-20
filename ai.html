@@ -72,8 +72,7 @@
         </div>
         
         <div class="input-area">
-            <!-- ✏️ 변경 1: placeholder 업데이트 -->
-            <input type="text" id="aiQ" placeholder="질문을 입력하세요 · Ask in any language · 请用任何语言提问" autocomplete="off">
+            <input type="text" id="aiQ" placeholder="질문을 입력하세요 · Ask in any uage · 请用任何语言提问" autocomplete="off">
             <button id="aiSend" onclick="sendAi()">전송</button>
         </div>
     </div>
@@ -103,7 +102,7 @@
     </div>
 
     <script>
-        const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서(1345)에 확인하시기 바랍니다.";
+        const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서 및 1345에 확인하시기 바랍니다.";
         const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
         const API_URL = `${API_BASE}/api/ask`;
         let userConsent = null;
@@ -114,7 +113,6 @@
             return div.innerHTML;
         }
 
-        // ✏️ 변경 2: detectLang() 함수 추가
         function detectLang(text) {
             if (/[\uAC00-\uD7A3\u3131-\u3163\u1100-\u11FF]/.test(text)) return 'ko';
             if (/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/.test(text)) return 'zh';
@@ -165,7 +163,6 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // ✏️ 변경 3: lang 파라미터 추가
                     body: JSON.stringify({ question: q, consent: userConsent, context: "", lang: detectLang(q) })
                 });
                 
