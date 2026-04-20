@@ -691,27 +691,21 @@ async function submitAiAnalysis(actionType, btnEl) {
     currentAiController = new AbortController();
 
     try {
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/ask', { // 1. 엔드포인트 변경
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                messages: [
-                    {
-                        role: 'system',
-                        content: "당신은 2026년 기준 대한민국 출입국관리법, 재외동포법, 국적법, 난민법, 재한외국인 처우 기본법 및 사증/체류민원 매뉴얼과 '체류지 변경(국내거소 이전) 신고 및 사실증명 발급 안내 매뉴얼'에 완벽히 정통한 출입국·외국인 정책 AI 'Moonshot'입니다. 모든 답변은 철저히 검증된 사실과 현행 법령에 기반해야 하며, 기계적 번역투를 배제한 자연스러운 한국어로 작성하되 팩트 위주로 건조하고 객관적으로 서술하십시오. 불확실한 정보는 추측하지 말고 '정보 부족'으로 명확히 밝히십시오."
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ]
+            body: JSON.stringify({ // 2. 페이로드 구조 변경
+                question: prompt,
+                consent: true,
+                context: "",
+                lang: "ko"
             }),
             signal: currentAiController.signal
         });
         
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
-        const responseText = result.choices?.[0]?.message?.content || result.response || "결과를 생성할 수 없습니다.";
+        const responseText = result.answer || "결과를 생성할 수 없습니다.";
         
         let formattedText = escapeHtml(responseText).replace(/\n/g, '<br>');
         formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
