@@ -54,7 +54,7 @@ class AskRequest(BaseModel):
     question: str
     consent: bool
     context: Optional[str] = ""
-    lang: Optional[str] = "ko"  # ✏️ 변경 1: lang 필드 추가
+    lang: Optional[str] = "ko"  
 
 def classify_category(question: str) -> str:
     q = question.lower()
@@ -186,7 +186,7 @@ async def ask_ai(req: AskRequest):
         "ko": "한국어", "en": "English", "zh": "中文", "ja": "日本語",
         "th": "ภาษาไทย", "ru": "Русский", "ar": "العربية", "id": "Bahasa Indonesia",
     }
-    reply_lang = lang_map.get(req.lang or "ko", "the same language as the user's question")
+    reply_lang = lang_map.get("the same language as the user's question")
 
     system_prompt = (
     f"CRITICAL: You MUST respond ONLY in {reply_lang}. "
