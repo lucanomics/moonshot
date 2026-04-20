@@ -61,6 +61,17 @@
         "addReqDocs": [],
         "note": "k-eta.go.kr 2026-04-14 기준. 조건부 국가는 체류일수 계산에 주의."
       }
+    ],
+    "newReqDocs": [
+      "doc_passport_copy",
+      "doc_photo",
+      "doc_fee",
+      "doc_accom"
+    ],
+    "extReqDocs": [
+      "doc_passport_copy",
+      "doc_photo",
+      "doc_fee"
     ]
   },
   {
@@ -81,6 +92,19 @@
         "addReqDocs": ["doc_health"],
         "note": "태국 등 국가별 결핵 검사 지정 병원은 관할 재외공관 첨부파일 참조 필수."
       }
+    ],
+    "newReqDocs": [
+      "doc_app_form",
+      "doc_passport_org",
+      "doc_passport_copy",
+      "doc_tb"
+    ],
+    "extReqDocs": [
+      "doc_app_form",
+      "doc_passport_org",
+      "doc_passport_copy",
+      "doc_id",
+      "doc_tb"
     ]
   },
   {
