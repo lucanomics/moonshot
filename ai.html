@@ -103,7 +103,8 @@
     </div>
 
     <script>
-        const API_URL = "/api/ask"; // 같은 서버이므로 상대 경로면 충분하다!
+        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
+        const API_URL = `${API_BASE}/api/ask`;
         const DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
 
         let userConsent = null;
