@@ -72,7 +72,8 @@
         </div>
         
         <div class="input-area">
-            <input type="text" id="aiQ" placeholder="질문을 입력하세요..." autocomplete="off">
+            <!-- ✏️ 변경 1: placeholder 업데이트 -->
+            <input type="text" id="aiQ" placeholder="질문을 입력하세요 · Ask in any language · 请用任何语言提问" autocomplete="off">
             <button id="aiSend" onclick="sendAi()">전송</button>
         </div>
     </div>
@@ -111,6 +112,17 @@
             const div = document.createElement('div');
             div.textContent = str ?? '';
             return div.innerHTML;
+        }
+
+        // ✏️ 변경 2: detectLang() 함수 추가
+        function detectLang(text) {
+            if (/[\uAC00-\uD7A3\u3131-\u3163\u1100-\u11FF]/.test(text)) return 'ko';
+            if (/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/.test(text)) return 'zh';
+            if (/[\u3040-\u30FF\u31F0-\u31FF\uFF65-\uFF9F]/.test(text)) return 'ja';
+            if (/[\u0E00-\u0E7F]/.test(text)) return 'th';
+            if (/[\u0400-\u04FF]/.test(text)) return 'ru';
+            if (/[\u0600-\u06FF]/.test(text)) return 'ar';
+            return 'en';
         }
 
         window.handleConsent = function(agreed) {
@@ -153,7 +165,8 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q, consent: userConsent, context: "" })
+                    // ✏️ 변경 3: lang 파라미터 추가
+                    body: JSON.stringify({ question: q, consent: userConsent, context: "", lang: detectLang(q) })
                 });
                 
                 if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
