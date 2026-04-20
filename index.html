@@ -691,7 +691,7 @@ async function submitAiAnalysis(actionType, btnEl) {
     currentAiController = new AbortController();
 
     try {
-        const response = await fetch('/api/ask', { // 1. 엔드포인트 변경
+        const response = await fetch(`${API_BASE}/api/ask`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ // 2. 페이로드 구조 변경
