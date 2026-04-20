@@ -1,3 +1,6 @@
+from langdetect import detect, DetectorFactory
+DetectorFactory.seed = 0
+
 import os
 import json
 import logging
@@ -181,12 +184,16 @@ async def ask_ai(req: AskRequest):
     category = classify_category(req.question)
     law_context = await search_law(req.question)
     db_context = await search_visa_db(req.question)
-
+    
     lang_map = {
         "ko": "한국어", "en": "English", "zh": "中文", "ja": "日本語",
         "th": "ภาษาไทย", "ru": "Русский", "ar": "العربية", "id": "Bahasa Indonesia",
     }
-    reply_lang = lang_map.get("the same language as the user's question")
+    try:
+        user_lang_code = req.lang if req.lang and req.lang in lang_map else detect(req.question)
+        reply_lang = lang_map.get(user_lang_code, "한국어") 
+    except Exception:
+        reply_lang = "한국어"
 
     system_prompt = (
     f"CRITICAL: You MUST respond ONLY in {reply_lang}. "
