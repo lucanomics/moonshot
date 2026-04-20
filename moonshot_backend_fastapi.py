@@ -54,6 +54,7 @@ class AskRequest(BaseModel):
     question: str
     consent: bool
     context: Optional[str] = ""
+    lang: Optional[str] = "ko"  # ✏️ 변경 1: lang 필드 추가
 
 def classify_category(question: str) -> str:
     q = question.lower()
@@ -127,7 +128,6 @@ async def search_visa_db(query: str) -> str:
 
 @app.get("/api/visas")
 async def get_visas():
-    # [수정 1] JSON 폴백 모드: 파일에서 읽어 항상 배열로 반환
     if not db_pool:
         for fname in ["visa_data.json", "visa_data (1).json"]:
             p = Path(fname)
@@ -156,23 +156,15 @@ async def get_visas():
     try:
         async with db_pool.acquire() as conn:
             json_str = await conn.fetchval(query)
-
-            # [수정 2] 빈 결과는 빈 배열로 반환 (기존: {"data": [], "status": "empty"})
             if not json_str:
                 return []
-
             result = json.loads(json_str)
-
-            # [수정 3] json_agg 이중 래핑 방어 및 배열 보장
             if isinstance(result, list):
-                # [[...]] 이중 배열인 경우 언래핑
                 if len(result) == 1 and isinstance(result[0], list):
                     return result[0]
                 return result
-            # 배열이 아닌 경우 빈 배열 반환
             logger.warning(f"/api/visas: 예상치 못한 응답 형식 — {type(result)}")
             return []
-
     except Exception as e:
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
@@ -190,22 +182,29 @@ async def ask_ai(req: AskRequest):
     law_context = await search_law(req.question)
     db_context = await search_visa_db(req.question)
 
+    # ✏️ 변경 2: lang_map + 영문 system_prompt
+    lang_map = {
+        "ko": "한국어", "en": "English", "zh": "中文", "ja": "日本語",
+        "th": "ภาษาไทย", "ru": "Русский", "ar": "العربية", "id": "Bahasa Indonesia",
+    }
+    reply_lang = lang_map.get(req.lang or "ko", "the same language as the user's question")
+
     system_prompt = (
-        "당신은 대한민국 출입국·외국인청 소속의 최고위급 민원 안내 전문 AI 'Moonshot'이다.\n"
-        "[절대 규칙]\n"
-        "1. 철저히 건조하고 기계적이며 객관적인 문체(~이다, ~한다)만 사용할 것.\n"
-        "2. 인사말, 사과, 감정적 표현, 친절한 수식어는 일절 배제할 것.\n"
-        "3. 제공된 [참고 비자 정보]를 최우선으로 검토하여 답변할 것.\n"
-        "4. 핵심 요건, 절차, 서류는 반드시 글머리 기호(-)를 사용하여 가독성 있게 구조화할 것.\n"
-        "5. 체류기간 도과(오버스테이, 기한 초과, 불법체류) 정황이 질문에 포함된 경우, 일반 체류 연장 절차 안내를 전면 중단할 것.\n"
-        "6. 위법 상태 체류자에게는 반드시 '출입국관리법 위반에 따른 범칙금 부과', '출국명령 또는 강제퇴거', '자진출국제도' 절차만을 단호하고 엄격하게 고지할 것."
+        "You are 'Moonshot', a top-tier immigration and visa guidance AI for the Republic of Korea.\n"
+        "[ABSOLUTE RULES]\n"
+        f"1. ALWAYS reply in {reply_lang}. Match the language of the user's question exactly.\n"
+        "2. Use a dry, mechanical, objective tone. No greetings, apologies, or emotional expressions.\n"
+        "3. Prioritize the provided [Visa Reference Data] above all else when answering.\n"
+        "4. Structure requirements, procedures, and documents using bullet points (-) for readability.\n"
+        "5. If the question involves overstay or illegal residence, immediately STOP any extension guidance.\n"
+        "6. For illegal overstay cases, strictly inform only: penalty fines under Immigration Act, deportation order or forced removal, and voluntary departure program."
     )
     if law_context:
         system_prompt += f"\n\n[관련 법령]:\n{law_context}"
     if db_context:
-        system_prompt += f"\n\n[참고 비자 정보 (DB 검색 결과)]:\n{db_context}"
+        system_prompt += f"\n\n[Visa Reference Data (DB)]:\n{db_context}"
     elif req.context:
-        system_prompt += f"\n\n[참고 비자 정보 (화면 전달)]:\n{req.context}"
+        system_prompt += f"\n\n[Visa Reference Data (client)]:\n{req.context}"
 
     models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
