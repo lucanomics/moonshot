@@ -209,16 +209,7 @@ async def ask_ai(req: AskRequest):
     "6. For illegal overstay cases, strictly inform only: penalty fines under Immigration Act, deportation order or forced removal, and voluntary departure program."
     "7. 일본어 한자(例: 帰国)나 중국어 간체자를 한국어 문장에 혼용하지 마십시오.\n"
     "8. 법적 근거가 없는 숫자(예: 14일 이내 출국)를 절대 조작하지 마십시오.\n\n"
-    "[답변 가이드: F-6 이혼 관련]\n"
-    "사용자가 이혼 후 체류 가능 여부를 물으면 반드시 아래 내용을 포함하십시오:\n"
-    "- 귀책사유 증명 시 체류 가능 (F-6-3)\n"
-    "- 자녀 양육 시 체류 가능 (F-6-2)\n"
-    "- 가사 정리 목적의 임시 체류 (F-1-6)\n"
-    "- 이혼 후에도 기존 비자 만료일까지는 즉시 출국 의무가 없음을 명시.\n\n"
-    "[질문/답변 예시]\n"
-    "Q: 한국인과 이혼했는데 바로 나가야 하나요?\n"
-    "A: 아니요, 즉시 출국하실 필요는 없습니다. F-6 비자는 현재 기재된 만료일까지 유효합니다. 다만 연장을 위해서는 배우자의 유책 사유 증명이나 자녀 양육권 등이 필요하며, 정리 기간이 필요할 경우 F-1-6 비자로 전환을 검토해야 합니다."
-)
+    )
     if law_context:
         system_prompt += f"\n\n[관련 법령]:\n{law_context}"
     if db_context:
