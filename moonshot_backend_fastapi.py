@@ -127,13 +127,15 @@ async def search_visa_db(query: str) -> str:
 
 @app.get("/api/visas")
 async def get_visas():
+    # [수정 1] JSON 폴백 모드: 파일에서 읽어 항상 배열로 반환
     if not db_pool:
         for fname in ["visa_data.json", "visa_data (1).json"]:
             p = Path(fname)
             if p.exists():
                 data = json.loads(p.read_text(encoding="utf-8"))
-                return data if isinstance(data, list) else data.get("data", data)
+                return data if isinstance(data, list) else data.get("data", [])
         raise HTTPException(status_code=500, detail="데이터베이스 및 JSON 파일 모두 없음")
+
     query = """
     SELECT json_agg(
         json_strip_nulls(
@@ -154,9 +156,25 @@ async def get_visas():
     try:
         async with db_pool.acquire() as conn:
             json_str = await conn.fetchval(query)
-            if not json_str: return {"data": [], "status": "empty"}
-            return json.loads(json_str)
+
+            # [수정 2] 빈 결과는 빈 배열로 반환 (기존: {"data": [], "status": "empty"})
+            if not json_str:
+                return []
+
+            result = json.loads(json_str)
+
+            # [수정 3] json_agg 이중 래핑 방어 및 배열 보장
+            if isinstance(result, list):
+                # [[...]] 이중 배열인 경우 언래핑
+                if len(result) == 1 and isinstance(result[0], list):
+                    return result[0]
+                return result
+            # 배열이 아닌 경우 빈 배열 반환
+            logger.warning(f"/api/visas: 예상치 못한 응답 형식 — {type(result)}")
+            return []
+
     except Exception as e:
+        logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
 @app.post("/api/ask")
