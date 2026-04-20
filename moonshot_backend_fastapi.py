@@ -215,7 +215,7 @@ async def ask_ai(req: AskRequest):
     elif req.context:
         system_prompt += f"\n\n[Visa Reference Data (client)]:\n{req.context}"
 
-    models_to_try = ["llama-3.3-70b-versatile"]
+    models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768", "llama-3.1-8b-instant"]
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     for model_name in models_to_try:
