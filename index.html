@@ -106,6 +106,18 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 .qf { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 1rem 0 0.8rem; }
 .qb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.22rem 0.65rem; font-size: 0.7rem; color: var(--t3); cursor: pointer; font-weight: 500; transition: all 0.15s ease; }
 .qb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
+
+/* Document Tags Styling & Information Hierarchy */
+.text-desc { margin-bottom: 0.5rem; line-height: 1.6; }
+.doc-req-box { background: rgba(0,0,0,0.025); border: 1px dashed var(--bd); padding: 0.75rem 0.85rem; border-radius: 8px; margin-top: 0.6rem; }
+[data-theme="dark"] .doc-req-box { background: rgba(255,255,255,0.03); }
+.doc-req-label { font-size: 0.7rem; font-weight: 700; color: var(--t2); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem; }
+.doc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.doc-badge { background: var(--bg3); border: 1px solid var(--bd); padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; color: var(--t1); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.doc-badge.critical { background: #fee2e2; border-color: #ef4444; color: #b91c1c; animation: pulse 2s infinite; }
+[data-theme="dark"] .doc-badge.critical { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
 .rlist { display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 3rem; }
 .vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 8px; box-shadow: var(--sh1); transition: box-shadow 0.2s; animation: cIn 0.25s ease both; }
 .vc:hover { box-shadow: var(--sh2); }
@@ -239,6 +251,58 @@ body.searched .ft { opacity: 1; }
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
 <script>
+// 공식 서류 딕셔너리 (치명적 결격 사유 강조 및 실무 명칭으로 전면 보완)
+const DOC_DICT = {
+    "doc_app_form": "통합신청서(별지 34호)",
+    "doc_passport": "여권",
+    "doc_passport_org": "여권 원본",
+    "doc_passport_copy": "여권 사본",
+    "doc_id": "외국인등록증",
+    "doc_photo": "표준규격사진 1매",
+    "doc_fee": "수수료",
+    "doc_biz_reg": "사업자등록증 사본",
+    "doc_corp_reg": "법인등기사항전부증명서",
+    "doc_tax": "납세증명서",
+    "doc_vat": "부가가치세 과세표준증명",
+    "doc_inc_proof": "소득금액증명원 등 소득입증",
+    "doc_emp_contract": "고용/근로계약서",
+    "doc_emp_recom": "고용추천서",
+    "doc_degree": "학위/학력증명서",
+    "doc_career": "경력증명서",
+    "doc_health": "의료기관 건강진단서(마약검사 필수)", // 직관적 강조
+    "doc_tb": "결핵진단서(고위험 35개국 필수)", // 결핵 위험군 강조
+    "doc_crim": "해외 범죄경력증명서(아포스티유/영사확인)", // 범죄경력의 공증 요건 명시
+    "doc_fam_rel": "가족관계증명서",
+    "doc_mar_rel": "혼인관계증명서",
+    "doc_basic": "기본증명서",
+    "doc_address": "체류지 입증서류(임대차계약서 등)",
+    "doc_guarantee": "신원보증서",
+    "doc_dispatch": "파견명령서",
+    "doc_invitation": "초청장",
+    "doc_bank_bal": "잔고증명서",
+    "doc_enroll": "재학/입학/수료증명서",
+    "doc_transcript": "성적증명서",
+    "doc_attend": "출석확인서",
+    "doc_topik": "TOPIK/한국어능력 입증",
+    "doc_kiip": "사회통합프로그램 이수증",
+    "doc_f4_proof": "동포 입증서류(공적장부)",
+    "doc_job_report": "외국인 직업 신고서",
+    "doc_flight": "왕복항공권",
+    "doc_plan": "계획서/사유서",
+    "doc_consent": "자진출국 각서",
+    "doc_eps": "고용허가서",
+    "doc_invest": "투자/벤처기업 입증서류",
+    "doc_refugee": "난민인정신청서",
+    "doc_medical": "의료기관 진단서",
+    "doc_purpose": "목적 입증서류",
+    "doc_accom": "숙소 제공 확인서",
+    "doc_schedule": "일정표",
+    "doc_finance": "재정능력 입증서류",
+    "doc_training_cont": "연수계속 입증서류",
+    "doc_prof_conf": "지도교수/유학담당자 확인서",
+    "doc_specialty": "전문성 입증서류"
+};
+
 // 1. 별자리 배경 시스템
 (async function initStars() {
     const canvas = document.getElementById('starCanvas');
@@ -350,7 +414,20 @@ async function loadVisaData() {
 // 3. 검색 및 UI 로직
 let currentSearchMode='and', currentTheme='dark';
 const CC={short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
-const CL={short:['입국 요건','연장/제한','FAQ'],study:['신규 발급 요건','연장 구비서류','FAQ'],work:['신규 발급 요건','연장 구비서류','FAQ'],invest:['신규 발급 요건','연장 구비서류','FAQ'],family:['신규 발급 요건','연장 구비서류','FAQ'],other:['개요/요건','연장/절차','FAQ'],diplo:['부여 요건','유지','FAQ'],nhis:['적용 대상','신청 절차','FAQ'],faq:['개요','절차/유의','FAQ'],scn:['적용 기준','상세/대상','FAQ']};
+
+// 라벨링 전면 수정 - '신규 발급 요건' -> '신규 구비서류'
+const CL={
+    short:['신규 구비서류','연장/제한','FAQ'],
+    study:['신규 구비서류','연장 구비서류','FAQ'],
+    work:['신규 구비서류','연장 구비서류','FAQ'],
+    invest:['신규 구비서류','연장 구비서류','FAQ'],
+    family:['신규 구비서류','연장 구비서류','FAQ'],
+    other:['개요/구비서류','연장/절차','FAQ'],
+    diplo:['부여 요건','유지','FAQ'],
+    nhis:['적용 대상','신청 절차','FAQ'],
+    faq:['개요','절차/유의','FAQ'],
+    scn:['적용 기준','상세/대상','FAQ']
+};
 
 function getLabels(v){return v.labels||CL[v.cat]||['개요','상세','FAQ'];}
 function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
@@ -359,6 +436,26 @@ function hl(t,k){
     const text = String(t ?? '');
     if(!k.length) return escapeHtml(text);
     return escapeHtml(text).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>')
+}
+
+// 태그 렌더링 함수 - 시각적 격리 컴포넌트 적용
+function renderDocTags(docKeys, keywords) {
+    if (!docKeys || !docKeys.length) return '';
+    const tagsHtml = docKeys.map(key => {
+        const officialName = DOC_DICT[key] || key;
+        const isCritical = ['doc_health', 'doc_crim', 'doc_tb'].includes(key);
+        const criticalClass = isCritical ? ' critical' : '';
+        const iconPrefix = isCritical ? '🚨 ' : '';
+        return `<span class="doc-badge${criticalClass}">${iconPrefix}${hl(officialName, keywords)}</span>`;
+    }).join('');
+    
+    return `<div class="doc-req-box">
+                <div class="doc-req-label">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    필수 구비서류 목록
+                </div>
+                <div class="doc-tags">${tagsHtml}</div>
+            </div>`;
 }
 
 function calculateScore(item,keywords){
@@ -524,8 +621,18 @@ function renderResults(query){
                 const x=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase();
                 const im=!kw.length||kwL.some(k=>x.includes(k));
                 sh+=`<div class="su${kw.length&&im?' open':''}"><div class="su-h" onclick="this.parentElement.classList.toggle('open')"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c">`;
-                if(s.addReq) sh+=`<div class="su-s"><div class="tl tl-n">안내/추가</div><div class="ct">${hl(s.addReq,kw)}</div></div>`;
-                if(s.note) sh+=`<div class="su-s"><div class="tl tl-f">실무참고</div><div class="ct">${hl(s.note,kw)}</div></div>`;
+                
+                // 정보 위계 개선: 소분류에서도 텍스트 설명과 배지 목록을 분리
+                if(s.addReq || (s.addReqDocs && s.addReqDocs.length > 0)) {
+                    sh+=`<div class="su-s">
+                            <div class="tl tl-n">안내/추가</div>
+                            ${s.addReq ? `<div class="ct text-desc">${hl(s.addReq,kw)}</div>` : ''}
+                            ${renderDocTags(s.addReqDocs, kw)}
+                         </div>`;
+                }
+                if(s.note) {
+                    sh+=`<div class="su-s"><div class="tl tl-f">실무참고</div><div class="ct text-desc">${hl(s.note,kw)}</div></div>`;
+                }
                 sh+=`</div></div></div>`;
             });
             sh+=`</div>`;
@@ -535,7 +642,37 @@ function renderResults(query){
         const ddHtml = v.dataDate ? `<div class="data-date">데이터 기준: ${escapeHtml(v.dataDate)}</div>` : '';
         
         const lb=getLabels(v);
-        c.innerHTML=`<div class="vc-h" onclick="this.parentElement.classList.toggle('open')"><span class="bc">${hl(v.code,kw)}</span><span class="vt">${hl(v.name,kw)}</span>${v.period?`<span class="bp">${hl(v.period,kw)}</span>`:''}${dbHtml}${hs?`<span class="bn">+${v.subCodes.length}</span>`:''}<span class="tgl">▼</span></div><div class="vc-cw"><div class="vc-c"><div class="vs"><div class="tl tl-n">${lb[0]}</div><div class="ct">${hl(v.newReq,kw)}</div></div><div class="vs"><div class="tl tl-e">${lb[1]}</div><div class="ct">${hl(v.extReq,kw)}</div></div><div class="vs"><div class="tl tl-f">${lb[2]}</div><div class="ct">${hl(v.faq,kw)}</div></div>${sh}${ddHtml}</div></div>`;
+        
+        // 정보 위계 개선: 대분류 항목에서도 텍스트 설명과 배지 박스를 분리 렌더링
+        c.innerHTML=`
+            <div class="vc-h" onclick="this.parentElement.classList.toggle('open')">
+                <span class="bc">${hl(v.code,kw)}</span>
+                <span class="vt">${hl(v.name,kw)}</span>
+                ${v.period?`<span class="bp">${hl(v.period,kw)}</span>`:''}
+                ${dbHtml}
+                ${hs?`<span class="bn">+${v.subCodes.length}</span>`:''}
+                <span class="tgl">▼</span>
+            </div>
+            <div class="vc-cw">
+                <div class="vc-c">
+                    <div class="vs">
+                        <div class="tl tl-n">${lb[0]}</div>
+                        ${v.newReq ? `<div class="ct text-desc">${hl(v.newReq,kw)}</div>` : ''}
+                        ${renderDocTags(v.newReqDocs, kw)}
+                    </div>
+                    <div class="vs">
+                        <div class="tl tl-e">${lb[1]}</div>
+                        ${v.extReq ? `<div class="ct text-desc">${hl(v.extReq,kw)}</div>` : ''}
+                        ${renderDocTags(v.extReqDocs, kw)}
+                    </div>
+                    <div class="vs">
+                        <div class="tl tl-f">${lb[2]}</div>
+                        <div class="ct text-desc">${hl(v.faq,kw)}</div>
+                    </div>
+                    ${sh}
+                    ${ddHtml}
+                </div>
+            </div>`;
         fg.appendChild(c);
     });
     
