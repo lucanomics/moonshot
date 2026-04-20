@@ -24,23 +24,23 @@
             --shD: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
         
-        html, body { height: 100%; overflow: hidden; }
+        html, body { height: 100dvh; overflow: hidden; margin: 0; padding: 0; }
         body { font-family: var(--ff) !important; background: var(--bg0); color: var(--t1); display: flex; flex-direction: column; }
 
-        header { background: var(--bg1); padding: 1rem 1.5rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shD); z-index: 10; }
+        header { background: var(--bg1); padding: 1rem 1.5rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shD); z-index: 10; flex-shrink: 0; }
         .back-btn { background: none; border: none; color: var(--t2); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; text-decoration: none; font-family: var(--ff) !important; }
         .back-btn:hover { color: var(--t1); }
         h1 { font-family: var(--ff-logo) !important; font-size: 1.5rem; font-weight: 400; background: linear-gradient(135deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; }
 
-        .chat-container { flex: 1; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; position: relative; }
+        .chat-container { flex: 1; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; position: relative; min-height: 0; }
         
-        .messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
         .msg { padding: 1rem 1.2rem; border-radius: 12px; max-width: 85%; line-height: 1.6; font-size: 0.95rem; word-break: keep-all; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         .msg.ai { background: var(--bg1); color: var(--t1); border: 1px solid var(--bd); align-self: flex-start; border-bottom-left-radius: 4px; }
         .msg.user { background: var(--ac); color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
         .msg-disc { display: block; margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px dashed var(--bd); font-size: 0.75rem; color: var(--t3); }
 
-        .input-area { padding: 1.5rem; background: var(--bg1); border-top: 1px solid var(--bd); display: flex; gap: 0.5rem; }
+        .input-area { padding: 1.5rem; background: var(--bg1); border-top: 1px solid var(--bd); display: flex; gap: 0.5rem; flex-shrink: 0; }
         .input-area input { flex: 1; padding: 1rem 1.2rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 1rem; font-family: var(--ff) !important; outline: none; transition: border-color 0.2s; }
         .input-area input:focus { border-color: var(--ac); }
         .input-area button { background: var(--ac); color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; font-family: var(--ff) !important; transition: background 0.2s; white-space: nowrap; }
@@ -72,7 +72,7 @@
         </div>
         
         <div class="input-area">
-            <input type="text" id="aiQ" placeholder="질문을 입력하세요..." onkeydown="if(event.key==='Enter') sendAi()" autocomplete="off">
+            <input type="text" id="aiQ" placeholder="질문을 입력하세요..." autocomplete="off">
             <button id="aiSend" onclick="sendAi()">전송</button>
         </div>
     </div>
@@ -89,7 +89,6 @@
         .consent-box .btn-deny:hover { color: var(--t1); border-color: var(--t2); }
     </style>
 
-    <!-- 동의 팝업 -->
     <div class="consent-overlay" id="consentOverlay">
         <div class="consent-box">
             <h2>서비스 이용 전 안내</h2>
@@ -103,38 +102,35 @@
     </div>
 
     <script>
+        const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서(1345)에 확인하시기 바랍니다.";
         const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
         const API_URL = `${API_BASE}/api/ask`;
-        const DISCLAIMER = "⚠ 이 정보는 Moonshot 데이터 기준이며, 실무 교차검증이 필요합니다.";
-
         let userConsent = null;
 
-        function handleConsent(agreed) {
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str ?? '';
+            return div.innerHTML;
+        }
+
+        window.handleConsent = function(agreed) {
             userConsent = agreed;
-            sessionStorage.setItem('consent', agreed ? 'true' : 'false');
-            document.getElementById('consentOverlay').style.display = 'none';
-            if (!agreed) {
-                const msgs = document.getElementById('aiMsgs');
-                msgs.innerHTML += `<div class="msg ai">통계 수집에 동의하지 않으셨습니다. 질문은 가능하지만 통계에 포함되지 않습니다.<span class="msg-disc">${DISCLAIMER}</span></div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }
-            document.getElementById('aiQ').focus();
-        }
+            const overlay = document.getElementById('consentOverlay');
+            if(overlay) overlay.style.display = 'none';
+            
+            const msgs = document.getElementById('aiMsgs');
+            if(!msgs) return;
 
-        // 이미 동의 여부가 저장된 경우 팝업 생략
-        (function () {
-            const stored = sessionStorage.getItem('consent');
-            if (stored !== null) {
-                userConsent = stored === 'true';
-                document.getElementById('consentOverlay').style.display = 'none';
+            if(agreed) {
+                msgs.insertAdjacentHTML('beforeend', `<div class="msg ai">동의가 완료되었습니다. 무엇을 도와드릴까요?</div>`);
+                document.getElementById('aiQ').disabled = false;
+                document.getElementById('aiSend').disabled = false;
+                document.getElementById('aiQ').focus();
+            } else {
+                msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">동의하지 않으시면 AI 상담을 이용할 수 없습니다. 화면을 새로고침하여 다시 선택해주세요.</div>`);
             }
-        })();
-
-        function escapeHtml(s) {
-            const d = document.createElement('div');
-            d.textContent = s;
-            return d.innerHTML;
-        }
+            setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 100);
+        };
 
         async function sendAi() {
             const inp = document.getElementById('aiQ');
@@ -144,40 +140,50 @@
             const msgs = document.getElementById('aiMsgs');
             const btn = document.getElementById('aiSend');
 
-            msgs.innerHTML += `<div class="msg user">${escapeHtml(q)}</div>`;
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(q)}</div>`);
             inp.value = '';
             btn.disabled = true;
             btn.textContent = '...';
 
             const lid = 'ld-' + Date.now();
-            msgs.innerHTML += `<div class="msg ai" id="${lid}">답변을 생성 중입니다...</div>`;
-            msgs.scrollTop = msgs.scrollHeight;
+            msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" id="${lid}">답변을 생성 중입니다... (최대 10~15초 소요)</div>`);
+            setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 100);
 
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q, consent: userConsent !== false })
+                    body: JSON.stringify({ question: q, consent: userConsent, context: "" })
                 });
+                
                 if(!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
                 
                 const data = await res.json();
                 const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
 
-                const le = document.getElementById(lid);
-                if(le) le.remove();
-                msgs.innerHTML += `<div class="msg ai">${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span></div>`;
+                const loader = document.getElementById(lid);
+                if(loader) loader.remove();
+                msgs.insertAdjacentHTML('beforeend', `<div class="msg ai">${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span></div>`);
             } catch(err) {
-                const le = document.getElementById(lid);
-                if(le) le.remove();
-                msgs.innerHTML += `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span></div>`;
+                const loader = document.getElementById(lid);
+                if(loader) loader.remove();
+                msgs.insertAdjacentHTML('beforeend', `<div class="msg ai" style="border-color:#ef4444; color:#ef4444;">오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span></div>`);
             }
+            
             btn.disabled = false;
             btn.textContent = '전송';
-            msgs.scrollTop = msgs.scrollHeight;
+            inp.focus();
+            setTimeout(() => { msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }); }, 100);
         }
-        
-        // 팝업이 표시 중일 때는 포커스 이동 생략 (handleConsent에서 처리)
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const qEl = document.getElementById('aiQ');
+            if(qEl) {
+                qEl.addEventListener('keydown', (e) => {
+                    if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAi(); }
+                });
+            }
+        });
     </script>
 </body>
 </html>
