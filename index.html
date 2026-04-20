@@ -284,7 +284,9 @@ body.searched .ft { opacity: 1; }
 })();
 
 // 2. 비자 데이터 엔진
-const API_BASE = "";
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
+    ? ""
+    : "https://web-production-14f9a.up.railway.app";
 let VISA_DATA = [];
 let dataReady = false;
 
@@ -300,29 +302,47 @@ function setSearchEnabled(enabled) {
 }
 
 async function loadVisaData() {
-    try {
-        rcEl.textContent = '데이터 동기화 중...';
-        const res = await fetch(`${API_BASE}/api/visas?t=${Date.now()}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        const raw = await res.json();
-        const arr = Array.isArray(raw) ? raw : (raw.data || null);
-        
-        if (!arr || arr.length === 0) throw new Error('Invalid Data Format');
-
+    const PH_LIST = ["제주 무사증, B-2-2, K-ETA 등 검색","사증면제협정국, B-1, 무비자 차이 검색","F-6 결혼이민, 가정폭력, 혼인단절 검색","E-7 특정활동, E-9 비전문취업 검색","D-2 유학, 아르바이트 활동허가 검색","건강보험 면제, NHIS, 국외체류 검색","난민신청 서류, G-1, RF-1 검색","F-5 영주권, 점수제, F-2-7 검색","오버스테이, 자진신고, 입국규제 검색","K-ETA 국가 목록, 116개국 검색","결핵 고위험국, TB-1, 진단서 검색","F-3 동반 소득요건, 25.7.1 개편 검색"];
+    const applySuccess = (arr, label) => {
         VISA_DATA = arr;
         dataReady = true;
-        rcEl.textContent = `데이터 로드 완료 (${VISA_DATA.length}개)`;
+        rcEl.textContent = `데이터 로드 완료 (${VISA_DATA.length}개) - ${label}`;
         setSearchEnabled(true);
         initUI();
-        
-        const PH_LIST=["제주 무사증, B-2-2, K-ETA 등 검색","사증면제협정국, B-1, 무비자 차이 검색","F-6 결혼이민, 가정폭력, 혼인단절 검색","E-7 특정활동, E-9 비전문취업 검색","D-2 유학, 아르바이트 활동허가 검색","건강보험 면제, NHIS, 국외체류 검색","난민신청 서류, G-1, RF-1 검색","F-5 영주권, 점수제, F-2-7 검색","오버스테이, 자진신고, 입국규제 검색","K-ETA 국가 목록, 116개국 검색","결핵 고위험국, TB-1, 진단서 검색","F-3 동반 소득요건, 25.7.1 개편 검색"];
-        qEl.placeholder = PH_LIST[Math.floor(Math.random()*PH_LIST.length)];
+        qEl.placeholder = PH_LIST[Math.floor(Math.random() * PH_LIST.length)];
+    };
+    const parse = (raw) => {
+        const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : null);
+        if (!arr || arr.length === 0) throw new Error('데이터가 비어 있습니다.');
+        return arr;
+    };
+
+    const API_URL = `${API_BASE}/api/visas`;
+    try {
+        console.log(`[Moonshot] Primary API fetch 시도: ${API_URL}`);
+        const res = await fetch(API_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`API 응답 실패 (${res.status})`);
+        const arr = parse(await res.json());
+        console.log(`[Moonshot] ✅ API 로드 성공: ${arr.length}개`);
+        applySuccess(arr, 'API 연동');
+        return;
     } catch (e) {
-        console.error("Data Load Error:", e);
+        console.warn(`[Moonshot] ⚠ API 로드 실패, JSON 폴백 시도:`, e.message);
+    }
+
+    const fallbackUrl = './visa_data.json';
+    try {
+        console.log(`[Moonshot] Fallback JSON fetch 시도: ${fallbackUrl}`);
+        const res = await fetch(fallbackUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`JSON 응답 실패 (${res.status})`);
+        const arr = parse(await res.json());
+        console.log(`[Moonshot] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
+        applySuccess(arr, '정적 백업');
+    } catch (e) {
+        console.error(`[Moonshot] ❌ 최종 데이터 로드 실패:`, e.message);
         dataReady = false;
-        rcEl.textContent = '⚠ 서버 통신 실패 (데이터 로드 오류)';
-        qEl.placeholder = '데이터 로드 실패 — 새로고침 후 다시 시도';
+        rcEl.textContent = '⚠ 데이터 로드 실패 — 서버 및 파일 상태를 확인하세요';
+        qEl.placeholder = '데이터 로드 실패';
         setSearchEnabled(false);
     }
 }
