@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+Put your HTML text here<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -230,6 +230,61 @@ body.searched .ft { opacity: 1; }
   .su { margin: 0; border-radius: 0; box-shadow: none; border-left: 0; border-right: 0; }
   .ai-action-btn { flex-basis: 100%; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   직종/산업 코드 검색 모달 (정적 DB 기반)
+   ═══════════════════════════════════════════════════════════════ */
+.jc-tabs { display: flex; gap: 0.3rem; margin-bottom: 1rem; border-bottom: 1px solid var(--bd); }
+.jc-tab { flex: 1; padding: 0.7rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; color: var(--t3); font-weight: 700; cursor: pointer; font-family: var(--ff) !important; font-size: 0.9rem; transition: all 0.2s; }
+.jc-tab:hover { color: var(--t1); }
+.jc-tab.active { color: var(--ac); border-bottom-color: var(--ac); }
+
+.jc-search-wrap { position: relative; margin-bottom: 0.8rem; }
+.jc-search-input { width: 100%; padding: 0.75rem 5rem 0.75rem 1rem; border: 1.5px solid var(--bd); border-radius: 8px; background: var(--bgI); color: var(--t1); font-size: 0.95rem; font-family: var(--ff) !important; outline: none; transition: border-color 0.2s; }
+.jc-search-input:focus { border-color: var(--ac); box-shadow: var(--shG); }
+.jc-count-badge { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: var(--bg2); color: var(--t2); padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; pointer-events: none; }
+
+.jc-results { max-height: 50vh; overflow-y: auto; border: 1px solid var(--bd2); border-radius: 8px; padding: 0.4rem; background: var(--bg0); }
+.jc-loading, .jc-empty { padding: 2rem 1rem; text-align: center; color: var(--t3); font-size: 0.88rem; }
+.jc-item { display: grid; grid-template-columns: auto 1fr auto; gap: 0.7rem; align-items: center; padding: 0.65rem 0.8rem; border-radius: 6px; margin-bottom: 0.25rem; transition: background 0.15s; }
+.jc-item:hover { background: var(--acL); }
+.jc-item:last-child { margin-bottom: 0; }
+.jc-code { font-family: 'SF Mono', Monaco, Consolas, monospace; font-weight: 800; background: var(--ac); color: #fff; padding: 0.28rem 0.6rem; border-radius: 4px; font-size: 0.82rem; min-width: 3.5rem; text-align: center; letter-spacing: 0.02em; }
+[data-theme="dark"] .jc-code { color: #0f172a; }
+.jc-code.lv1 { background: #dc2626; }
+.jc-code.lv2 { background: #ea580c; }
+.jc-code.lv3 { background: #ca8a04; }
+.jc-code.lv4 { background: #0891b2; }
+.jc-code.lv5 { background: var(--ac); }
+.jc-desc { font-size: 0.88rem; color: var(--t1); line-height: 1.4; word-break: keep-all; }
+.jc-level-tag { display: inline-block; font-size: 0.68rem; color: var(--t3); background: var(--bg2); padding: 0.08rem 0.4rem; border-radius: 3px; margin-right: 0.3rem; font-weight: 600; }
+.jc-copy-btn { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.35rem 0.7rem; font-size: 0.72rem; color: var(--t2); cursor: pointer; font-weight: 700; font-family: var(--ff) !important; transition: all 0.15s; white-space: nowrap; }
+.jc-copy-btn:hover { background: var(--ac); color: #fff; border-color: var(--ac); }
+.jc-copy-btn.copied { background: #10b981; color: #fff; border-color: #10b981; }
+
+.jc-disclaimer { margin-top: 1rem; padding: 0.75rem 0.9rem; background: var(--hlB); color: var(--hlT); border-radius: 6px; font-size: 0.78rem; line-height: 1.6; border-left: 3px solid var(--cWk); }
+.jc-disclaimer a { color: var(--hlT); text-decoration: underline; font-weight: 700; }
+
+/* ═══════════════════════════════════════════════════════════════
+   관할관서 안내 모달
+   ═══════════════════════════════════════════════════════════════ */
+.jur-section { padding: 1rem; background: var(--bg2); border-radius: 8px; margin-bottom: 0.8rem; }
+.jur-section:last-child { margin-bottom: 0; }
+.jur-section.jur-exception { background: var(--acL); border-left: 3px solid var(--ac); }
+.jur-label { font-size: 0.78rem; font-weight: 700; color: var(--t2); margin-bottom: 0.4rem; }
+.jur-big { font-size: 2.4rem; font-weight: 900; color: var(--ac); letter-spacing: 0.08em; margin: 0.2rem 0; font-family: 'SF Mono', Monaco, Consolas, monospace; }
+.jur-sub { font-size: 0.78rem; color: var(--t3); line-height: 1.5; }
+.jur-btn-primary { display: inline-block; background: var(--ac); color: #fff; padding: 0.7rem 1.4rem; border-radius: 8px; text-decoration: none; font-weight: 700; margin: 0.3rem 0; font-size: 0.9rem; transition: background 0.2s; }
+.jur-btn-primary:hover { background: var(--ac2); }
+.jur-list { list-style: none; padding: 0; margin: 0.3rem 0 0 0; }
+.jur-list li { padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.85rem; color: var(--t1); line-height: 1.5; }
+.jur-list li::before { content: '•'; position: absolute; left: 0.3rem; color: var(--ac); font-weight: 900; }
+
+@media (max-width: 600px) {
+    .jc-item { grid-template-columns: auto 1fr; }
+    .jc-copy-btn { grid-column: 1 / -1; justify-self: end; margin-top: 0.3rem; }
+    .jur-big { font-size: 1.8rem; }
+}
     </style>
 </head>
 <body class="landing" data-theme="dark">
@@ -322,17 +377,98 @@ body.searched .ft { opacity: 1; }
                     <span>✨ 서류 다국어 풀이 및 발급처 안내</span>
                     <div class="spinner"></div>
                 </button>
-                <button class="ai-action-btn" data-type="jurisdiction">
-                    <span>✨ 관할 관서 및 방문 예약(HiKorea) 가이드</span>
-                    <div class="spinner"></div>
+                <!-- 관할관서: LLM 대신 공식 조회 링크 + 1345 안내 (정적, 환각 없음) -->
+                <button class="ai-action-btn" data-type="jurisdiction" id="btnJurisdiction">
+                    <span>🏛 관할 관서 조회 & 1345 안내</span>
                 </button>
-                <button class="ai-action-btn" data-type="job_code">
-                    <span>✨ 취업신고용 업종/직종 코드 매칭</span>
-                    <div class="spinner"></div>
+                <!-- 직종코드: 취업신고 대상 비자에서만 노출 (정적 DB 기반) -->
+                <button class="ai-action-btn" data-type="job_code" id="btnJobCode" style="display:none;">
+                    <span>💼 취업신고용 업종/직종 코드 찾기</span>
                 </button>
             </div>
 
             <div id="aiResult" class="ai-result"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     직종/산업 코드 검색 모달 (정적 DB 기반, LLM 호출 없음)
+     데이터 출처: 통계청_산업직업분류_20250901 (3,937건)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="jobCodeModalOverlay">
+    <div class="modal-box" style="max-width: 720px;">
+        <div class="modal-header">
+            <span>💼 취업신고용 업종/직종 코드 찾기</span>
+            <button class="modal-close" onclick="closeJobCodeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="jc-tabs">
+                <button class="jc-tab active" data-jctab="직업" onclick="switchJobCodeTab('직업')">
+                    직업 코드 (KSCO)
+                </button>
+                <button class="jc-tab" data-jctab="산업" onclick="switchJobCodeTab('산업')">
+                    산업 코드 (KSIC)
+                </button>
+            </div>
+            <div class="jc-search-wrap">
+                <input type="text" id="jcSearchInput" class="jc-search-input"
+                       placeholder="명칭 또는 코드 검색 (예: 간호사, 244)" autocomplete="off">
+                <span id="jcCountBadge" class="jc-count-badge">0건</span>
+            </div>
+            <div id="jcResults" class="jc-results">
+                <div class="jc-empty">처음 열면 데이터를 불러옵니다. 잠시만 기다려주세요.</div>
+            </div>
+            <div class="jc-disclaimer">
+                ⚠️ 본 데이터는 통계청 공식 자료(2025.09.01 기준)이나, HiKorea 취업신고 제출 전
+                <a href="https://kssc.kostat.go.kr/ksscNew_web/index.jsp" target="_blank" rel="noopener">통계분류포털</a>에서
+                최종 확인을 권장합니다. 계층 코드(1~5자리)는 상위→하위 분류이며, HiKorea는 보통 5자리를 요구합니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     관할관서 안내 모달 (정적 안내, API 호출 없음)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="jurisdictionModalOverlay">
+    <div class="modal-box" style="max-width: 560px;">
+        <div class="modal-header">
+            <span>🏛 관할 출입국관서 조회</span>
+            <button class="modal-close" onclick="closeJurisdictionModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="jur-section">
+                <div class="jur-label">📞 외국인종합안내센터</div>
+                <div class="jur-big">1345</div>
+                <div class="jur-sub">평일 09:00~18:00 · 20개 언어 지원 · 무료</div>
+            </div>
+            <div class="jur-section">
+                <div class="jur-label">🌐 HiKorea 관할관서 조회 & 방문 예약</div>
+                <a href="https://www.hikorea.go.kr/Main.pt" target="_blank" rel="noopener" class="jur-btn-primary">
+                    HiKorea 바로가기 →
+                </a>
+                <div class="jur-sub">체류지 주소로 관할관서 확인 · 방문 예약 가능</div>
+            </div>
+            <div class="jur-section">
+                <div class="jur-label">⚠️ 방문 예약 필수</div>
+                <ul class="jur-list">
+                    <li>일반 체류 민원(자격 변경·연장·외국인등록)은 <strong>사전 예약 필수</strong></li>
+                    <li>예약 없이 방문 시 당일 처리 불가</li>
+                    <li>예약 10분 전 도착, 지각 시 무효 처리</li>
+                </ul>
+            </div>
+            <div class="jur-section jur-exception">
+                <div class="jur-label">✅ 비예약 방문 가능 업무</div>
+                <ul class="jur-list">
+                    <li>체류지 변경 신고 (시·군·구청·읍면동 주민센터에서도 가능)</li>
+                    <li>등록외국인 여권 변경 신고</li>
+                    <li>외국인등록증 분실·훼손 재발급</li>
+                    <li>모바일 외국인등록증 발급</li>
+                    <li>전자민원 허가 후 연장 스티커 부착</li>
+                    <li>체류기간 만료 당일 방문자 (취약계층 및 인도적 사유)</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -548,6 +684,16 @@ function openAiModal(visaCode) {
         descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
     }
     
+    // ===== 직종코드 버튼: 취업신고 대상 비자에서만 활성화 =====
+    // 근거: 출입국관리법 시행규칙 제47조(근무처 변경·추가 신고), 제49조의2(외국인 취업정보 온라인 신고)
+    const jobCodeBtn = document.getElementById('btnJobCode');
+    if (jobCodeBtn) {
+        const isJobCodeTarget = JOBCODE_TARGET_VISAS.some(prefix => 
+            visa.code === prefix || visa.code.startsWith(prefix + '-') || visa.code.startsWith(prefix)
+        );
+        jobCodeBtn.style.display = isJobCodeTarget ? '' : 'none';
+    }
+    
     document.getElementById('aiInput').value = '';
     document.getElementById('aiResult').style.display = 'none';
     document.getElementById('aiResult').innerHTML = '';
@@ -700,7 +846,278 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════════════════
+// 직종코드 & 관할관서 모달 로직 (정적 DB 기반, LLM 호출 없음)
+// ═══════════════════════════════════════════════════════════════════════
+
+// 취업신고 대상 비자 (출입국관리법 시행규칙 제47조·제49조의2)
+// 이 배열에 포함된 prefix로 시작하는 모든 비자 코드(세부약호 포함)에서 직종코드 버튼이 활성화됨
+const JOBCODE_TARGET_VISAS = [
+    'E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7',
+    'E-8', 'E-9', 'E-10',
+    'H-1', 'H-2',
+    'D-8', 'D-9', 'D-10',
+    'F-2', 'F-4', 'F-5', 'F-6'
+];
+
+// 직종코드 DB 캐시 (한 번만 로드, 브라우저 세션 동안 재사용)
+let _jobcodeData = null;
+let _jobcodeLoadPromise = null;
+let _currentJcTab = '직업';
+let _jcSearchDebounce = null;
+
+// ═══════════════════════════════════════════════════════════════════════
+// 📍 JSON 데이터 경로 (여러 후보를 순차 시도 — 배포 구조 유연성 확보)
+// ═══════════════════════════════════════════════════════════════════════
+// 맹꽁이: 실제 파일명/위치에 맞춰 이 배열 순서를 조정하거나 추가하세요.
+// 첫 번째로 성공하는 경로가 사용됩니다.
+const JOBCODE_JSON_PATHS = [
+    './data/jobcode_master.json',   // 표준 경로 (권장)
+    './data/output.json',            // 파일명이 output.json으로 커밋된 경우
+    './jobcode_master.json',         // 루트 디렉토리에 있는 경우
+    './output.json'                  // 루트에 output.json인 경우
+];
+
+// ─── 직종코드 모달: 데이터 로드 (폴백 체인으로 여러 경로 순차 시도) ───
+async function loadJobcodeData() {
+    if (_jobcodeData) return _jobcodeData;
+    if (_jobcodeLoadPromise) return _jobcodeLoadPromise;
+
+    _jobcodeLoadPromise = (async () => {
+        const errors = [];
+        for (const path of JOBCODE_JSON_PATHS) {
+            try {
+                const res = await fetch(path, { cache: 'default' });
+                if (!res.ok) {
+                    errors.push(`${path}: HTTP ${res.status}`);
+                    continue;
+                }
+                const json = await res.json();
+                if (!json.data || !Array.isArray(json.data)) {
+                    errors.push(`${path}: 데이터 형식 오류`);
+                    continue;
+                }
+                _jobcodeData = json;
+                console.log(`[Moonshot] ✅ 직종코드 DB 로드 성공: ${path} (${json.total_count}건)`);
+                return json;
+            } catch (err) {
+                errors.push(`${path}: ${err.message}`);
+            }
+        }
+        _jobcodeLoadPromise = null;
+        throw new Error(`모든 경로 시도 실패:\n${errors.join('\n')}`);
+    })();
+    return _jobcodeLoadPromise;
+}
+
+// ─── 직종코드 모달: 열기 ───
+async function openJobCodeModal() {
+    const overlay = document.getElementById('jobCodeModalOverlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+
+    const resultsEl = document.getElementById('jcResults');
+    const input = document.getElementById('jcSearchInput');
+    const badge = document.getElementById('jcCountBadge');
+
+    // 입력창 초기화
+    if (input) {
+        input.value = '';
+        setTimeout(() => input.focus(), 100);
+    }
+
+    // 데이터 로드 시도
+    resultsEl.innerHTML = '<div class="jc-loading">데이터 로드 중... (최초 1회만)</div>';
+    try {
+        await loadJobcodeData();
+        renderJobcodeResults('');  // 빈 쿼리 = 대분류만 표시
+    } catch (err) {
+        const pathList = JOBCODE_JSON_PATHS.map(p => `  - ${p}`).join('<br>');
+        resultsEl.innerHTML = `<div class="jc-empty" style="color:#ef4444; text-align:left; padding:1.2rem;">
+            ⚠ <strong>데이터 로드 실패</strong><br><br>
+            다음 경로들을 순차 시도했으나 모두 실패했습니다:<br>
+            <code style="font-size:0.75rem;">${pathList}</code><br><br>
+            <strong>해결 방법:</strong><br>
+            1. 저장소 루트에 <code>data/jobcode_master.json</code> 파일이 있는지 확인<br>
+            2. 파일명이 다르면 <code>index.html</code>의 <code>JOBCODE_JSON_PATHS</code> 배열 수정<br>
+            3. 브라우저 개발자도구(F12) → Network 탭에서 실제 404 경로 확인<br><br>
+            <small style="color:#64748b;">상세 오류: ${escapeHtml(err.message)}</small>
+        </div>`;
+        if (badge) badge.textContent = '오류';
+    }
+}
+
+function closeJobCodeModal() {
+    const overlay = document.getElementById('jobCodeModalOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+// ─── 직종코드 모달: 탭 전환 ───
+function switchJobCodeTab(tab) {
+    _currentJcTab = tab;
+    document.querySelectorAll('.jc-tab').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-jctab') === tab);
+    });
+    const input = document.getElementById('jcSearchInput');
+    renderJobcodeResults(input ? input.value.trim() : '');
+}
+
+// ─── 직종코드 모달: 검색 + 렌더링 ───
+function renderJobcodeResults(query) {
+    const resultsEl = document.getElementById('jcResults');
+    const badge = document.getElementById('jcCountBadge');
+    if (!resultsEl || !_jobcodeData) return;
+
+    const q = (query || '').trim().toLowerCase();
+    // 현재 탭에 해당하는 데이터만 필터
+    let rows = _jobcodeData.data.filter(r => r.분류 === _currentJcTab);
+
+    if (q) {
+        // 명칭 또는 코드값 매칭 (대소문자 무시)
+        rows = rows.filter(r => {
+            const desc = (r.상세설명 || '').toLowerCase();
+            const code = (r.코드값 || '').toLowerCase();
+            return desc.includes(q) || code.includes(q);
+        });
+    } else {
+        // 빈 쿼리: 대분류(1자리)만 노출 → 탐색 유도
+        rows = rows.filter(r => (r.코드값 || '').length === 1);
+    }
+
+    // 코드 길이 짧은 순(상위분류 먼저) → 코드 오름차순 정렬
+    rows.sort((a, b) => {
+        const la = (a.코드값 || '').length;
+        const lb = (b.코드값 || '').length;
+        if (la !== lb) return la - lb;
+        return (a.코드값 || '').localeCompare(b.코드값 || '');
+    });
+
+    // 렌더 상한: 500건 (성능 보호)
+    const MAX_RENDER = 500;
+    const truncated = rows.length > MAX_RENDER;
+    const displayRows = truncated ? rows.slice(0, MAX_RENDER) : rows;
+
+    if (badge) {
+        badge.textContent = rows.length === 0 
+            ? '0건' 
+            : (truncated ? `${MAX_RENDER}+/${rows.length}건` : `${rows.length}건`);
+    }
+
+    if (rows.length === 0) {
+        resultsEl.innerHTML = q
+            ? `<div class="jc-empty">검색 결과가 없습니다. 다른 키워드로 시도해보세요.</div>`
+            : `<div class="jc-empty">데이터 없음</div>`;
+        return;
+    }
+
+    const html = displayRows.map(r => {
+        const code = escapeHtml(r.코드값 || '');
+        const desc = escapeHtml(r.상세설명 || '');
+        const lv = Math.min(code.length, 5);
+        const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
+        return `<div class="jc-item">
+            <span class="jc-code lv${lv}">${code}</span>
+            <div>
+                <span class="jc-level-tag">${levelLabel}</span>
+                <span class="jc-desc">${desc}</span>
+            </div>
+            <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
+        </div>`;
+    }).join('');
+
+    const footer = truncated 
+        ? `<div class="jc-empty" style="padding:0.8rem; font-size:0.78rem;">※ 상위 ${MAX_RENDER}건만 표시. 더 정확한 검색을 위해 키워드를 좁혀주세요.</div>`
+        : '';
+    resultsEl.innerHTML = html + footer;
+}
+
+// ─── 직종코드 모달: 복사 ───
+function copyJobcode(btnEl, code) {
+    if (!code) return;
+    const done = () => {
+        btnEl.classList.add('copied');
+        const original = btnEl.textContent;
+        btnEl.textContent = '✓ 복사됨';
+        setTimeout(() => {
+            btnEl.classList.remove('copied');
+            btnEl.textContent = original;
+        }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done).catch(() => {
+            // fallback
+            fallbackCopy(code);
+            done();
+        });
+    } else {
+        fallbackCopy(code);
+        done();
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta);
+}
+
+// ─── 관할관서 모달 ───
+function openJurisdictionModal() {
+    const overlay = document.getElementById('jurisdictionModalOverlay');
+    if (overlay) overlay.classList.add('active');
+}
+function closeJurisdictionModal() {
+    const overlay = document.getElementById('jurisdictionModalOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+// ─── 검색 입력 이벤트 바인딩 (디바운스 200ms) ───
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('jcSearchInput');
+    if (input) {
+        input.addEventListener('input', () => {
+            clearTimeout(_jcSearchDebounce);
+            _jcSearchDebounce = setTimeout(() => {
+                renderJobcodeResults(input.value);
+            }, 200);
+        });
+    }
+
+    // 모달 오버레이 바깥 클릭 시 닫기
+    ['jobCodeModalOverlay', 'jurisdictionModalOverlay'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('click', (e) => {
+                if (e.target === el) el.classList.remove('active');
+            });
+        }
+    });
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeJobCodeModal();
+            closeJurisdictionModal();
+        }
+    });
+});
+
 async function submitAiAnalysis(actionType, btnEl) {
+    // ===== 정적 액션 가로채기: LLM 호출 없이 전용 모달 오픈 (환각 0, 비용 0) =====
+    if (actionType === 'jurisdiction') {
+        openJurisdictionModal();
+        return;
+    }
+    if (actionType === 'job_code') {
+        openJobCodeModal();
+        return;
+    }
+
     const userInput = document.getElementById('aiInput').value.trim();
     if (!userInput) {
         alert("본인의 상황(국적, 체류자격, 거주지, 직무 등)을 상세히 입력해 주십시오.");
@@ -730,11 +1147,8 @@ async function submitAiAnalysis(actionType, btnEl) {
         }
     } else if (actionType === 'doc_guide') {
         prompt = baseContext + `위의 비자 규정(구비서류)과 민원인 상황을 바탕으로, 해당 비자의 필수 서류들에 대한 '개념 풀이(외국인이 이해하기 쉽도록 직역을 피하고, 필요한 경우 영문 또는 요청 언어 병기)'를 제공해 주십시오. 아울러 각 서류를 대한민국 또는 본국 어디에서 발급받아야 하는지(예: 세무서, 무인민원발급기, 본국 대사관 등)와, 사증/체류민원 매뉴얼상 아포스티유(Apostille) 또는 영사확인이 필수적인 서류는 무엇인지 명확히 안내하는 '서류 준비 완벽 가이드'를 도출해 주십시오.`;
-    } else if (actionType === 'jurisdiction') {
-        prompt = baseContext + `위 민원인 상황(거주지 등)을 바탕으로 정확한 '관할 출입국·외국인관서'를 매칭해 주십시오 (거주지가 불분명하다면 관할 관서 찾는 방법을 명확히 안내). 대한민국 출입국관서는 원칙적으로 방문 예약이 필수이나, 예외적으로 '체류지 변경(시·군·구청 및 읍·면·동 행정복지센터에서도 신고 가능)', '등록외국인의 여권 변경 신고', '외국인등록증 분실/훼손 재발급', '모바일 외국인등록증 발급', '전자민원 허가 후 외국인등록증에 체류기간 연장 스티커 부착' 업무는 하이코리아 방문 예약 없이 당일 관할 관서 방문 처리가 가능함을 2026년 매뉴얼에 근거하여 명확히 안내해 주십시오. (그 외 체류자격 부여, 변경, 연장 등의 일반 업무는 당일 비예약 방문 시 절대 처리 불가함을 강력히 경고) 아울러 하이코리아 방문 예약 시스템 접속 경로 및 예약 시 주의사항(예약 번호 지참 필수, 10분 전 대기, 지각 시 무효 처리 등)을 단계별로 상세히 안내해 주십시오.`;
-    } else if (actionType === 'job_code') {
-        prompt = `민원인이 출입국관리법 시행규칙 제47조 및 제49조의2에 따라 '외국인 취업정보 온라인 신고(또는 외국인 직업 신고서 제출)'를 진행하려 합니다. 국가데이터처의 '한국표준산업분류' 및 '한국표준직업분류'(2025.09.01 기준) 코드를 입력해야 합니다.\n민원인의 상황 및 직무 설명: "${userInput}"\n\n위 설명을 바탕으로 가장 정확도 높은 1) **업종(산업) 대/중/소/세/세세분류 및 5자리 코드**, 2) **직종(직업) 대/중/소/세/세세분류 및 5자리 코드**를 추론하여 추천해 주십시오. (후보군이 여러 개라면 상위 2~3개를 제시). 아울러 '연간 소득금액' 입력 등 취업신고 시 주의사항을 법령(출입국관리법 등)에 근거하여 안내해 주십시오.`;
     }
+    // NOTE: 'jurisdiction', 'job_code' 분기는 submitAiAnalysis 시작부에서 정적 모달로 가로채기 처리됨 (LLM 호출 없음)
 
     if (currentAiController) currentAiController.abort();
     currentAiController = new AbortController();
