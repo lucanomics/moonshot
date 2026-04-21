@@ -391,22 +391,26 @@ function hl(t,k){
 // -------------------------------------------------------------
 // [무결점 공식 서류 딕셔너리 및 공통 서류 상수] 
 // -------------------------------------------------------------
-const COMMON_NEW = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_photo', 'doc_fee'];
-const COMMON_EXT = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_id', 'doc_fee'];
+const COMMON_NEW = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_photo', 'doc_id', 'doc_fee_new', 'doc_arc_fee'];
+const COMMON_EXT = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_id', 'doc_fee_ext'];
 
 const DOC_DICT = {
     "doc_app_form": "통합신청서 (별지 제34호 서식)",
     "doc_passport": "여권 원본 및 인적사항면 사본",
     "doc_passport_org": "여권 원본 (대조용 필수지참)",
     "doc_passport_copy": "여권 인적사항면 사본",
-    "doc_id": "외국인등록증 원본 및 사본 (기존 등록자)",
+    "doc_id": "외국인등록증(또는 거소증) 원본 및 사본 (기존 등록자에 한함)",
     "doc_photo": "표준규격사진 1매 (3.5x4.5cm, 최근 6개월)",
-    "doc_fee": "수수료 (현금 또는 정부수입인지)",
+    "doc_fee": "수수료 (정부수입인지)",
+    "doc_fee_new": "신규 발급 수수료 (정부수입인지)",
+    "doc_fee_ext": "기간 연장 수수료 (정부수입인지)",
+    "doc_arc_fee": "신분증(외국인등록증, 거소증 등) 발급 수수료 35,000원 (전액 현금 결제, 택배 수령 시 39,000원)",
     "doc_biz_reg": "사업자등록증 사본",
     "doc_corp_reg": "법인등기사항전부증명서 (발급 3개월 이내)",
     "doc_tax": "납세증명서 (국세 및 지방세 완납증명)",
     "doc_vat": "부가가치세 과세표준증명 (최근 1년)",
     "doc_inc_proof": "소득금액증명원 등 소득입증서류",
+    "doc_score": "점수제 평가표 및 해당 항목별 증빙서류 (점수제 적용 비자에 한함)",
     "doc_emp_contract": "표준근로계약서 또는 고용계약서 원본/사본",
     "doc_emp_recom": "주무부처 고용추천서 (해당 직종 한정)",
     "doc_degree": "최종 학위/학력증명서 (아포스티유/영사확인 필수)",
@@ -415,6 +419,7 @@ const DOC_DICT = {
     "doc_tb": "결핵건강진단서 (보건소/지정병원, 고위험 35개국 필수)",
     "doc_crim": "해외 범죄경력증명서 (자국 정부 발급, 아포스티유/영사확인)",
     "doc_fam_rel": "가족관계증명서 (본국 권한기관 발급 및 공증/확인)",
+    "doc_fam_rel_kr": "가족관계증명서(상세) (한국인 배우자 명의, 자녀 양육 시 각 자녀 명의로 개별 발급 필수)",
     "doc_mar_rel": "혼인관계증명서 (상세)",
     "doc_basic": "기본증명서 (상세)",
     "doc_address": "체류지 입증서류 (임대차계약서, 숙소제공확인서, 공공요금 영수증 등)",
@@ -445,7 +450,7 @@ const DOC_DICT = {
     "doc_specialty": "해당 분야 전문성 입증서류 (국가공인자격증 등)",
     "doc_address_change": "체류지 변경 신고서 (통합신청서), 신분증, 체류지 입증서류",
     "doc_passport_change": "등록사항 변경 신고서 (통합신청서), 신여권 원본 및 사본, 기존 외국인등록증",
-    "doc_arc_reissue": "외국인등록증 재발급 신청서 (통합신청서), 여권, 사유 소명 서류(경찰서 분실신고증 등), 수수료, 사진 1매"
+    "doc_arc_reissue": "외국인등록증 재발급 신청서 (통합신청서), 여권, 사유 소명 서류(경찰서 분실신고증 등), 사진 1매"
 };
 
 // 1. 별자리 배경 시스템
@@ -559,27 +564,40 @@ function openDocModal(visaCode, type, subIdx) {
     if (!visa) return;
 
     let title = '', docs = [];
+    let targetCode = visa.code;
     const isFaq = ['faq', 'scn', 'nhis'].includes(visa.cat);
 
+    // 파싱 안정성을 위해 subIdx 검증 강화
     if (type === 'new') {
         title = '신규 발급 필수 구비서류';
         docs = isFaq ? (visa.newReqDocs || []) : [...new Set([...COMMON_NEW, ...(visa.newReqDocs || [])])];
     } else if (type === 'ext') {
         title = '체류기간 연장 필수 구비서류';
         docs = isFaq ? (visa.extReqDocs || []) : [...new Set([...COMMON_EXT, ...(visa.extReqDocs || [])])];
-    } else if (type === 'sub' && subIdx !== null) {
-        const sub = visa.subCodes[subIdx];
-        title = `${sub.name} 추가 구비서류`;
-        docs = sub.addReqDocs || [];
+    } else if (type === 'sub' && subIdx !== null && subIdx !== undefined) {
+        const sIdx = parseInt(subIdx, 10);
+        if (!isNaN(sIdx) && visa.subCodes && visa.subCodes[sIdx]) {
+            const sub = visa.subCodes[sIdx];
+            title = `${sub.name || '해당 세부항목'} 추가 구비서류`;
+            docs = sub.addReqDocs || [];
+            targetCode = sub.code;
+        } else {
+            title = `세부항목 추가 구비서류`;
+        }
     }
 
     document.getElementById('docModalTitle').textContent = `${escapeHtml(visa.code)} - ${escapeHtml(title)}`;
     
     const descEl = document.getElementById('docModalDesc');
-    descEl.innerHTML = `🚨 <strong>실무 주의사항</strong>: 본 체크리스트는 법령에 명시된 기본 공통 서류입니다. 체류 목적 및 심사관의 재량적 판단에 따라 출입국 실무 현장에서 추가 소명 자료가 징구될 수 있음을 주의하십시오.`;
+    descEl.innerHTML = `🚨 <strong>실무 주의사항</strong>: 본 체크리스트는 법령에 명시된 기본 공통 서류입니다. 심사관의 재량적 판단에 따라 출입국 실무 현장에서 추가 소명 자료가 징구될 수 있습니다.<br>
+    <div style="margin-top:0.6rem; padding-top:0.6rem; border-top:1px dashed var(--bd); color:var(--t2);">
+    🤝 <strong>대리인(가족, 고용주 등) 방문 대리 신청 안내</strong><br>
+    • <strong>대리 자격:</strong> 질병, 만 17세 미만 등 부득이한 사유가 있거나, 배우자/직계친족, 초청자/고용주(소속 직원 포함)에 한함. (※ 영주(F-5) 등 본인 출석 필수 민원은 예외)<br>
+    • <strong>필수 지참:</strong> 위 기본 서류 외에 <strong>① 위임장(소정 양식) ② 대리인 신분증(원본 대조 및 사본) ③ 관계 입증 서류(가족관계증명서, 재직증명서 등)</strong>를 반드시 지참해야 하며, 통합신청서 하단에 대리인 서명이 필수입니다.
+    </div>`;
     descEl.style.display = 'block';
 
-    document.getElementById('docModalChecklist').innerHTML = renderDocTags(docs, [], type === 'sub');
+    document.getElementById('docModalChecklist').innerHTML = renderDocTags(docs, [], type === 'sub', targetCode);
     document.getElementById('docModalOverlay').classList.add('active');
 }
 
@@ -694,7 +712,7 @@ async function submitAiAnalysis(actionType, btnEl) {
         const response = await fetch(`${API_BASE}/api/ask`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ // 2. 페이로드 구조 변경
+            body: JSON.stringify({
                 question: prompt,
                 consent: true,
                 context: "",
@@ -712,7 +730,7 @@ async function submitAiAnalysis(actionType, btnEl) {
         resultBox.innerHTML = formattedText;
         resultBox.style.display = 'block';
     } catch (error) {
-        if (error.name === 'AbortError') return; // 취소됨
+        if (error.name === 'AbortError') return;
         resultBox.innerHTML = "<b>⚠ 분석 중 오류가 발생했습니다.</b><br>네트워크 상태 또는 서버 환경을 확인해 주십시오.";
         resultBox.style.display = 'block';
     } finally {
@@ -729,11 +747,39 @@ function setSearchEnabled(enabled) {
     qEl.style.opacity = enabled ? '1' : '0.6';
 }
 
-function renderDocTags(docKeys, keywords, isSubCode = false) {
+function renderDocTags(docKeys, keywords, isSubCode = false, visaCode = '') {
     if (!docKeys || !docKeys.length) return '<div class="text-desc" style="color:var(--t3);">요구되는 추가 서류가 없습니다.</div>';
     
     const tagsHtml = docKeys.map(key => {
-        const officialName = DOC_DICT[key] || key;
+        let officialName = DOC_DICT[key] || key;
+        
+        // 비자 코드에 따른 수수료 동적 렌더링 처리
+        if (key === 'doc_fee_new' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "수수료 면제 (외교·공무·협정 비자)";
+            } else if (visaCode.startsWith('F-5')) {
+                officialName = "수수료 (정부수입인지: 영주(F-5) 자격 변경 20만 원)";
+            } else if (visaCode.startsWith('F-6')) {
+                officialName = "수수료 (정부수입인지: 체류자격 변경 10만 원 / 국내 출생 등 자격 부여 4만 원)";
+            } else {
+                officialName = "수수료 (정부수입인지: 일반 체류자격 변경 10만 원 / 국내 출생 등 자격 부여 8만 원)";
+            }
+        } else if (key === 'doc_fee_ext' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "수수료 면제 (외교·공무·협정 비자)";
+            } else if (visaCode.startsWith('F-6')) {
+                officialName = "수수료 (정부수입인지: 체류기간 연장 3만 원)";
+            } else {
+                officialName = "수수료 (정부수입인지: 일반 체류기간 연장 6만 원)";
+            }
+        } else if (key === 'doc_arc_fee' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "신분증 발급 수수료 면제 (외교·공무·협정 비자)";
+            } else {
+                officialName = DOC_DICT[key];
+            }
+        }
+        
         const isCritical = ['doc_health', 'doc_crim', 'doc_tb'].includes(key);
         const criticalClass = isCritical ? ' critical' : '';
         const iconHtml = isCritical 
@@ -917,14 +963,19 @@ function renderResults(query){
                 const im=!kw.length||kwL.some(k=>x.includes(k));
                 sh+=`<div class="su${kw.length&&im?' open':''}"><div class="su-h" onclick="this.parentElement.classList.toggle('open')"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c">`;
                 
-                if(s.addReqDocs && s.addReqDocs.length > 0) {
-                    sh+=`<div class="su-s">
-                            <div class="sub-req"><span class="badge-req">📌 추가 필수 서류</span></div>
-                            <button class="ai-btn sub-doc-btn" style="background: var(--bg2); color: var(--t1); border: 1px solid var(--bd); padding: 0.6rem 1rem; width: 100%; justify-content: center; box-shadow:var(--sh1); margin-top:0.5rem;" data-action="open-doc-modal" data-vcode="${escapeHtml(v.code)}" data-type="sub" data-subidx="${idx}">
-                                📑 이 세부항목의 추가 구비서류 확인
-                            </button>
-                         </div>`;
+                sh+=`<div class="su-s">`;
+                
+                // 기존 addReq (서류 내역) 텍스트는 캡션 영역에서 아예 제거하고, note (설명)만 렌더링되게 픽스함.
+                if(s.note && String(s.note).trim().length > 0) {
+                    sh+= `<div class="ct text-desc" style="margin-bottom:0.5rem;">${hl(s.note,kw)}</div>`;
                 }
+                
+                sh+=`   <div class="sub-req"><span class="badge-req">📌 세부항목 추가 확인</span></div>
+                        <button class="ai-btn sub-doc-btn" style="background: var(--bg2); color: var(--t1); border: 1px solid var(--bd); padding: 0.6rem 1rem; width: 100%; justify-content: center; box-shadow:var(--sh1); margin-top:0.5rem;" data-action="open-doc-modal" data-vcode="${escapeHtml(v.code)}" data-type="sub" data-subidx="${idx}">
+                            📑 이 세부항목의 추가 구비서류 확인
+                        </button>
+                     </div>`;
+                     
                 sh+=`</div></div></div>`;
             });
             sh+=`</div>`;
@@ -1098,7 +1149,7 @@ function injectLocalData(arr) {
             {
                 code: "FAQ-0-3",
                 name: "외국인등록증 분실·훼손 재발급",
-                addReqDocs: ["doc_arc_reissue"]
+                addReqDocs: ["doc_arc_reissue", "doc_arc_fee"]
             }
         ]
     };
@@ -1192,9 +1243,9 @@ function injectLocalData(arr) {
             v.newReqDocs = ["doc_id", "doc_inc_proof", "doc_kiip", "doc_crim", "doc_tb", "doc_guarantee"];
             v.extReqDocs = ["doc_address", "doc_photo"];
         } else if (v.code === 'F-6') {
-            v.faq = "Q: 한국인 배우자가 소득 증빙을 못하면 비자가 안 나오나요?\nA: 원칙적으로 불허됩니다. 다만 부부의 자산, 부모의 소득 합산 등 보완 제도가 있으므로 세부 확인이 필요합니다.\nQ: 이혼하게 되면 비자는 어떻게 되나요?\nA: 원칙적으로 체류기간 연장이 불허됩니다. 단, 한국인 배우자의 사망, 실종, 가정폭력 등 본인의 귀책사유가 없음을 공적 서류(판결문 등)로 입증하면 연장 가능합니다.";
-            v.newReqDocs = ["doc_basic", "doc_fam_rel", "doc_mar_rel", "doc_invitation", "doc_guarantee", "doc_address", "doc_inc_proof", "doc_crim", "doc_health", "doc_topik", "doc_tb"];
-            v.extReqDocs = ["doc_mar_rel", "doc_basic", "doc_address", "doc_job_report"];
+            v.faq = "Q: 한국인 배우자가 소득 증빙을 못하면 비자가 안 나오나요?\nA: 원칙적으로 불허됩니다. 다만 부부의 자산, 부모의 소득 합산 등 보완 제도가 있으므로 세부 확인이 필요합니다.\nQ: 이혼하게 되면 비자는 어떻게 되나요?\nA: 원칙적으로 체류기간 연장이 불허됩니다. 단, 한국인 배우자의 사망, 실종, 가정폭력 등 본인의 귀책사유가 없음을 공적 서류(판결문 등)로 연장 가능합니다.";
+            v.newReqDocs = ["doc_basic", "doc_fam_rel_kr", "doc_mar_rel", "doc_invitation", "doc_guarantee", "doc_address", "doc_inc_proof", "doc_crim", "doc_health", "doc_topik", "doc_tb"];
+            v.extReqDocs = ["doc_mar_rel", "doc_fam_rel_kr", "doc_basic", "doc_address", "doc_job_report"];
         } else if (v.code === 'G-1') {
             v.newReqDocs = ["doc_plan", "doc_medical", "doc_purpose", "doc_address", "doc_tb"];
             v.extReqDocs = ["doc_purpose", "doc_address"];
@@ -1206,6 +1257,40 @@ function injectLocalData(arr) {
         if (!['faq', 'scn', 'nhis'].includes(v.cat)) {
             v.newReq = "";
             v.extReq = "";
+        }
+        
+        // 🚨 핵심 픽스: 세부 코드(subCodes)에 각 하위 항목별 구비서류(addReqDocs) 강제 주입 로직
+        if (v.subCodes) {
+            v.subCodes.forEach(sub => {
+                if (!sub.addReqDocs) sub.addReqDocs = [];
+                const sc = sub.code;
+                
+                if (sc.startsWith('D-2')) {
+                    if (sc === 'D-2-6') sub.addReqDocs.push("doc_enroll", "doc_prof_conf", "doc_finance");
+                    else sub.addReqDocs.push("doc_enroll", "doc_degree", "doc_finance");
+                } else if (sc.startsWith('D-4')) {
+                    sub.addReqDocs.push("doc_enroll", "doc_plan", "doc_finance");
+                } else if (sc.startsWith('D-10')) {
+                    sub.addReqDocs.push("doc_plan", "doc_finance");
+                    if (sc === 'D-10-2') sub.addReqDocs.push("doc_specialty");
+                } else if (sc.startsWith('E-7')) {
+                    sub.addReqDocs.push("doc_emp_contract", "doc_biz_reg", "doc_career");
+                    if (sc === 'E-7-4') sub.addReqDocs.push("doc_score", "doc_topik", "doc_emp_recom");
+                } else if (sc.startsWith('F-6')) {
+                    sub.addReqDocs.push("doc_mar_rel", "doc_basic", "doc_fam_rel_kr", "doc_invitation", "doc_guarantee", "doc_inc_proof", "doc_crim", "doc_health");
+                } else if (sc.startsWith('F-2')) {
+                    sub.addReqDocs.push("doc_inc_proof", "doc_tax", "doc_address");
+                    if (sc === 'F-2-7' || sc === 'F-2-99') sub.addReqDocs.push("doc_score", "doc_degree");
+                } else if (sc.startsWith('F-5')) {
+                    sub.addReqDocs.push("doc_inc_proof", "doc_tax", "doc_crim", "doc_guarantee");
+                    if (sc === 'F-5-10' || sc === 'F-5-11' || sc === 'F-5-16') sub.addReqDocs.push("doc_degree");
+                } else if (sc.startsWith('E-9') || sc.startsWith('E-8')) {
+                    sub.addReqDocs.push("doc_eps", "doc_emp_contract", "doc_health");
+                }
+                
+                // 중복 제거 및 반영
+                sub.addReqDocs = [...new Set(sub.addReqDocs)];
+            });
         }
     });
 
