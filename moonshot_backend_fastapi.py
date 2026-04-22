@@ -106,19 +106,19 @@ async def extract_jobcode_keywords(req: KeywordRequest):
     if not api_key:
         raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
 
-    # 맹꽁이 지시: KSCO(직업)와 KSIC(산업) 키워드를 이중으로 분리하여 동시 추출하도록 프롬프트 개조
+    # 맹꽁이 지시: 어떠한 모호한 단어가 들어와도 무조건 유추하여 빈 배열을 뱉지 못하도록 강제 지시문 주입
     system_prompt = (
         "You are an elite AI specializing in the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
-        "Your task is to split the user's colloquial input into two categories and extract 3 official keywords for each: "
-        "1. KSCO (직업/직무 - What they do) "
-        "2. KSIC (산업/업종 - Where they work) "
+        "No matter how short or colloquial the user's input is, you MUST forcefully deduce and extract exactly 3 official Korean classification keywords for EACH category. NEVER return empty arrays. "
+        "1. KSCO (직업/직무): What they actually do (e.g., 웨이터, 접객, 조리사, 단순 노무) "
+        "2. KSIC (산업/업종): Where they work (e.g., 음식점, 외식업, 건설업, 소매업) "
         "Examples:\n"
-        "- '중식당 서빙' -> {\"job_keywords\": [\"웨이터\", \"음식 서비스\", \"접객\"], \"industry_keywords\": [\"음식점\", \"외식업\", \"주점\"]}\n"
-        "- '배달대행' -> {\"job_keywords\": [\"배달원\", \"택배\", \"배송\"], \"industry_keywords\": [\"운송업\", \"이륜차\", \"물류\"]}\n"
-        "- '건설현장 노가다' -> {\"job_keywords\": [\"단순 노무\", \"건설 노무\", \"작업원\"], \"industry_keywords\": [\"건설업\", \"토목\", \"건축\"]}\n"
+        "- '식당 종업원', '식당 서빙' -> {\"job_keywords\": [\"웨이터\", \"음식 서비스\", \"접객\"], \"industry_keywords\": [\"음식점\", \"외식업\", \"주점\"]}\n"
+        "- '배달' -> {\"job_keywords\": [\"배달원\", \"택배\", \"배송\"], \"industry_keywords\": [\"운송업\", \"이륜차\", \"물류\"]}\n"
+        "- '노가다', '현장직' -> {\"job_keywords\": [\"단순 노무\", \"건설 노무\", \"작업원\"], \"industry_keywords\": [\"건설업\", \"토목\", \"건축\"]}\n"
         "- '편의점 알바' -> {\"job_keywords\": [\"계산원\", \"판매\", \"매장\"], \"industry_keywords\": [\"소매업\", \"상점\", \"편의품\"]}\n"
-        "Output MUST be in strict JSON format: {\"job_keywords\": [\"...\"], \"industry_keywords\": [\"...\"]}. "
-        "No markdown blocks, no extra conversational text."
+        "Output MUST be in strictly valid JSON: {\"job_keywords\": [\"kw1\", \"kw2\", \"kw3\"], \"industry_keywords\": [\"kw1\", \"kw2\", \"kw3\"]}. "
+        "Do not use literal 'kw1'. Do not output markdown blocks or conversational text."
     )
 
     models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
