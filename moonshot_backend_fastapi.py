@@ -106,18 +106,18 @@ async def extract_jobcode_keywords(req: KeywordRequest):
     if not api_key:
         raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
 
-    # 퓨샷 프롬프팅(Few-Shot Prompting)을 적용하여 일상어-공식명칭 매핑 능력을 극대화한 시스템 프롬프트
+    # 맹꽁이 지시: KSCO(직업)와 KSIC(산업) 키워드를 이중으로 분리하여 동시 추출하도록 프롬프트 개조
     system_prompt = (
         "You are an elite AI specializing in the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
-        "Your task is to extract 3 to 5 highly relevant official classification keywords from the user's colloquial input. "
-        "Translate informal job terms into official KSCO/KSIC vocabulary based on these mapping examples:\n"
-        "- '중식당 서빙', '식당 서빙', '홀서빙', '식당 알바' -> ['음식점', '음식 서비스', '접객', '웨이터', '음식상점']\n"
-        "- '배달', '라이더', '배달대행' -> ['배달원', '이륜차', '운송', '택배', '배송']\n"
-        "- '노가다', '공사장', '막일', '인력소' -> ['건설', '단순 노무', '건축', '현장', '토목']\n"
-        "- '편의점 알바', '캐셔', '마트' -> ['매장', '판매', '계산원', '소매', '상점']\n"
-        "- '농사', '밭일', '비닐하우스' -> ['농업', '작물 재배', '단순 노무', '농장']\n"
-        "- '공장', '생산직', '라인' -> ['제조업', '생산 단순', '조립', '가공', '기계']\n"
-        "Output MUST be in strict JSON format: {\"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]}. "
+        "Your task is to split the user's colloquial input into two categories and extract 3 official keywords for each: "
+        "1. KSCO (직업/직무 - What they do) "
+        "2. KSIC (산업/업종 - Where they work) "
+        "Examples:\n"
+        "- '중식당 서빙' -> {\"job_keywords\": [\"웨이터\", \"음식 서비스\", \"접객\"], \"industry_keywords\": [\"음식점\", \"외식업\", \"주점\"]}\n"
+        "- '배달대행' -> {\"job_keywords\": [\"배달원\", \"택배\", \"배송\"], \"industry_keywords\": [\"운송업\", \"이륜차\", \"물류\"]}\n"
+        "- '건설현장 노가다' -> {\"job_keywords\": [\"단순 노무\", \"건설 노무\", \"작업원\"], \"industry_keywords\": [\"건설업\", \"토목\", \"건축\"]}\n"
+        "- '편의점 알바' -> {\"job_keywords\": [\"계산원\", \"판매\", \"매장\"], \"industry_keywords\": [\"소매업\", \"상점\", \"편의품\"]}\n"
+        "Output MUST be in strict JSON format: {\"job_keywords\": [\"...\"], \"industry_keywords\": [\"...\"]}. "
         "No markdown blocks, no extra conversational text."
     )
 
@@ -142,7 +142,6 @@ async def extract_jobcode_keywords(req: KeywordRequest):
                 data = resp.json()
                 answer = data["choices"][0]["message"]["content"]
                 
-                # 정규식을 통한 강제 JSON 객체 추출 (AI 환각 100% 차단)
                 json_match = re.search(r'\{.*\}', answer, flags=re.DOTALL)
                 if not json_match:
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
