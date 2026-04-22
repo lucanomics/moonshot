@@ -348,10 +348,19 @@ body.searched .ft { opacity: 1; }
             <button class="cb" onclick="toggleAccordions(false)">펼치기</button>
         </div>
 
-        <div class="qa-main" id="qaMain">
-            <button class="qa-btn" onclick="openJobCodeModal()">💼 취업신고용 업종/직종 코드 찾기</button>
-            <button class="qa-btn" onclick="openJurisdictionModal()">🏛 관할 출입국관서 조회</button>
-        </div>
+        <style>
+            .qa-btn {
+                padding: 15px 30px; /* 맹꽁이 너를 위해 적당히 키워놨다 */
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 8px; /* 모서리도 살짝 굴려주면 훨씬 보기 좋지 */
+            }
+        </style>
+
+<div class="qa-main" id="qaMain">
+    <button class="qa-btn" onclick="openJobCodeModal()">💼 취업신고용 업종/직종 코드 찾기</button>
+    <button class="qa-btn" onclick="openJurisdictionModal()">🏛 관할 출입국관서 조회</button>
+</div>
         
         <div class="landing-hints" id="landingHints"></div>
     </div>
