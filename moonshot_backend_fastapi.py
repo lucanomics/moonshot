@@ -106,12 +106,19 @@ async def extract_jobcode_keywords(req: KeywordRequest):
     if not api_key:
         raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
 
+    # 퓨샷 프롬프팅(Few-Shot Prompting)을 적용하여 일상어-공식명칭 매핑 능력을 극대화한 시스템 프롬프트
     system_prompt = (
-        "You are a specialized AI for the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
-        "Your strictly required task is to extract 3 to 5 highly relevant official Korean classification keywords from the user's natural language input. "
-        "For example, if input is '중식당 주방장', extract ['음식점', '조리사', '주방장', '외식', '요리사']. "
-        "Output MUST be in strict JSON format: {\"keywords\": [\"keyword1\", \"keyword2\"]}. "
-        "No markdown blocks, no extra explanations."
+        "You are an elite AI specializing in the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
+        "Your task is to extract 3 to 5 highly relevant official classification keywords from the user's colloquial input. "
+        "Translate informal job terms into official KSCO/KSIC vocabulary based on these mapping examples:\n"
+        "- '중식당 서빙', '식당 서빙', '홀서빙', '식당 알바' -> ['음식점', '음식 서비스', '접객', '웨이터', '음식상점']\n"
+        "- '배달', '라이더', '배달대행' -> ['배달원', '이륜차', '운송', '택배', '배송']\n"
+        "- '노가다', '공사장', '막일', '인력소' -> ['건설', '단순 노무', '건축', '현장', '토목']\n"
+        "- '편의점 알바', '캐셔', '마트' -> ['매장', '판매', '계산원', '소매', '상점']\n"
+        "- '농사', '밭일', '비닐하우스' -> ['농업', '작물 재배', '단순 노무', '농장']\n"
+        "- '공장', '생산직', '라인' -> ['제조업', '생산 단순', '조립', '가공', '기계']\n"
+        "Output MUST be in strict JSON format: {\"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]}. "
+        "No markdown blocks, no extra conversational text."
     )
 
     models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
@@ -130,7 +137,6 @@ async def extract_jobcode_keywords(req: KeywordRequest):
         }
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                # 마크다운 링크 찌꺼기 제거 및 올바른 URL 형태 복구
                 resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
                 resp.raise_for_status()
                 data = resp.json()
@@ -186,7 +192,6 @@ Context: {req.context}"""
         }
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
-                # 마크다운 링크 찌꺼기 제거 및 올바른 URL 형태 복구
                 resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
                 resp.raise_for_status()
                 data = resp.json()
