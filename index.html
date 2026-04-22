@@ -456,6 +456,14 @@ body.searched .ft { opacity: 1; }
                        placeholder="명칭 또는 코드 검색 (예: 간호사, 244)" autocomplete="off">
                 <span id="jcCountBadge" class="jc-count-badge">0건</span>
             </div>
+
+             <div style="display:flex; justify-content:flex-end; margin-bottom: 0.8rem;">
+                <button class="ai-action-btn primary" onclick="searchJobcodeWithAI()" style="width:100%; max-width:100%; padding:0.6rem;">
+                    <span>🤖 AI 자연어 분석으로 공식 직종 찾기</span>
+                    <div class="spinner" id="jcAiSpinner" style="margin-left:8px;"></div>
+                </button>
+            </div>
+            
             <div id="jcResults" class="jc-results">
                 <div class="jc-empty">처음 열면 데이터를 불러옵니다. 잠시만 기다려주세요.</div>
             </div>
@@ -1068,7 +1076,102 @@ function renderJobcodeResults(query) {
         : '';
     resultsEl.innerHTML = html + footer;
 }
+async function searchJobcodeWithAI() {
+    const input = document.getElementById('jcSearchInput').value.trim();
+    if(!input) {
+        alert("명칭/코드 검색창에 본인의 상황(예: 중식당 주방장)을 상세히 적어주십시오.");
+        return;
+    }
+    
+    const resultsEl = document.getElementById('jcResults');
+    const spinner = document.getElementById('jcAiSpinner');
+    const btn = spinner.parentElement;
+    
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    resultsEl.innerHTML = '<div class="jc-loading">AI가 공식 분류 체계를 스캔 중입니다...</div>';
 
+    try {
+        const response = await fetch(`${API_BASE}/api/jobcode_keywords`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: input })
+        });
+        if(!response.ok) throw new Error("AI 호출 실패");
+        const data = await response.json();
+        const keywords = data.keywords || [];
+
+        if(keywords.length === 0) {
+            resultsEl.innerHTML = '<div class="jc-empty">추출된 분류 키워드가 없습니다. 더 구체적으로 적어주십시오.</div>';
+            return;
+        }
+
+        renderJobcodeResultsByKeywords(keywords);
+
+    } catch(e) {
+        resultsEl.innerHTML = `<div class="jc-empty" style="color:#ef4444;">AI 분석 오류: ${escapeHtml(e.message)}</div>`;
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+}
+
+function renderJobcodeResultsByKeywords(keywords) {
+    const resultsEl = document.getElementById('jcResults');
+    const badge = document.getElementById('jcCountBadge');
+    if (!_jobcodeData) return;
+
+    let rows = _jobcodeData.data.filter(r => r.분류 === _currentJcTab);
+    
+    const scoredRows = rows.map(r => {
+        let score = 0;
+        const desc = (r.상세설명 || '').toLowerCase();
+        keywords.forEach(kw => {
+            const k = kw.toLowerCase();
+            if(desc.includes(k)) score += 1;
+        });
+        return { ...r, score };
+    }).filter(r => r.score > 0);
+
+    scoredRows.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        const la = (a.코드값 || '').length;
+        const lb = (b.코드값 || '').length;
+        return la - lb || (a.코드값 || '').localeCompare(b.코드값 || '');
+    });
+
+    const MAX_RENDER = 200;
+    const truncated = scoredRows.length > MAX_RENDER;
+    const displayRows = truncated ? scoredRows.slice(0, MAX_RENDER) : scoredRows;
+
+    if (badge) badge.textContent = scoredRows.length === 0 ? '0건' : `${scoredRows.length}건`;
+
+    if (scoredRows.length === 0) {
+        resultsEl.innerHTML = `<div class="jc-empty"><b>[${keywords.join(', ')}]</b> 관련 결과를 찾을 수 없습니다.</div>`;
+        return;
+    }
+
+    const html = displayRows.map(r => {
+        const code = escapeHtml(r.코드값 || '');
+        const desc = hl(r.상세설명 || '', keywords); 
+        const lv = Math.min(code.length, 5);
+        const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
+        return `<div class="jc-item">
+            <span class="jc-code lv${lv}">${code}</span>
+            <div>
+                <span class="jc-level-tag">매칭도 ${r.score}</span><span class="jc-level-tag">${levelLabel}</span>
+                <span class="jc-desc">${desc}</span>
+            </div>
+            <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
+        </div>`;
+    }).join('');
+
+    const topHtml = `<div style="padding: 0.6rem; background: var(--acG); color: var(--ac); font-size: 0.82rem; border-radius: 6px; margin-bottom: 0.8rem; font-weight:700; border-left:3px solid var(--ac);">🤖 AI 추출 탐색 키워드: ${keywords.map(k => \`[${escapeHtml(k)}]\`).join(' ')}</div>`;
+    
+    resultsEl.innerHTML = topHtml + html;
+}
+
+                                                                                                                                                                                                                                             
 // ─── 직종코드 모달: 복사 ───
 function copyJobcode(btnEl, code) {
     if (!code) return;
