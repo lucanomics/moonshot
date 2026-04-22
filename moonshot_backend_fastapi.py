@@ -59,6 +59,9 @@ class AskRequest(BaseModel):
     context: Optional[str] = ""
     lang: Optional[str] = "ko"  
 
+class KeywordRequest(BaseModel):
+    query: str
+    
 def classify_category(question: str) -> str:
     q = question.lower()
     if any(k in q for k in ["비자", "visa", "사증"]): return "비자문의"
@@ -171,6 +174,48 @@ async def get_visas():
     except Exception as e:
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
+
+@app.post("/api/jobcode_keywords")
+async def extract_jobcode_keywords(req: KeywordRequest):
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
+
+    system_prompt = (
+        "You are a specialized AI for the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
+        "Your strictly required task is to extract 3 to 5 highly relevant official Korean classification keywords from the user's natural language input. "
+        "For example, if input is '중식당 주방장', extract ['음식점', '조리사', '주방장', '외식', '요리사']. "
+        "Output MUST be in strict JSON format: {\"keywords\": [\"keyword1\", \"keyword2\"]}. "
+        "No markdown blocks, no extra explanations."
+    )
+
+    models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+    for model in models:
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": req.query}
+            ],
+            "max_tokens": 150,
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"}
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post("[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)", headers=headers, json=payload)
+                resp.raise_for_status()
+                data = resp.json()
+                answer = data["choices"][0]["message"]["content"]
+                return json.loads(answer)
+        except Exception as e:
+            logger.error(f"[{model}] 직종 키워드 추출 실패: {e}")
+            continue
+            
+    raise HTTPException(status_code=503, detail="AI 키워드 추출 서버에 응답할 수 없습니다.")
+
 
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
