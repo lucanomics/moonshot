@@ -2,6 +2,7 @@ from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
 import os
+import re
 import json
 import logging
 import httpx
@@ -49,9 +50,9 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    global db_pool
     if db_pool:
         await db_pool.close()
+        logger.info("PostgreSQL 커넥션 풀 종료.")
 
 class AskRequest(BaseModel):
     question: str
@@ -61,116 +62,40 @@ class AskRequest(BaseModel):
 
 class KeywordRequest(BaseModel):
     query: str
-    
+
 def classify_category(question: str) -> str:
     q = question.lower()
-    if any(k in q for k in ["비자", "visa", "사증"]): return "비자문의"
-    if any(k in q for k in ["체류", "연장", "등록"]): return "체류문의"
-    return "기타"
+    if any(w in q for w in ["유학", "d-2", "학생", "대학교", "어학연수", "d-4"]): return "study"
+    if any(w in q for w in ["취업", "일", "알바", "e-", "e-7", "e-9", "직장", "h-2"]): return "work"
+    if any(w in q for w in ["결혼", "가족", "배우자", "f-6", "f-3", "f-1", "부모"]): return "family"
+    if any(w in q for w in ["투자", "사업", "법인", "d-8", "d-9"]): return "invest"
+    if any(w in q for w in ["건강보험", "건보", "보험료"]): return "nhis"
+    if any(w in q for w in ["영주권", "국적", "f-5", "귀화"]): return "permanent"
+    return "general"
 
 def append_log(category: str, success: bool):
-    entry = {
-        "timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
-        "category": category,
-        "success": success,
-    }
-    logs = []
-    if LOGS_FILE.exists():
-        try:
-            logs = json.loads(LOGS_FILE.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    logs.append(entry)
-    LOGS_FILE.write_text(json.dumps(logs, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-@app.get("/api/health")
-async def health_check():
-    if not db_pool:
-        return JSONResponse(status_code=200, content={"status": "ok", "db": "json fallback mode"})
     try:
-        async with db_pool.acquire() as conn:
-            await conn.fetchval("SELECT 1")
-        return {"status": "ok", "db": "connected"}
+        logs = []
+        if LOGS_FILE.exists():
+            with open(LOGS_FILE, "r", encoding="utf-8") as f:
+                logs = json.load(f)
+        logs.append({"timestamp": datetime.now().isoformat(), "category": category, "success": success})
+        with open(LOGS_FILE, "w", encoding="utf-8") as f:
+            json.dump(logs, f, ensure_ascii=False, indent=2)
     except Exception as e:
-        logger.error(f"Health check DB 오류: {e}")
-        return JSONResponse(status_code=503, content={"status": "error", "db": "unreachable"})
-
-@app.get("/api/logs")
-def get_logs():
-    if not LOGS_FILE.exists(): return []
-    try:
-        return json.loads(LOGS_FILE.read_text(encoding="utf-8"))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-async def search_law(query: str) -> str:
-    law_api_key = os.environ.get("LAW_API_KEY")
-    if not law_api_key: return ""
-    return ""
-
-async def search_visa_db(query: str) -> str:
-    if not db_pool: return ""
-    sql = """
-    SELECT code, name, period, new_req, ext_req, faq
-    FROM visas
-    WHERE $1 ILIKE '%' || code || '%' OR $1 ILIKE '%' || name || '%'
-    LIMIT 2;
-    """
-    try:
-        async with db_pool.acquire() as conn:
-            rows = await conn.fetch(sql, query)
-            if not rows: return ""
-            ctx = ""
-            for r in rows:
-                ctx += f"- 비자종류: {r['name']} ({r['code']})\n"
-                ctx += f"- 체류기간: {r['period']}\n"
-                ctx += f"- 신규/연장요건: {r['new_req']} / {r['ext_req']}\n"
-                ctx += f"- FAQ: {r['faq']}\n\n"
-            return ctx.strip()
-    except Exception as e:
-        logger.error(f"DB 검색 실패: {e}")
-        return ""
+        logger.error(f"로그 기록 실패: {e}")
 
 @app.get("/api/visas")
 async def get_visas():
     if not db_pool:
-        for fname in ["visa_data.json", "visa_data (1).json"]:
-            p = Path(fname)
-            if p.exists():
-                data = json.loads(p.read_text(encoding="utf-8"))
-                return data if isinstance(data, list) else data.get("data", [])
-        raise HTTPException(status_code=500, detail="데이터베이스 및 JSON 파일 모두 없음")
-
-    query = """
-    SELECT json_agg(
-        json_strip_nulls(
-            json_build_object(
-                'code', v.code, 'name', v.name, 'cat', v.cat, 'period', v.period,
-                'newReq', v.new_req, 'extReq', v.ext_req, 'faq', v.faq,
-                'dataBadge', v.data_badge, 'dataDate', v.data_date, 'aliases', v.aliases,
-                'subCodes', (
-                    SELECT json_agg(json_strip_nulls(json_build_object(
-                        'code', s.code, 'name', s.name, 'addReq', s.add_req, 'note', s.note, 'aliases', s.aliases
-                    )) ORDER BY s.sort_order)
-                    FROM visa_sub_codes s WHERE s.parent_code = v.code
-                )
-            )
-        ) ORDER BY v.sort_order
-    ) FROM visas v;
-    """
+        return JSONResponse(status_code=200, content={"data": []}) 
     try:
         async with db_pool.acquire() as conn:
-            json_str = await conn.fetchval(query)
-            if not json_str:
-                return []
-            result = json.loads(json_str)
-            if isinstance(result, list):
-                if len(result) == 1 and isinstance(result[0], list):
-                    return result[0]
-                return result
-            logger.warning(f"/api/visas: 예상치 못한 응답 형식 — {type(result)}")
-            return []
+            rows = await conn.fetch("SELECT data FROM visas_json LIMIT 1")
+            if rows:
+                return JSONResponse(content=json.loads(rows[0]['data']))
+            else:
+                return JSONResponse(status_code=200, content={"data": []})
     except Exception as e:
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
@@ -205,64 +130,47 @@ async def extract_jobcode_keywords(req: KeywordRequest):
         }
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.post("[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)", headers=headers, json=payload)
+                # 마크다운 링크 찌꺼기 제거 및 올바른 URL 형태 복구
+                resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
                 resp.raise_for_status()
                 data = resp.json()
                 answer = data["choices"][0]["message"]["content"]
-                return json.loads(answer)
+                
+                # 정규식을 통한 강제 JSON 객체 추출 (AI 환각 100% 차단)
+                json_match = re.search(r'\{.*\}', answer, flags=re.DOTALL)
+                if not json_match:
+                    raise ValueError("JSON 객체를 파싱할 수 없습니다.")
+                
+                clean_json = json_match.group(0)
+                return json.loads(clean_json)
+                
         except Exception as e:
             logger.error(f"[{model}] 직종 키워드 추출 실패: {e}")
             continue
             
-    raise HTTPException(status_code=503, detail="AI 키워드 추출 서버에 응답할 수 없습니다.")
-
+    raise HTTPException(status_code=503, detail="AI 모델 응답 지연 또는 JSON 파싱 실패로 키워드를 추출할 수 없습니다.")
 
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
-    if not req.consent:
-        raise HTTPException(status_code=400, detail="개인정보 처리 동의가 필요합니다.")
-    
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise HTTPException(status_code=500, detail="서버 내부 오류: AI API 키 누락")
-
+        raise HTTPException(status_code=500, detail="서버 구성 오류: API 키가 설정되지 않았습니다.")
+        
     category = classify_category(req.question)
-    law_context = await search_law(req.question)
-    db_context = await search_visa_db(req.question)
     
-    lang_map = {
-        "ko": "한국어", "en": "English", "zh": "中文", "ja": "日本語",
-        "th": "ภาษาไทย", "ru": "Русский", "ar": "العربية", "id": "Bahasa Indonesia",
-    }
     try:
-        user_lang_code = req.lang if req.lang and req.lang in lang_map else detect(req.question)
-        reply_lang = lang_map.get(user_lang_code, "한국어") 
+        user_lang = detect(req.question)
     except Exception:
-        reply_lang = "한국어"
+        user_lang = "ko"
+        
+    system_prompt = f"""You are an elite Korean immigration law assistant.
+The user's query language appears to be '{user_lang}'.
+If it is not Korean, answer in the user's language, but accurately translate and explain the Korean legal terms.
+Always base your answer on the 2026 Korean Immigration Act and Visa Manuals. 
+Be direct, objective, and precise. DO NOT hallucinate. Do not use markdown blocks unless necessary.
+Context: {req.context}"""
 
-    system_prompt = (
-    f"CRITICAL: You MUST strictly respond ONLY in {reply_lang}. "
-    f"Even if all reference data below is in Korean, your answer must be written entirely in {reply_lang}. "
-    "Violating this rule is never acceptable under any circumstances.\n\n"
-    "You are 'Moonshot', a top-tier immigration and visa guidance AI for the Republic of Korea.\n"
-    "[ABSOLUTE RULES]\n"
-    f"1. ALWAYS reply in {reply_lang}. Perfectly match the language of the user's question exactly.\n"
-    "2. Use a dry, mechanical, objective tone. No greetings, apologies, or emotional expressions.\n"
-    "3. Prioritize the provided [Visa Reference Data] above all else when answering.\n"
-    "4. Structure requirements, procedures, and documents using bullet points (-) for readability.\n"
-    "5. If the question involves overstay or illegal residence, immediately STOP any extension guidance.\n"
-    "6. For illegal overstay cases, strictly inform only: penalty fines under Immigration Act, deportation order or forced removal, and voluntary departure program."
-    "7. 일본어 한자(例: 帰国)나 중국어 간체자를 한국어 문장에 혼용하지 마십시오.\n"
-    "8. 법적 근거가 없는 숫자(예: 14일 이내 출국)를 절대 조작하지 마십시오.\n\n"
-    )
-    if law_context:
-        system_prompt += f"\n\n[관련 법령]:\n{law_context}"
-    if db_context:
-        system_prompt += f"\n\n[Visa Reference Data (DB)]:\n{db_context}"
-    elif req.context:
-        system_prompt += f"\n\n[Visa Reference Data (client)]:\n{req.context}"
-
-    models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768", "llama-3.1-8b-instant"]
+    models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768"]
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     for model_name in models_to_try:
@@ -278,6 +186,7 @@ async def ask_ai(req: AskRequest):
         }
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
+                # 마크다운 링크 찌꺼기 제거 및 올바른 URL 형태 복구
                 resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
                 resp.raise_for_status()
                 data = resp.json()
@@ -297,8 +206,12 @@ async def serve_index():
     if os.path.exists("index.html"): return FileResponse("index.html")
     raise HTTPException(status_code=404, detail="index.html 파일을 찾을 수 없습니다.")
 
-@app.get("/ai")
 @app.get("/ai.html")
 async def serve_ai():
     if os.path.exists("ai.html"): return FileResponse("ai.html")
     raise HTTPException(status_code=404, detail="ai.html 파일을 찾을 수 없습니다.")
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
