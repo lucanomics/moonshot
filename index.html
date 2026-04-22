@@ -366,7 +366,6 @@ body.searched .ft { opacity: 1; }
         </div>
 
         <style>
-/* Quick Actions Main - 버튼 크기 튜닝 버전 */
 .qa-main { 
     display: flex; 
     gap: 0.8rem; 
@@ -416,7 +415,6 @@ body.searched .ft { opacity: 1; }
     <div class="rlist" id="rlist"></div>
 </div>
 
-<!-- AI Case Analyzer Modal -->
 <div class="modal-overlay" id="aiModalOverlay">
     <div class="modal-box">
         <div class="modal-header">
@@ -436,11 +434,9 @@ body.searched .ft { opacity: 1; }
                     <span>✨ 서류 다국어 풀이 및 발급처 안내</span>
                     <div class="spinner"></div>
                 </button>
-                <!-- 관할관서: LLM 대신 공식 조회 링크 + 1345 안내 (정적, 환각 없음) -->
                 <button class="ai-action-btn" data-type="jurisdiction" id="btnJurisdiction">
                     <span>🏛 관할 관서 조회 & 1345 안내</span>
                 </button>
-                <!-- 직종코드: 취업신고 대상 비자에서만 노출 (정적 DB 기반) -->
                 <button class="ai-action-btn" data-type="job_code" id="btnJobCode" style="display:none;">
                     <span>💼 취업신고용 업종/직종 코드 찾기</span>
                 </button>
@@ -468,12 +464,12 @@ body.searched .ft { opacity: 1; }
             </div>
             <div class="jc-search-wrap">
                 <input type="text" id="jcSearchInput" class="jc-search-input"
-                       placeholder="명칭 또는 코드 검색 (예: 간호사, 244)" autocomplete="off">
+                       placeholder="명칭 또는 상황 검색 (예: 건설현장 노가다, 중식당 배달)" autocomplete="off">
                 <span id="jcCountBadge" class="jc-count-badge">0건</span>
             </div>
             <div style="display:flex; justify-content:flex-end; margin-bottom: 0.8rem;">
                 <button class="ai-btn" onclick="searchJobcodeWithAI()" style="width:100%; justify-content:center; padding:0.8rem;">
-                    <span>🤖 AI 자연어 분석으로 공식 직종 찾기</span>
+                    <span>🤖 AI 자연어 분석으로 공식 직종 및 업종 동시 찾기</span>
                     <div class="spinner" id="jcAiSpinner" style="margin-left:8px;"></div>
                 </button>
             </div>
@@ -481,14 +477,11 @@ body.searched .ft { opacity: 1; }
                 <div class="jc-empty">처음 열면 데이터를 불러옵니다. 잠시만 기다려주세요.</div>
             </div>
             <div class="jc-disclaimer">
-                ⚠️ 본 데이터는 통계청 공식 자료(2025.09.01 기준)이나, HiKorea 취업신고 제출 전
-                <a href="https://kssc.kostat.go.kr/ksscNew_web/index.jsp" target="_blank" rel="noopener">통계분류포털</a>에서
-                최종 확인을 권장합니다. 계층 코드(1~5자리)는 상위→하위 분류이며, HiKorea는 보통 5자리를 요구합니다.
+                ⚠️ <b>[실무 주의 사항]</b> HiKorea 외국인 취업정보 온라인 신고 시 <b>직종(직업)</b> 코드와 <b>업종(산업)</b> 코드를 모두 입력해야 하며, <b>연간소득</b> 정보도 필수입니다. 변동사항 발생 시 15일 이내에 신고하지 않으면 출입국관리법에 따라 범칙금이 부과될 수 있습니다.
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="modal-overlay" id="jurisdictionModalOverlay">
     <div class="modal-box" style="max-width: 560px;">
@@ -557,7 +550,6 @@ body.searched .ft { opacity: 1; }
     </div>
 </div>
 
-<!-- Document Checklist Modal -->
 <div class="modal-overlay" id="docModalOverlay">
     <div class="modal-box" style="max-width: 640px;">
         <div class="modal-header">
@@ -571,7 +563,6 @@ body.searched .ft { opacity: 1; }
     </div>
 </div>
 
-<!-- FAQ Modal -->
 <div class="modal-overlay" id="faqModalOverlay">
     <div class="modal-box" style="max-width: 600px;">
         <div class="modal-header">
@@ -579,7 +570,6 @@ body.searched .ft { opacity: 1; }
             <button class="modal-close" data-action="close-faq-modal">✕</button>
         </div>
         <div class="modal-body" id="faqModalBody">
-            <!-- FAQ items will be rendered here -->
         </div>
     </div>
 </div>
@@ -591,7 +581,6 @@ body.searched .ft { opacity: 1; }
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
 <script>
-// XSS 방어 (HTML 이스케이프)
 function escapeHtml(s){
     const d=document.createElement('div');
     d.textContent=s ?? '';
@@ -608,9 +597,6 @@ function hl(t,k){
     return escapeHtml(text).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>');
 }
 
-// -------------------------------------------------------------
-// [무결점 공식 서류 딕셔너리 및 공통 서류 상수] 
-// -------------------------------------------------------------
 const COMMON_NEW = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_photo', 'doc_id', 'doc_fee_new', 'doc_arc_fee'];
 const COMMON_EXT = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_id', 'doc_fee_ext'];
 
@@ -673,7 +659,6 @@ const DOC_DICT = {
     "doc_arc_reissue": "외국인등록증 재발급 신청서 (통합신청서), 여권, 사유 소명 서류(경찰서 분실신고증 등), 사진 1매"
 };
 
-// 1. 별자리 배경 시스템
 (async function initStars() {
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
@@ -717,7 +702,6 @@ const DOC_DICT = {
     requestAnimationFrame(draw);
 })();
 
-// 2. 비자 데이터 엔진
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
     ? ""
     : "https://web-production-14f9a.up.railway.app";
@@ -728,7 +712,6 @@ const qEl = document.getElementById('q');
 const goBtn = document.querySelector('.sbar-go');
 const rcEl = document.getElementById('rc');
 
-// --- 복구된 전역 변수 및 UI 상수 ---
 let currentSearchMode = 'and';
 let currentTheme = 'dark';
 const CC = {short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
@@ -747,11 +730,7 @@ const CL = {
 };
 
 function getLabels(v){return v.labels||CL[v.cat]||['개요','상세','FAQ'];}
-// ------------------------------------
 
-// -------------------------------------------------------------
-// [문서 모달, FAQ 모달, AI 파이프라인 연동, 이벤트 위임 처리]
-// -------------------------------------------------------------
 let currentAiVisaCode = null;
 let currentAiController = null;
 
@@ -768,8 +747,6 @@ function openAiModal(visaCode) {
         descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
     }
     
-    // ===== 직종코드 버튼: 취업신고 대상 비자에서만 활성화 =====
-    // 근거: 출입국관리법 시행규칙 제47조(근무처 변경·추가 신고), 제49조의2(외국인 취업정보 온라인 신고)
     const jobCodeBtn = document.getElementById('btnJobCode');
     if (jobCodeBtn) {
         const isJobCodeTarget = JOBCODE_TARGET_VISAS.some(prefix => 
@@ -805,7 +782,6 @@ function openDocModal(visaCode, type, subIdx) {
     let targetCode = visa.code;
     const isFaq = ['faq', 'scn', 'nhis'].includes(visa.cat);
 
-    // 파싱 안정성을 위해 subIdx 검증 강화
     if (type === 'new') {
         title = '신규 발급 필수 구비서류';
         docs = isFaq ? (visa.newReqDocs || []) : [...new Set([...COMMON_NEW, ...(visa.newReqDocs || [])])];
@@ -876,7 +852,6 @@ function openFaqModal(visaCode) {
     document.getElementById('faqModalOverlay').classList.add('active');
 }
 
-// 모달 및 버튼 전역 이벤트 위임
 document.body.addEventListener('click', (e) => {
     const openAiBtn = e.target.closest('[data-action="open-ai-modal"]');
     if (openAiBtn) {
@@ -921,7 +896,6 @@ document.body.addEventListener('click', (e) => {
     }
 });
 
-// ESC 키 닫기 지원
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (document.getElementById('aiModalOverlay').classList.contains('active')) closeAiModal();
@@ -930,12 +904,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ═══════════════════════════════════════════════════════════════════════
-// 직종코드 & 관할관서 모달 로직 (정적 DB 기반, LLM 호출 없음)
-// ═══════════════════════════════════════════════════════════════════════
-
-// 취업신고 대상 비자 (출입국관리법 시행규칙 제47조·제49조의2)
-// 이 배열에 포함된 prefix로 시작하는 모든 비자 코드(세부약호 포함)에서 직종코드 버튼이 활성화됨
 const JOBCODE_TARGET_VISAS = [
     'E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7',
     'E-8', 'E-9', 'E-10',
@@ -944,31 +912,29 @@ const JOBCODE_TARGET_VISAS = [
     'F-2', 'F-4', 'F-5', 'F-6'
 ];
 
-// 직종코드 DB 캐시 (한 번만 로드, 브라우저 세션 동안 재사용)
 let _jobcodeData = null;
 let _jobcodeLoadPromise = null;
 let _currentJcTab = '직업';
 let _jcSearchDebounce = null;
 
-// ═══════════════════════════════════════════════════════════════════════
-// 📍 JSON 데이터 경로 (여러 후보를 순차 시도 — 배포 구조 유연성 확보)
-// ═══════════════════════════════════════════════════════════════════════
-// 맹꽁이: 실제 파일명/위치에 맞춰 이 배열 순서를 조정하거나 추가하세요.
-// 첫 번째로 성공하는 경로가 사용됩니다.
 const JOBCODE_JSON_PATHS = [
-    './data/jobcode_master.json',   // 표준 경로 (권장)
-    './data/output.json',            // 파일명이 output.json으로 커밋된 경우
-    './jobcode_master.json',         // 루트 디렉토리에 있는 경우
-    './output.json'                  // 루트에 output.json인 경우
+    './data/jobcode_master.json',   
+    './data/output.json',            
+    './jobcode_master.json',         
+    './output.json'                  
 ];
 
-// ─── 직종코드 모달: 데이터 로드 (폴백 체인으로 여러 경로 순차 시도) ───
 async function loadJobcodeData() {
     if (_jobcodeData) return _jobcodeData;
     if (_jobcodeLoadPromise) return _jobcodeLoadPromise;
 
     _jobcodeLoadPromise = (async () => {
         const errors = [];
+        
+        if (window.location.protocol === 'data:' || window.location.protocol === 'about:') {
+             throw new Error("현재 미리보기(샌드박스) 환경에서는 로컬 JSON 파일을 읽어올 수 없습니다. 코드를 다운로드하여 로컬 웹 서버를 통해 실행하십시오.");
+        }
+        
         for (const path of JOBCODE_JSON_PATHS) {
             try {
                 const res = await fetch(path, { cache: 'default' });
@@ -994,7 +960,6 @@ async function loadJobcodeData() {
     return _jobcodeLoadPromise;
 }
 
-// ─── 직종코드 모달: 열기 ───
 async function openJobCodeModal() {
     const overlay = document.getElementById('jobCodeModalOverlay');
     if (!overlay) return;
@@ -1004,17 +969,15 @@ async function openJobCodeModal() {
     const input = document.getElementById('jcSearchInput');
     const badge = document.getElementById('jcCountBadge');
 
-    // 입력창 초기화
     if (input) {
         input.value = '';
         setTimeout(() => input.focus(), 100);
     }
 
-    // 데이터 로드 시도
     resultsEl.innerHTML = '<div class="jc-loading">데이터 로드 중... (최초 1회만)</div>';
     try {
         await loadJobcodeData();
-        renderJobcodeResults('');  // 빈 쿼리 = 대분류만 표시
+        renderJobcodeResults('');  
     } catch (err) {
         const pathList = JOBCODE_JSON_PATHS.map(p => `  - ${p}`).join('<br>');
         resultsEl.innerHTML = `<div class="jc-empty" style="color:#ef4444; text-align:left; padding:1.2rem;">
@@ -1036,7 +999,6 @@ function closeJobCodeModal() {
     if (overlay) overlay.classList.remove('active');
 }
 
-// ─── 직종코드 모달: 탭 전환 ───
 function switchJobCodeTab(tab) {
     _currentJcTab = tab;
     document.querySelectorAll('.jc-tab').forEach(el => {
@@ -1046,29 +1008,29 @@ function switchJobCodeTab(tab) {
     renderJobcodeResults(input ? input.value.trim() : '');
 }
 
-// ─── 직종코드 모달: 검색 + 렌더링 ───
 function renderJobcodeResults(query) {
     const resultsEl = document.getElementById('jcResults');
     const badge = document.getElementById('jcCountBadge');
     if (!resultsEl || !_jobcodeData) return;
 
+    if (!_currentJcTab) {
+        switchJobCodeTab('직업');
+        return;
+    }
+
     const q = (query || '').trim().toLowerCase();
-    // 현재 탭에 해당하는 데이터만 필터
     let rows = _jobcodeData.data.filter(r => r.분류 === _currentJcTab);
 
     if (q) {
-        // 명칭 또는 코드값 매칭 (대소문자 무시)
         rows = rows.filter(r => {
             const desc = (r.상세설명 || '').toLowerCase();
             const code = (r.코드값 || '').toLowerCase();
             return desc.includes(q) || code.includes(q);
         });
     } else {
-        // 빈 쿼리: 대분류(1자리)만 노출 → 탐색 유도
         rows = rows.filter(r => (r.코드값 || '').length === 1);
     }
 
-    // 코드 길이 짧은 순(상위분류 먼저) → 코드 오름차순 정렬
     rows.sort((a, b) => {
         const la = (a.코드값 || '').length;
         const lb = (b.코드값 || '').length;
@@ -1076,7 +1038,6 @@ function renderJobcodeResults(query) {
         return (a.코드값 || '').localeCompare(b.코드값 || '');
     });
 
-    // 렌더 상한: 500건 (성능 보호)
     const MAX_RENDER = 500;
     const truncated = rows.length > MAX_RENDER;
     const displayRows = truncated ? rows.slice(0, MAX_RENDER) : rows;
@@ -1118,7 +1079,7 @@ function renderJobcodeResults(query) {
 async function searchJobcodeWithAI() {
     const input = document.getElementById('jcSearchInput').value.trim();
     if(!input) {
-        alert("명칭/코드 검색창에 본인의 상황(예: 중식당 주방장)을 상세히 적어주십시오.");
+        alert("명칭/상황 검색창에 본인의 취업 상황(예: 중식당 주방장, 건설현장 일용직)을 상세히 적어주십시오.");
         return;
     }
     
@@ -1128,7 +1089,7 @@ async function searchJobcodeWithAI() {
     
     btn.disabled = true;
     spinner.style.display = 'inline-block';
-    resultsEl.innerHTML = '<div class="jc-loading">AI가 공식 분류 체계를 스캔 중입니다...</div>';
+    resultsEl.innerHTML = '<div class="jc-loading">AI가 입력하신 내용을 분석하여 <b>직종(직무)</b>과 <b>업종(사업장)</b> 키워드를 분리 스캔 중입니다...</div>';
 
     try {
         const response = await fetch(`${API_BASE}/api/jobcode_keywords`, {
@@ -1143,14 +1104,15 @@ async function searchJobcodeWithAI() {
         }
         
         const data = await response.json();
-        const keywords = data.keywords || [];
+        const jobKw = data.job_keywords || data.keywords || [];
+        const indKw = data.industry_keywords || [];
 
-        if(keywords.length === 0) {
+        if(jobKw.length === 0 && indKw.length === 0) {
             resultsEl.innerHTML = '<div class="jc-empty">추출된 분류 키워드가 없습니다. 더 구체적으로 적어주십시오.</div>';
             return;
         }
 
-        renderJobcodeResultsByKeywords(keywords);
+        renderUnifiedAiResults(jobKw, indKw);
 
     } catch(e) {
         resultsEl.innerHTML = `<div class="jc-empty" style="color:#ef4444;">AI 분석 오류: ${escapeHtml(e.message)}</div>`;
@@ -1160,7 +1122,7 @@ async function searchJobcodeWithAI() {
     }
 }
 
-function renderJobcodeResultsByKeywords(keywords) {
+function renderUnifiedAiResults(jobKw, indKw) {
     const resultsEl = document.getElementById('jcResults');
     const badge = document.getElementById('jcCountBadge');
     
@@ -1169,57 +1131,71 @@ function renderJobcodeResultsByKeywords(keywords) {
         return;
     }
 
-    let rows = _jobcodeData.data.filter(r => r.분류 === _currentJcTab);
-    
-    const scoredRows = rows.map(r => {
-        let score = 0;
-        const desc = (r.상세설명 || '').toLowerCase();
-        keywords.forEach(kw => {
-            const k = kw.toLowerCase();
-            if(desc.includes(k)) score += 1;
+    document.querySelectorAll('.jc-tab').forEach(el => el.classList.remove('active'));
+    _currentJcTab = null;
+
+    const getScoredRows = (type, keywords) => {
+        if(!keywords || keywords.length === 0) return [];
+        let rows = _jobcodeData.data.filter(r => r.분류 === type);
+        let scoredRows = rows.map(r => {
+            let score = 0;
+            const desc = (r.상세설명 || '').toLowerCase();
+            keywords.forEach(kw => {
+                if(desc.includes(kw.toLowerCase())) score += 1;
+            });
+            return { ...r, score };
+        }).filter(r => r.score > 0);
+
+        scoredRows.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            const la = (a.코드값 || '').length;
+            const lb = (b.코드값 || '').length;
+            return la - lb || (a.코드값 || '').localeCompare(b.코드값 || '');
         });
-        return { ...r, score };
-    }).filter(r => r.score > 0);
+        return scoredRows.slice(0, 50); 
+    };
 
-    scoredRows.sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        const la = (a.코드값 || '').length;
-        const lb = (b.코드값 || '').length;
-        return la - lb || (a.코드값 || '').localeCompare(b.코드값 || '');
-    });
+    const jobRows = getScoredRows('직업', jobKw);
+    const indRows = getScoredRows('산업', indKw);
 
-    const MAX_RENDER = 200;
-    const truncated = scoredRows.length > MAX_RENDER;
-    const displayRows = truncated ? scoredRows.slice(0, MAX_RENDER) : scoredRows;
+    if (badge) badge.textContent = `AI 통합 추천`;
 
-    if (badge) badge.textContent = scoredRows.length === 0 ? '0건' : `${scoredRows.length}건`;
+    const buildHtml = (title, rows, keywords) => {
+        if(rows.length === 0) return '';
+        let html = `<div style="margin:1rem 0 0.5rem; font-weight:900; color:var(--t1); border-bottom:2px solid var(--bd2); padding-bottom:0.3rem;">
+                        ${title} <span style="font-size:0.75rem; color:var(--ac); font-weight:700; margin-left:0.5rem;">탐색 키워드: ${keywords.map(k => `[${escapeHtml(k)}]`).join(' ')}</span>
+                    </div>`;
+        html += rows.map(r => {
+            const code = escapeHtml(r.코드값 || '');
+            const desc = hl(r.상세설명 || '', keywords); 
+            const lv = Math.min(code.length, 5);
+            const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
+            return `<div class="jc-item">
+                <span class="jc-code lv${lv}">${code}</span>
+                <div>
+                    <span class="jc-level-tag">매칭도 ${r.score}</span><span class="jc-level-tag">${levelLabel}</span>
+                    <span class="jc-desc">${desc}</span>
+                </div>
+                <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
+            </div>`;
+        }).join('');
+        return html;
+    };
 
-    if (scoredRows.length === 0) {
-        resultsEl.innerHTML = `<div class="jc-empty"><b>[${keywords.join(', ')}]</b> 관련 결과를 찾을 수 없습니다.</div>`;
-        return;
+    let finalHtml = `<div style="padding: 0.6rem; background: var(--acG); color: var(--ac); font-size: 0.85rem; border-radius: 6px; margin-bottom: 0.8rem; font-weight:800; border-left:4px solid var(--ac);">
+        ✅ HiKorea 신고용 직종(직업) 및 업종(산업) 코드를 분리하여 추천합니다. 두 항목 모두 복사하여 제출하십시오.
+    </div>`;
+
+    finalHtml += buildHtml('👔 직업(직무) 코드 추천', jobRows, jobKw);
+    finalHtml += buildHtml('🏭 산업(사업장) 코드 추천', indRows, indKw);
+
+    if (jobRows.length === 0 && indRows.length === 0) {
+        finalHtml = `<div class="jc-empty"><b>[${[...jobKw, ...indKw].join(', ')}]</b> 관련 결과를 찾을 수 없습니다.</div>`;
     }
 
-    const html = displayRows.map(r => {
-        const code = escapeHtml(r.코드값 || '');
-        const desc = hl(r.상세설명 || '', keywords); 
-        const lv = Math.min(code.length, 5);
-        const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
-        return `<div class="jc-item">
-            <span class="jc-code lv${lv}">${code}</span>
-            <div>
-                <span class="jc-level-tag">매칭도 ${r.score}</span><span class="jc-level-tag">${levelLabel}</span>
-                <span class="jc-desc">${desc}</span>
-            </div>
-            <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
-        </div>`;
-    }).join('');
-
-    const topHtml = `<div style="padding: 0.6rem; background: var(--acG); color: var(--ac); font-size: 0.82rem; border-radius: 6px; margin-bottom: 0.8rem; font-weight:700; border-left:3px solid var(--ac);">🤖 AI 추출 탐색 키워드: ${keywords.map(k => '[' + escapeHtml(k) + ']').join(' ')}</div>`;
-    
-    resultsEl.innerHTML = topHtml + html;
+    resultsEl.innerHTML = finalHtml;
 }
 
-// ─── 직종코드 모달: 복사 ───
 function copyJobcode(btnEl, code) {
     if (!code) return;
     const done = () => {
@@ -1233,7 +1209,6 @@ function copyJobcode(btnEl, code) {
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code).then(done).catch(() => {
-            // fallback
             fallbackCopy(code);
             done();
         });
@@ -1254,7 +1229,6 @@ function fallbackCopy(text) {
     document.body.removeChild(ta);
 }
 
-// ─── 관할관서 하드코딩 DB (공식 15년차 실무 기준) ───
 const JUR_DB = {
     "서울특별시": {
         "관악구": "서울출입국·외국인청", "광진구": "서울출입국·외국인청", "강남구": "서울출입국·외국인청", "강동구": "서울출입국·외국인청", "동작구": "서울출입국·외국인청", "송파구": "서울출입국·외국인청", "성동구": "서울출입국·외국인청", "서초구": "서울출입국·외국인청", "용산구": "서울출입국·외국인청",
@@ -1435,7 +1409,6 @@ function showJurisdiction() {
     card.classList.add('active');
 }
 
-// ─── 관할관서 모달 ───
 function openJurisdictionModal() {
     const overlay = document.getElementById('jurisdictionModalOverlay');
     if (overlay) {
@@ -1448,7 +1421,6 @@ function closeJurisdictionModal() {
     if (overlay) overlay.classList.remove('active');
 }
 
-// ─── 검색 입력 이벤트 바인딩 (디바운스 200ms) ───
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('jcSearchInput');
     if (input) {
@@ -1460,7 +1432,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 모달 오버레이 바깥 클릭 시 닫기
     ['jobCodeModalOverlay', 'jurisdictionModalOverlay'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -1470,7 +1441,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ESC 키로 모달 닫기
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeJobCodeModal();
@@ -1480,7 +1450,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function submitAiAnalysis(actionType, btnEl) {
-    // ===== 정적 액션 가로채기: LLM 호출 없이 전용 모달 오픈 (환각 0, 비용 0) =====
     if (actionType === 'jurisdiction') {
         openJurisdictionModal();
         return;
@@ -2124,8 +2093,7 @@ function injectLocalData(arr) {
 
 async function loadVisaData() {
     const parse = (raw) => {
-        const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : null);
-        if (!arr || arr.length === 0) throw new Error('데이터가 비어 있습니다.');
+        const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
         return injectLocalData(arr);
     };
 
@@ -2147,6 +2115,9 @@ async function loadVisaData() {
 
     const API_URL = `${API_BASE}/api/visas`;
     try {
+        if (!API_BASE && (window.location.protocol === 'data:' || window.location.protocol === 'about:')) {
+             throw new Error("미리보기 환경에서는 로컬 API 호출이 제한됩니다.");
+        }
         console.log(`[Moonshot] Primary API fetch 시도: ${API_URL}`);
         const res = await fetch(API_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`API 응답 실패 (${res.status})`);
@@ -2160,6 +2131,9 @@ async function loadVisaData() {
 
     const fallbackUrl = './visa_data.json';
     try {
+        if (window.location.protocol === 'data:' || window.location.protocol === 'about:') {
+            throw new Error("미리보기 환경에서는 상대 경로(./)를 해석할 수 없습니다.");
+        }
         console.log(`[Moonshot] Fallback JSON fetch 시도: ${fallbackUrl}`);
         const res = await fetch(fallbackUrl, { cache: 'no-store' });
         if (!res.ok) throw new Error(`JSON 응답 실패 (${res.status})`);
@@ -2167,11 +2141,9 @@ async function loadVisaData() {
         console.log(`[Moonshot] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
         applySuccess(arr, '정적 백업');
     } catch (e) {
-        console.error(`[Moonshot] ❌ 최종 데이터 로드 실패:`, e.message);
-        dataReady = false;
-        if(rcEl) rcEl.textContent = '⚠ 데이터 로드 실패 — 서버 및 파일 상태를 확인하세요';
-        if(qEl) qEl.placeholder = '데이터 로드 실패';
-        setSearchEnabled(false);
+        console.error(`[Moonshot] ❌ 외부 데이터 로드 실패 (내장 데이터로 자동 전환):`, e.message);
+        const offlineData = parse([]);
+        applySuccess(offlineData, '오프라인 내장 데이터');
     }
 }
 
