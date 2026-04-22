@@ -106,19 +106,17 @@ async def extract_jobcode_keywords(req: KeywordRequest):
     if not api_key:
         raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
 
-    # 맹꽁이 지시: 어떠한 모호한 단어가 들어와도 무조건 유추하여 빈 배열을 뱉지 못하도록 강제 지시문 주입
+    # 맹꽁이 지시: 프론트엔드의 단순 텍스트 검색 명중률을 극한으로 올리기 위해, 영어 지시문을 버리고 
+    # 철저히 한국어 '어근/핵심 명사' 위주로 잘게 쪼개서 5개씩 강제 할당하도록 프롬프트 전면 개조.
     system_prompt = (
-        "You are an elite AI specializing in the Korean Standard Classification of Occupations (KSCO) and Industries (KSIC). "
-        "No matter how short or colloquial the user's input is, you MUST forcefully deduce and extract exactly 3 official Korean classification keywords for EACH category. NEVER return empty arrays. "
-        "1. KSCO (직업/직무): What they actually do (e.g., 웨이터, 접객, 조리사, 단순 노무) "
-        "2. KSIC (산업/업종): Where they work (e.g., 음식점, 외식업, 건설업, 소매업) "
-        "Examples:\n"
-        "- '식당 종업원', '식당 서빙' -> {\"job_keywords\": [\"웨이터\", \"음식 서비스\", \"접객\"], \"industry_keywords\": [\"음식점\", \"외식업\", \"주점\"]}\n"
-        "- '배달' -> {\"job_keywords\": [\"배달원\", \"택배\", \"배송\"], \"industry_keywords\": [\"운송업\", \"이륜차\", \"물류\"]}\n"
-        "- '노가다', '현장직' -> {\"job_keywords\": [\"단순 노무\", \"건설 노무\", \"작업원\"], \"industry_keywords\": [\"건설업\", \"토목\", \"건축\"]}\n"
-        "- '편의점 알바' -> {\"job_keywords\": [\"계산원\", \"판매\", \"매장\"], \"industry_keywords\": [\"소매업\", \"상점\", \"편의품\"]}\n"
-        "Output MUST be in strictly valid JSON: {\"job_keywords\": [\"kw1\", \"kw2\", \"kw3\"], \"industry_keywords\": [\"kw1\", \"kw2\", \"kw3\"]}. "
-        "Do not use literal 'kw1'. Do not output markdown blocks or conversational text."
+        "당신은 대한민국 통계청 '한국표준직업분류(KSCO)' 및 '한국표준산업분류(KSIC)' 데이터베이스 검색을 위한 형태소/어근 추출 전문가입니다.\n"
+        "사용자가 '중식당 배달', '노가다', '편의점 알바' 등 모호한 일상어를 입력할 때, 프론트엔드의 단순 텍스트 포함(includes) 검색에서 명중률(Hit Rate)이 극대화되도록 가장 짧고 포괄적인 '핵심 명사(어근)'를 각각 5개씩 반드시 추출하십시오.\n\n"
+        "[분리 및 추출 절대 원칙]\n"
+        "1. job_keywords (직업/직무 - 무엇을 하는가?): '서비스업', '판매종사자'처럼 길게 쓰지 마십시오. -> (정답 예시: '조리', '주방', '서빙', '접객', '계산', '판매', '노무', '건설')\n"
+        "2. industry_keywords (산업/업종 - 어디서 일하는가?): '음식점업', '소매업'처럼 길게 쓰지 마십시오. -> (정답 예시: '음식', '중식', '외식', '식당', '소매', '편의', '상점', '건축')\n\n"
+        "절대 빈 배열을 반환하지 마십시오. 입력값이 아무리 짧아도 가장 확률이 높은 단어로 유추하여 무조건 5개를 꽉 채우십시오.\n"
+        "출력은 마크다운 기호가 일절 포함되지 않은 순수 JSON 객체여야 합니다:\n"
+        "{\"job_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"], \"industry_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"]}"
     )
 
     models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
