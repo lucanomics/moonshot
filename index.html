@@ -347,6 +347,11 @@ body.searched .ft { opacity: 1; }
             <button class="cb" onclick="toggleAccordions(true)">접기</button>
             <button class="cb" onclick="toggleAccordions(false)">펼치기</button>
         </div>
+
+        <div class="qa-main" id="qaMain">
+            <button class="qa-btn" onclick="openJobCodeModal()">💼 취업신고용 업종/직종 코드 찾기</button>
+            <button class="qa-btn" onclick="openJurisdictionModal()">🏛 관할 출입국관서 조회</button>
+        </div>
         
         <div class="landing-hints" id="landingHints"></div>
     </div>
@@ -392,10 +397,6 @@ body.searched .ft { opacity: 1; }
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     직종/산업 코드 검색 모달 (정적 DB 기반, LLM 호출 없음)
-     데이터 출처: 통계청_산업직업분류_20250901 (3,937건)
-     ═══════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="jobCodeModalOverlay">
     <div class="modal-box" style="max-width: 720px;">
         <div class="modal-header">
@@ -428,9 +429,7 @@ body.searched .ft { opacity: 1; }
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     관할관서 안내 모달 (정적 안내, API 호출 없음)
-     ═══════════════════════════════════════════════════════════════════ -->
+
 <div class="modal-overlay" id="jurisdictionModalOverlay">
     <div class="modal-box" style="max-width: 560px;">
         <div class="modal-header">
