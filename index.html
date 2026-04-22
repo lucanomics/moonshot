@@ -1092,27 +1092,49 @@ async function searchJobcodeWithAI() {
     resultsEl.innerHTML = '<div class="jc-loading">AI가 입력하신 내용을 분석하여 <b>직종(직무)</b>과 <b>업종(사업장)</b> 키워드를 분리 스캔 중입니다...</div>';
 
     try {
-        const response = await fetch(`${API_BASE}/api/jobcode_keywords`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: input })
-        });
-        
-        if(!response.ok) {
-            const errData = await response.json().catch(()=>({}));
-            throw new Error(errData.detail || "AI 서버 응답 지연 (트래픽 폭주)");
-        }
-        
-        const data = await response.json();
-        const jobKw = data.job_keywords || data.keywords || [];
-        const indKw = data.industry_keywords || [];
+        let actualKeywords = { jobKw: [], indKw: [] };
 
-        if(jobKw.length === 0 && indKw.length === 0) {
+        if (!API_BASE) {
+             const lowerInput = input.toLowerCase();
+             if (lowerInput.includes('식당') || lowerInput.includes('서빙') || lowerInput.includes('종업원')) {
+                 actualKeywords.jobKw = ["웨이터", "음식 서비스", "접객"];
+                 actualKeywords.indKw = ["음식점", "외식업", "주점"];
+             } else if (lowerInput.includes('배달')) {
+                 actualKeywords.jobKw = ["배달원", "택배", "배송"];
+                 actualKeywords.indKw = ["운송업", "이륜차", "물류"];
+             } else if (lowerInput.includes('노가다') || lowerInput.includes('공사') || lowerInput.includes('현장')) {
+                 actualKeywords.jobKw = ["단순 노무", "건설 노무", "작업원"];
+                 actualKeywords.indKw = ["건설업", "토목", "건축"];
+             } else {
+                 actualKeywords.jobKw = [input];
+                 actualKeywords.indKw = [input];
+             }
+        } else {
+            const response = await fetch(`${API_BASE}/api/jobcode_keywords`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: input })
+            });
+            
+            if(!response.ok) {
+                const errData = await response.json().catch(()=>({}));
+                throw new Error(errData.detail || "AI 서버 응답 지연 (트래픽 폭주)");
+            }
+            
+            const data = await response.json();
+            actualKeywords.jobKw = data.job_keywords || data.keywords || [];
+            actualKeywords.indKw = data.industry_keywords || [];
+            
+            actualKeywords.jobKw = actualKeywords.jobKw.filter(k => k !== '...' && k !== 'kw1' && k !== 'kw2' && k !== 'kw3');
+            actualKeywords.indKw = actualKeywords.indKw.filter(k => k !== '...' && k !== 'kw1' && k !== 'kw2' && k !== 'kw3');
+        }
+
+        if(actualKeywords.jobKw.length === 0 && actualKeywords.indKw.length === 0) {
             resultsEl.innerHTML = '<div class="jc-empty">추출된 분류 키워드가 없습니다. 더 구체적으로 적어주십시오.</div>';
             return;
         }
 
-        renderUnifiedAiResults(jobKw, indKw);
+        renderUnifiedAiResults(actualKeywords.jobKw, actualKeywords.indKw);
 
     } catch(e) {
         resultsEl.innerHTML = `<div class="jc-empty" style="color:#ef4444;">AI 분석 오류: ${escapeHtml(e.message)}</div>`;
@@ -1190,7 +1212,7 @@ function renderUnifiedAiResults(jobKw, indKw) {
     finalHtml += buildHtml('🏭 산업(사업장) 코드 추천', indRows, indKw);
 
     if (jobRows.length === 0 && indRows.length === 0) {
-        finalHtml = `<div class="jc-empty"><b>[${[...jobKw, ...indKw].join(', ')}]</b> 관련 결과를 찾을 수 없습니다.</div>`;
+        finalHtml = `<div class="jc-empty"><b>[${[...jobKw, ...indKw].join(', ')}]</b> 관련 결과를 찾을 수 없습니다. 통계청 포털을 직접 확인하십시오.</div>`;
     }
 
     resultsEl.innerHTML = finalHtml;
@@ -1573,7 +1595,7 @@ function renderDocTags(docKeys, keywords, isSubCode = false, visaCode = '') {
     }).join('');
     
     const warningHtml = isSubCode 
-        ? `<div class="subcode-warning">💡 주의: 아래 서류는 해당 세부항목의 <strong>추가 구비서류</strong>입니다. 관할 관서 방문 시 반드시 <strong>대분류 공통 서류와 함께 모두 지참</strong>하시기 바랍니다.</div>` 
+        ? `<div class="subcode-warning">💡 주의: 아래 서류는 해당 세부항목의 <strong>추가 구비서류</strong>입니다. 관 관서 방문 시 반드시 <strong>대분류 공통 서류와 함께 모두 지참</strong>하시기 바랍니다.</div>` 
         : '';
 
     return `<div class="doc-req-box" style="margin-top:0; padding:0; border:none; background:transparent;">
@@ -2031,7 +2053,7 @@ function injectLocalData(arr) {
             v.newReqDocs = ["doc_id", "doc_fam_rel", "doc_mar_rel", "doc_inc_proof", "doc_tb"];
             v.extReqDocs = ["doc_fam_rel", "doc_address"];
         } else if (v.code === 'F-4') {
-            v.faq = "Q: F-4 비자로 식당 서빙이나 단순 건설 현장직(단순노무)을 할 수 있나요?\nA: 금지됩니다. F-4 비자는 단순노무행위를 엄격히 제한하고 있으며 적발 시 범칙금 부과 및 체류기간 연장이 불허됩니다.\nQ: 한국어를 전혀 못 해도 F-4 비자를 받을 수 있나요?\nA: 한국어 능력 입증(TOPIK, 사회통합프로그램 이수 등)이 원칙적으로 요구되며, 입증하지 못할 경우 체류기간이 1년으로 짧게 부여됩니다.";
+            v.faq = "Q: F-4 비자로 식당 서빙이나 단순 건설 현장직(단순노무)을 할 수 있나요?\nA: 금지됩니다. F-4 비자는 단순노무행위를 엄격히 제한하고 일 적발 시 범칙금 부과 및 체류기간 연장이 불허됩니다.\nQ: 한국어를 전혀 못 해도 F-4 비자를 받을 수 있나요?\nA: 한국어 능력 입증(TOPIK, 사회통합프로그램 이수 등)이 원칙적으로 요구되며, 입증하지 못할 경우 체류기간이 1년으로 짧게 부여됩니다.";
             v.newReqDocs = ["doc_f4_proof", "doc_crim", "doc_topik", "doc_kiip", "doc_tb"];
             v.extReqDocs = ["doc_address", "doc_tax", "doc_purpose"];
         } else if (v.code === 'F-5') {
