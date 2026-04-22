@@ -349,12 +349,42 @@ body.searched .ft { opacity: 1; }
         </div>
 
         <style>
-            .qa-btn {
-                padding: 15px 30px; /* 맹꽁이 너를 위해 적당히 키워놨다 */
-                font-size: 16px;
-                cursor: pointer;
-                border-radius: 8px; /* 모서리도 살짝 굴려주면 훨씬 보기 좋지 */
-            }
+/* Quick Actions Main - 버튼 크기 튜닝 버전 */
+.qa-main { 
+    display: flex; 
+    gap: 0.8rem; /* 버튼 사이 간격도 쪼끔 더 넓혔다 */
+    justify-content: center; 
+    margin-top: 1.8rem; 
+    transition: opacity 0.4s; 
+    flex-wrap: wrap; 
+}
+
+.qa-btn { 
+    background: var(--bg1); 
+    border: 1px solid var(--bd); 
+    /* 원래 0.6rem 1.2rem이었던 걸 0.8rem 1.5rem으로 키웠다! */
+    padding: 0.8rem 1.5rem; 
+    border-radius: 10px; /* 모서리도 쪼끔 더 부드럽게 10px로 수정 */
+    font-weight: 800; 
+    /* 글자 크기도 0.85rem에서 0.95rem으로 키웠으니 눈에 잘 띌 거다 */
+    font-size: 0.95rem; 
+    color: var(--t2); 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    box-shadow: var(--sh1); 
+    font-family: var(--ff) !important; 
+}
+
+.qa-btn:hover { 
+    background: var(--acL); 
+    border-color: var(--ac); 
+    color: var(--ac); 
+    transform: translateY(-3px); /* 호버 시 쪼끔 더 역동적으로 올라가게 함 */
+    box-shadow: var(--shD); 
+}
         </style>
 
 <div class="qa-main" id="qaMain">
