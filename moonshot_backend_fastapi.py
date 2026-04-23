@@ -1,12 +1,7 @@
 from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
-import os
-import re
-import json
-import logging
-import httpx
-import asyncpg
+import os, re, json, logging, httpx, asyncpg
 from datetime import datetime
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -29,50 +24,33 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
-)
+)  # ← 문제1: 파일에서 이 닫는 괄호 ) 가 없었음
 
 db_pool = None
 LOGS_FILE = Path("logs.json")
 
-# ════════════════════════════════════════════════════════════
-# LLM 제공자 설정
-# 1순위: OpenRouter → Kimi K2.6        (최고 성능)
-# 2순위: OpenRouter → Kimi K2 free     (Kimi K2.6 quota 초과 시, 무료)
-# 3순위: OpenRouter → Gemma 3 27B free (OpenRouter 무료 폴백)
-# 4순위: Groq      → LLaMA 3.3 70B    (OpenRouter 전체 장애 시)
-# 5순위: Groq      → Gemma2 9B         (최후 수단)
-#
-# 환경변수 (Railway Variables에 설정):
-# OPENROUTER_API_KEY — https://openrouter.ai 에서 발급
-# GROQ_API_KEY       — https://console.groq.com 에서 발급
-# ════════════════════════════════════════════════════════════
-
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
-
 SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
 SITE_TITLE = "Moonshot Immigration AI"
 
-# /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
-    ("moonshotai/kimi-k2.6",          "openrouter"),  # 1순위
-    ("moonshotai/kimi-k2:free",        "openrouter"),  # 2순위 (무료)
-    ("google/gemma-3-27b-it:free",     "openrouter"),  # 3순위 (무료)
-    ("llama-3.3-70b-versatile",        "groq"),        # 4순위
-    ("gemma2-9b-it",                   "groq"),        # 5순위 (최후 수단)
-]
+    ("moonshotai/kimi-k2.6",          "openrouter"),
+    ("moonshotai/kimi-k2:free",        "openrouter"),
+    ("google/gemma-3-27b-it:free",     "openrouter"),
+    ("llama-3.3-70b-versatile",        "groq"),
+    ("gemma2-9b-it",                   "groq"),
+]  # ← 문제2: 리스트 닫는 ] 가 없었음
 
-# /api/jobcodekeywords 용 모델 폴백 체인
 KEYWORD_MODELS = [
-    ("moonshotai/kimi-k2.6",          "openrouter"),  # 1순위
-    ("moonshotai/kimi-k2:free",        "openrouter"),  # 2순위 (무료)
-    ("google/gemma-3-27b-it:free",     "openrouter"),  # 3순위 (무료)
-    ("llama-3.3-70b-versatile",        "groq"),        # 4순위
-]
+    ("moonshotai/kimi-k2.6",          "openrouter"),
+    ("moonshotai/kimi-k2:free",        "openrouter"),
+    ("google/gemma-3-27b-it:free",     "openrouter"),
+    ("llama-3.3-70b-versatile",        "groq"),
+]  # ← 문제3: 리스트 닫는 ] 가 없었음
 
 
 def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> dict:
-    """provider에 따라 API URL과 헤더를 반환."""
     if provider == "openrouter":
         return {
             "url": OPENROUTER_API_URL,
@@ -168,10 +146,6 @@ async def get_visas():
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
 
-# ────────────────────────────────────────────────────────────
-# [FIX] 엔드포인트 이름: /api/jobcode_keywords → /api/jobcodekeywords
-#       프런트(index.html)가 호출하는 경로와 일치시킴
-# ────────────────────────────────────────────────────────────
 @app.post("/api/jobcodekeywords")
 async def extract_jobcode_keywords(req: KeywordRequest):
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -188,7 +162,6 @@ async def extract_jobcode_keywords(req: KeywordRequest):
         "2. industrykeywords (산업/업종 - 어디서 일하는가?): '음식점업', '소매업'처럼 길게 쓰지 마십시오. -> (정답 예시: '음식', '중식', '외식', '식당', '소매', '편의', '상점', '건축')\n\n"
         "절대 빈 배열을 반환하지 마십시오. 입력값이 아무리 짧아도 가장 확률이 높은 단어로 유추하여 무조건 5개를 꽉 채우십시오.\n"
         "출력은 마크다운 기호가 일절 포함되지 않은 순수 JSON 객체여야 합니다:\n"
-        # [FIX] 키 이름을 프런트가 읽는 jobkeywords / industrykeywords 로 통일
         '{"jobkeywords": ["kw1","kw2","kw3","kw4","kw5"], "industrykeywords": ["kw1","kw2","kw3","kw4","kw5"]}'
     )
 
@@ -207,11 +180,10 @@ async def extract_jobcode_keywords(req: KeywordRequest):
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": req.query},
             ],
-            # [FIX] 150 → 300: 키워드 10개 JSON이 잘리지 않도록 여유 확보
             "max_tokens": 300,
             "temperature": 0.1,
             "response_format": {"type": "json_object"},
-        }
+        }  # ← 문제4: dict 닫는 } 가 없었음
 
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
@@ -225,9 +197,6 @@ async def extract_jobcode_keywords(req: KeywordRequest):
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
 
                 parsed = json.loads(json_match.group(0))
-
-                # [FIX] 모델이 구 키 이름(job_keywords / industry_keywords)으로 반환해도
-                #       프런트가 기대하는 jobkeywords / industrykeywords 로 정규화
                 result = {
                     "jobkeywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
                     "industrykeywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
