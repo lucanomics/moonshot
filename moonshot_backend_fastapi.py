@@ -199,9 +199,11 @@ async def extract_jobcodekeywords(req: KeywordRequest):
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
 
                 parsed = json.loads(json_match.group(0))
+                
+                # 프론트엔드와 맞추기 위해 반환 키를 job_keywords, industry_keywords로 변경
                 result = {
-                    "jobkeywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
-                    "industrykeywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
+                    "job_keywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
+                    "industry_keywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
                 }
 
                 logger.info(f"[jobcodekeywords] 성공 — provider={provider}, model={model}")
