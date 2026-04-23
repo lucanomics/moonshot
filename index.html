@@ -1101,6 +1101,7 @@ async function searchJobcodeWithAI() {
                  actualKeywords.indKw = [input];
              }
         } else {
+            // 수정점 1: fetch URL을 백엔드 라우트와 동일하게 /api/jobcodekeywords 로 맞춤 (언더스코어 제거)
             const response = await fetch(`${API_BASE}/api/jobcodekeywords`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1113,8 +1114,10 @@ async function searchJobcodeWithAI() {
             }
             
             const data = await response.json();
-            actualKeywords.jobKw = data.job_keywords || data.keywords || [];
-            actualKeywords.indKw = data.industry_keywords || [];
+            
+            // 수정점 2: 백엔드 수정 사항(job_keywords) 적용 및 기존 키(jobkeywords) 폴백 유지
+            actualKeywords.jobKw = data.job_keywords || data.jobkeywords || data.keywords || [];
+            actualKeywords.indKw = data.industry_keywords || data.industrykeywords || [];
             
             actualKeywords.jobKw = actualKeywords.jobKw.filter(k => k !== '...' && !k.startsWith('kw'));
             actualKeywords.indKw = actualKeywords.indKw.filter(k => k !== '...' && !k.startsWith('kw'));
@@ -1131,7 +1134,7 @@ async function searchJobcodeWithAI() {
         spinner.style.display = 'none';
     }
 }
-
+    
 function renderUnifiedAiResults(jobKw, indKw) {
     const jobBox = document.getElementById('jcJobResults');
     const indBox = document.getElementById('jcIndResults');
