@@ -36,11 +36,10 @@ SITE_TITLE = "Moonshot Immigration AI"
 
 # /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
-    ("moonshotai/kimi-k2",            "openrouter"),  # 1순위
-    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위 (무료)
-    ("google/gemma-3-27b-it:free",    "openrouter"),  # 3순위 (무료)
-    ("llama-3.3-70b-versatile",       "groq"),        # 4순위
-    ("gemma2-9b-it",                  "groq"),        # 5순위 (최후 수단)
+    ("moonshotai/kimi-k2:free",       "openrouter"),  
+    ("google/gemma-3-27b-it:free",    "openrouter"),  
+    ("llama-3.3-70b-versatile",       "groq"),        
+    ("gemma2-9b-it",                  "groq"),        
 ]
 
 # /api/jobcodekeywords 용 모델 폴백 체인
