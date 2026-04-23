@@ -164,7 +164,7 @@ async def get_visas():
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
 
-@app.post("/api/jobcode_keywords")
+@app.post("/api/jobcodekeywords")
 async def extract_jobcode_keywords(req: KeywordRequest):
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
     groq_key       = os.environ.get("GROQ_API_KEY", "")
@@ -216,7 +216,11 @@ async def extract_jobcode_keywords(req: KeywordRequest):
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
 
                 logger.info(f"[jobcode_keywords] 성공 — provider={provider}, model={model}")
-                return json.loads(json_match.group(0))
+                parsed = json.loads(json_match.group(0))
+                return {
+                    "jobkeywords":      parsed.get("job_keywords") or parsed.get("jobkeywords", []),
+                    "industrykeywords": parsed.get("industry_keywords") or parsed.get("industrykeywords", [])
+                }
 
         except Exception as e:
             logger.error(f"[{provider}/{model}] 직종 키워드 추출 실패: {e}")
