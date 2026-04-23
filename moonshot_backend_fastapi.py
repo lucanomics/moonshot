@@ -34,6 +34,63 @@ app.add_middleware(
 db_pool = None
 LOGS_FILE = Path("logs.json")
 
+# ════════════════════════════════════════════════════════════
+#  LLM 제공자 설정
+#  1순위: OpenRouter → Kimi K2.6  (미국 서버, HuggingFace 동일 가중치)
+#  2순위: OpenRouter → Kimi K2 free (Kimi 유료 다운 시)
+#  3순위: Groq       → LLaMA 3.3 70B (OpenRouter 장애 시)
+#  4순위: Groq       → Gemma2 9B (최후 수단)
+#
+#  환경변수:
+#    OPENROUTER_API_KEY  — https://openrouter.ai 에서 발급
+#    GROQ_API_KEY        — https://console.groq.com 에서 발급
+# ════════════════════════════════════════════════════════════
+
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
+
+SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
+SITE_TITLE = "Moonshot Immigration AI"
+
+# 우선순위 순서로 정의 — (model_id, provider)
+ASK_MODELS = [
+    ("moonshotai/kimi-k2.6",         "openrouter"),  # 1순위
+    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위
+    ("llama-3.3-70b-versatile",       "groq"),        # 3순위
+    ("gemma2-9b-it",                  "groq"),        # 4순위 (최후 수단)
+]
+
+KEYWORD_MODELS = [
+    ("moonshotai/kimi-k2.6",         "openrouter"),  # 1순위
+    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위
+    ("llama-3.3-70b-versatile",       "groq"),        # 3순위
+]
+
+
+def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> dict:
+    """provider에 따라 API URL과 헤더를 반환."""
+    if provider == "openrouter":
+        return {
+            "url": OPENROUTER_API_URL,
+            "headers": {
+                "Authorization": f"Bearer {openrouter_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": SITE_URL,
+                "X-Title": SITE_TITLE,
+            }
+        }
+    elif provider == "groq":
+        return {
+            "url": GROQ_API_URL,
+            "headers": {
+                "Authorization": f"Bearer {groq_key}",
+                "Content-Type": "application/json",
+            }
+        }
+    else:
+        raise ValueError(f"알 수 없는 provider: {provider}")
+
+
 @app.on_event("startup")
 async def startup_event():
     global db_pool
@@ -48,20 +105,24 @@ async def startup_event():
         logger.error(f"Database connection failed: {e}")
         logger.warning("DB 연결 실패 — JSON 폴백 모드로 실행")
 
+
 @app.on_event("shutdown")
 async def shutdown_event():
     if db_pool:
         await db_pool.close()
         logger.info("PostgreSQL 커넥션 풀 종료.")
 
+
 class AskRequest(BaseModel):
     question: str
     consent: bool
     context: Optional[str] = ""
-    lang: Optional[str] = "ko"  
+    lang: Optional[str] = "ko"
+
 
 class KeywordRequest(BaseModel):
     query: str
+
 
 def classify_category(question: str) -> str:
     q = question.lower()
@@ -72,6 +133,7 @@ def classify_category(question: str) -> str:
     if any(w in q for w in ["건강보험", "건보", "보험료"]): return "nhis"
     if any(w in q for w in ["영주권", "국적", "f-5", "귀화"]): return "permanent"
     return "general"
+
 
 def append_log(category: str, success: bool):
     try:
@@ -85,10 +147,11 @@ def append_log(category: str, success: bool):
     except Exception as e:
         logger.error(f"로그 기록 실패: {e}")
 
+
 @app.get("/api/visas")
 async def get_visas():
     if not db_pool:
-        return JSONResponse(status_code=200, content={"data": []}) 
+        return JSONResponse(status_code=200, content={"data": []})
     try:
         async with db_pool.acquire() as conn:
             rows = await conn.fetch("SELECT data FROM visas_json LIMIT 1")
@@ -100,14 +163,15 @@ async def get_visas():
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
+
 @app.post("/api/jobcode_keywords")
 async def extract_jobcode_keywords(req: KeywordRequest):
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=500, detail="GROQ_API_KEY가 설정되지 않았습니다.")
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    groq_key       = os.environ.get("GROQ_API_KEY", "")
 
-    # 맹꽁이 지시: 프론트엔드의 단순 텍스트 검색 명중률을 극한으로 올리기 위해, 영어 지시문을 버리고 
-    # 철저히 한국어 '어근/핵심 명사' 위주로 잘게 쪼개서 5개씩 강제 할당하도록 프롬프트 전면 개조.
+    if not openrouter_key and not groq_key:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY 또는 GROQ_API_KEY가 설정되지 않았습니다.")
+
     system_prompt = (
         "당신은 대한민국 통계청 '한국표준직업분류(KSCO)' 및 '한국표준산업분류(KSIC)' 데이터베이스 검색을 위한 형태소/어근 추출 전문가입니다.\n"
         "사용자가 '중식당 배달', '노가다', '편의점 알바' 등 모호한 일상어를 입력할 때, 프론트엔드의 단순 텍스트 포함(includes) 검색에서 명중률(Hit Rate)이 극대화되도록 가장 짧고 포괄적인 '핵심 명사(어근)'를 각각 5개씩 반드시 추출하십시오.\n\n"
@@ -119,10 +183,16 @@ async def extract_jobcode_keywords(req: KeywordRequest):
         "{\"job_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"], \"industry_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"]}"
     )
 
-    models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    for model, provider in KEYWORD_MODELS:
+        # 해당 provider의 키가 없으면 건너뜀
+        if provider == "openrouter" and not openrouter_key:
+            logger.warning(f"[{model}] OPENROUTER_API_KEY 없음 — 건너뜀")
+            continue
+        if provider == "groq" and not groq_key:
+            logger.warning(f"[{model}] GROQ_API_KEY 없음 — 건너뜀")
+            continue
 
-    for model in models:
+        config = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
             "model": model,
             "messages": [
@@ -133,50 +203,60 @@ async def extract_jobcode_keywords(req: KeywordRequest):
             "temperature": 0.1,
             "response_format": {"type": "json_object"}
         }
+
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
                 data = resp.json()
                 answer = data["choices"][0]["message"]["content"]
-                
+
                 json_match = re.search(r'\{.*\}', answer, flags=re.DOTALL)
                 if not json_match:
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
-                
-                clean_json = json_match.group(0)
-                return json.loads(clean_json)
-                
+
+                logger.info(f"[jobcode_keywords] 성공 — provider={provider}, model={model}")
+                return json.loads(json_match.group(0))
+
         except Exception as e:
-            logger.error(f"[{model}] 직종 키워드 추출 실패: {e}")
+            logger.error(f"[{provider}/{model}] 직종 키워드 추출 실패: {e}")
             continue
-            
+
     raise HTTPException(status_code=503, detail="AI 모델 응답 지연 또는 JSON 파싱 실패로 키워드를 추출할 수 없습니다.")
+
 
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    groq_key       = os.environ.get("GROQ_API_KEY", "")
+
+    if not openrouter_key and not groq_key:
         raise HTTPException(status_code=500, detail="서버 구성 오류: API 키가 설정되지 않았습니다.")
-        
+
     category = classify_category(req.question)
-    
+
     try:
         user_lang = detect(req.question)
     except Exception:
         user_lang = "ko"
-        
+
     system_prompt = f"""You are an elite Korean immigration law assistant.
 The user's query language appears to be '{user_lang}'.
 If it is not Korean, answer in the user's language, but accurately translate and explain the Korean legal terms.
-Always base your answer on the 2026 Korean Immigration Act and Visa Manuals. 
+Always base your answer on the 2026 Korean Immigration Act and Visa Manuals.
 Be direct, objective, and precise. DO NOT hallucinate. Do not use markdown blocks unless necessary.
 Context: {req.context}"""
 
-    models_to_try = ["llama-3.3-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768"]
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    for model_name, provider in ASK_MODELS:
+        # 해당 provider의 키가 없으면 건너뜀
+        if provider == "openrouter" and not openrouter_key:
+            logger.warning(f"[{model_name}] OPENROUTER_API_KEY 없음 — 건너뜀")
+            continue
+        if provider == "groq" and not groq_key:
+            logger.warning(f"[{model_name}] GROQ_API_KEY 없음 — 건너뜀")
+            continue
 
-    for model_name in models_to_try:
+        config = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
             "model": model_name,
             "messages": [
@@ -187,20 +267,24 @@ Context: {req.context}"""
             "temperature": 0.4,
             "top_p": 0.9,
         }
+
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+            async with httpx.AsyncClient(timeout=20.0) as client:
+                resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
                 data = resp.json()
                 answer = data["choices"][0]["message"]["content"]
+                logger.info(f"[ask] 성공 — provider={provider}, model={model_name}")
                 append_log(category, success=True)
                 return {"answer": answer}
+
         except Exception as e:
-            logger.error(f"[{model_name}] 호출 실패: {e}")
+            logger.error(f"[{provider}/{model_name}] 호출 실패: {e}")
             continue
-            
+
     append_log(category, success=False)
     raise HTTPException(status_code=503, detail="현재 AI 서버 트래픽 폭주로 응답할 수 없습니다. 잠시 후 시도하십시오.")
+
 
 @app.get("/")
 @app.get("/index.html")
@@ -208,10 +292,12 @@ async def serve_index():
     if os.path.exists("index.html"): return FileResponse("index.html")
     raise HTTPException(status_code=404, detail="index.html 파일을 찾을 수 없습니다.")
 
+
 @app.get("/ai.html")
 async def serve_ai():
     if os.path.exists("ai.html"): return FileResponse("ai.html")
     raise HTTPException(status_code=404, detail="ai.html 파일을 찾을 수 없습니다.")
+
 
 if __name__ == "__main__":
     import uvicorn
