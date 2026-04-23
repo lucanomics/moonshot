@@ -35,15 +35,16 @@ db_pool = None
 LOGS_FILE = Path("logs.json")
 
 # ════════════════════════════════════════════════════════════
-#  LLM 제공자 설정
-#  1순위: OpenRouter → Kimi K2.6  (미국 서버, HuggingFace 동일 가중치)
-#  2순위: OpenRouter → Kimi K2 free (Kimi 유료 다운 시)
-#  3순위: Groq       → LLaMA 3.3 70B (OpenRouter 장애 시)
-#  4순위: Groq       → Gemma2 9B (최후 수단)
+# LLM 제공자 설정
+# 1순위: OpenRouter → Kimi K2.6        (최고 성능)
+# 2순위: OpenRouter → Kimi K2 free     (Kimi K2.6 quota 초과 시, 무료)
+# 3순위: OpenRouter → Gemma 3 27B free (OpenRouter 무료 폴백)
+# 4순위: Groq      → LLaMA 3.3 70B    (OpenRouter 전체 장애 시)
+# 5순위: Groq      → Gemma2 9B         (최후 수단)
 #
-#  환경변수:
-#    OPENROUTER_API_KEY  — https://openrouter.ai 에서 발급
-#    GROQ_API_KEY        — https://console.groq.com 에서 발급
+# 환경변수 (Railway Variables에 설정):
+# OPENROUTER_API_KEY — https://openrouter.ai 에서 발급
+# GROQ_API_KEY       — https://console.groq.com 에서 발급
 # ════════════════════════════════════════════════════════════
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -52,18 +53,21 @@ GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
 SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
 SITE_TITLE = "Moonshot Immigration AI"
 
-# 우선순위 순서로 정의 — (model_id, provider)
+# /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
-    ("moonshotai/kimi-k2.6",         "openrouter"),  # 1순위
-    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위
-    ("llama-3.3-70b-versatile",       "groq"),        # 3순위
-    ("gemma2-9b-it",                  "groq"),        # 4순위 (최후 수단)
+    ("moonshotai/kimi-k2.6",          "openrouter"),  # 1순위
+    ("moonshotai/kimi-k2:free",        "openrouter"),  # 2순위 (무료)
+    ("google/gemma-3-27b-it:free",     "openrouter"),  # 3순위 (무료)
+    ("llama-3.3-70b-versatile",        "groq"),        # 4순위
+    ("gemma2-9b-it",                   "groq"),        # 5순위 (최후 수단)
 ]
 
+# /api/jobcodekeywords 용 모델 폴백 체인
 KEYWORD_MODELS = [
-    ("moonshotai/kimi-k2.6",         "openrouter"),  # 1순위
-    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위
-    ("llama-3.3-70b-versatile",       "groq"),        # 3순위
+    ("moonshotai/kimi-k2.6",          "openrouter"),  # 1순위
+    ("moonshotai/kimi-k2:free",        "openrouter"),  # 2순위 (무료)
+    ("google/gemma-3-27b-it:free",     "openrouter"),  # 3순위 (무료)
+    ("llama-3.3-70b-versatile",        "groq"),        # 4순위
 ]
 
 
@@ -77,7 +81,7 @@ def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> d
                 "Content-Type": "application/json",
                 "HTTP-Referer": SITE_URL,
                 "X-Title": SITE_TITLE,
-            }
+            },
         }
     elif provider == "groq":
         return {
@@ -85,7 +89,7 @@ def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> d
             "headers": {
                 "Authorization": f"Bearer {groq_key}",
                 "Content-Type": "application/json",
-            }
+            },
         }
     else:
         raise ValueError(f"알 수 없는 provider: {provider}")
@@ -156,7 +160,7 @@ async def get_visas():
         async with db_pool.acquire() as conn:
             rows = await conn.fetch("SELECT data FROM visas_json LIMIT 1")
             if rows:
-                return JSONResponse(content=json.loads(rows[0]['data']))
+                return JSONResponse(content=json.loads(rows[0]["data"]))
             else:
                 return JSONResponse(status_code=200, content={"data": []})
     except Exception as e:
@@ -164,6 +168,10 @@ async def get_visas():
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
 
+# ────────────────────────────────────────────────────────────
+# [FIX] 엔드포인트 이름: /api/jobcode_keywords → /api/jobcodekeywords
+#       프런트(index.html)가 호출하는 경로와 일치시킴
+# ────────────────────────────────────────────────────────────
 @app.post("/api/jobcodekeywords")
 async def extract_jobcode_keywords(req: KeywordRequest):
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -176,15 +184,15 @@ async def extract_jobcode_keywords(req: KeywordRequest):
         "당신은 대한민국 통계청 '한국표준직업분류(KSCO)' 및 '한국표준산업분류(KSIC)' 데이터베이스 검색을 위한 형태소/어근 추출 전문가입니다.\n"
         "사용자가 '중식당 배달', '노가다', '편의점 알바' 등 모호한 일상어를 입력할 때, 프론트엔드의 단순 텍스트 포함(includes) 검색에서 명중률(Hit Rate)이 극대화되도록 가장 짧고 포괄적인 '핵심 명사(어근)'를 각각 5개씩 반드시 추출하십시오.\n\n"
         "[분리 및 추출 절대 원칙]\n"
-        "1. job_keywords (직업/직무 - 무엇을 하는가?): '서비스업', '판매종사자'처럼 길게 쓰지 마십시오. -> (정답 예시: '조리', '주방', '서빙', '접객', '계산', '판매', '노무', '건설')\n"
-        "2. industry_keywords (산업/업종 - 어디서 일하는가?): '음식점업', '소매업'처럼 길게 쓰지 마십시오. -> (정답 예시: '음식', '중식', '외식', '식당', '소매', '편의', '상점', '건축')\n\n"
+        "1. jobkeywords (직업/직무 - 무엇을 하는가?): '서비스업', '판매종사자'처럼 길게 쓰지 마십시오. -> (정답 예시: '조리', '주방', '서빙', '접객', '계산', '판매', '노무', '건설')\n"
+        "2. industrykeywords (산업/업종 - 어디서 일하는가?): '음식점업', '소매업'처럼 길게 쓰지 마십시오. -> (정답 예시: '음식', '중식', '외식', '식당', '소매', '편의', '상점', '건축')\n\n"
         "절대 빈 배열을 반환하지 마십시오. 입력값이 아무리 짧아도 가장 확률이 높은 단어로 유추하여 무조건 5개를 꽉 채우십시오.\n"
         "출력은 마크다운 기호가 일절 포함되지 않은 순수 JSON 객체여야 합니다:\n"
-        "{\"job_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"], \"industry_keywords\": [\"kw1\",\"kw2\",\"kw3\",\"kw4\",\"kw5\"]}"
+        # [FIX] 키 이름을 프런트가 읽는 jobkeywords / industrykeywords 로 통일
+        '{"jobkeywords": ["kw1","kw2","kw3","kw4","kw5"], "industrykeywords": ["kw1","kw2","kw3","kw4","kw5"]}'
     )
 
     for model, provider in KEYWORD_MODELS:
-        # 해당 provider의 키가 없으면 건너뜀
         if provider == "openrouter" and not openrouter_key:
             logger.warning(f"[{model}] OPENROUTER_API_KEY 없음 — 건너뜀")
             continue
@@ -197,30 +205,36 @@ async def extract_jobcode_keywords(req: KeywordRequest):
             "model": model,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": req.query}
+                {"role": "user",   "content": req.query},
             ],
-            "max_tokens": 150,
+            # [FIX] 150 → 300: 키워드 10개 JSON이 잘리지 않도록 여유 확보
+            "max_tokens": 300,
             "temperature": 0.1,
-            "response_format": {"type": "json_object"}
+            "response_format": {"type": "json_object"},
         }
 
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
-                data = resp.json()
+                data   = resp.json()
                 answer = data["choices"][0]["message"]["content"]
 
-                json_match = re.search(r'\{.*\}', answer, flags=re.DOTALL)
+                json_match = re.search(r"\{.*\}", answer, flags=re.DOTALL)
                 if not json_match:
                     raise ValueError("JSON 객체를 파싱할 수 없습니다.")
 
-                logger.info(f"[jobcode_keywords] 성공 — provider={provider}, model={model}")
                 parsed = json.loads(json_match.group(0))
-                return {
-                    "jobkeywords":      parsed.get("job_keywords") or parsed.get("jobkeywords", []),
-                    "industrykeywords": parsed.get("industry_keywords") or parsed.get("industrykeywords", [])
+
+                # [FIX] 모델이 구 키 이름(job_keywords / industry_keywords)으로 반환해도
+                #       프런트가 기대하는 jobkeywords / industrykeywords 로 정규화
+                result = {
+                    "jobkeywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
+                    "industrykeywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
                 }
+
+                logger.info(f"[jobcodekeywords] 성공 — provider={provider}, model={model}")
+                return result
 
         except Exception as e:
             logger.error(f"[{provider}/{model}] 직종 키워드 추출 실패: {e}")
@@ -252,7 +266,6 @@ Be direct, objective, and precise. DO NOT hallucinate. Do not use markdown block
 Context: {req.context}"""
 
     for model_name, provider in ASK_MODELS:
-        # 해당 provider의 키가 없으면 건너뜀
         if provider == "openrouter" and not openrouter_key:
             logger.warning(f"[{model_name}] OPENROUTER_API_KEY 없음 — 건너뜀")
             continue
@@ -265,7 +278,7 @@ Context: {req.context}"""
             "model": model_name,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": req.question},
+                {"role": "user",   "content": req.question},
             ],
             "max_tokens": 2048,
             "temperature": 0.4,
@@ -276,7 +289,7 @@ Context: {req.context}"""
             async with httpx.AsyncClient(timeout=20.0) as client:
                 resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
-                data = resp.json()
+                data   = resp.json()
                 answer = data["choices"][0]["message"]["content"]
                 logger.info(f"[ask] 성공 — provider={provider}, model={model_name}")
                 append_log(category, success=True)
@@ -293,13 +306,15 @@ Context: {req.context}"""
 @app.get("/")
 @app.get("/index.html")
 async def serve_index():
-    if os.path.exists("index.html"): return FileResponse("index.html")
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
     raise HTTPException(status_code=404, detail="index.html 파일을 찾을 수 없습니다.")
 
 
 @app.get("/ai.html")
 async def serve_ai():
-    if os.path.exists("ai.html"): return FileResponse("ai.html")
+    if os.path.exists("ai.html"):
+        return FileResponse("ai.html")
     raise HTTPException(status_code=404, detail="ai.html 파일을 찾을 수 없습니다.")
 
 
