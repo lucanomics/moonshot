@@ -1101,7 +1101,7 @@ async function searchJobcodeWithAI() {
                  actualKeywords.indKw = [input];
              }
         } else {
-            const response = await fetch(`${API_BASE}/api/jobcode_keywords`, {
+            const response = await fetch(`${API_BASE}/api/jobcodekeywords`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: input })
