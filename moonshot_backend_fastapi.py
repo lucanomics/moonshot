@@ -44,7 +44,6 @@ ASK_MODELS = [
 
 # /api/jobcodekeywords 용 모델 폴백 체인
 KEYWORD_MODELS = [
-    ("moonshotai/kimi-k2",            "openrouter"),  # 1순위
     ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위 (무료)
     ("google/gemma-3-27b-it:free",    "openrouter"),  # 3순위 (무료)
     ("llama-3.3-70b-versatile",       "groq"),        # 4순위
@@ -148,7 +147,7 @@ async def get_visas():
 
 
 @app.post("/api/jobcodekeywords")
-async def extract_jobcode_keywords(req: KeywordRequest):
+async def extract_jobcodekeywords(req: KeywordRequest):
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
     groq_key       = os.environ.get("GROQ_API_KEY", "")
 
