@@ -309,7 +309,7 @@ CRITICAL RULES:
 [Provided Context]
 - RAG: {cached_public_visa_data}
 - RAG: {cached_public_job_data}
-- RAG: {realtime_law_context}"""
+- RAG: {realtime_law_context}
 
 [프론트엔드 제공 컨텍스트]:
 {req.context if req.context else "DATA MISSING"}
