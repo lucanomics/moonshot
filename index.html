@@ -3,50 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moonshot — 출입국 민원·비자 통합 검색</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌕</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <title>Paradiso 39 — 대한민국 39가지 체류자격, 하나의 플랫폼으로</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2246%22 fill=%22%231F6B5E%22/><g fill=%22%23C97A4A%22><circle cx=%2250%22 cy=%2250%22 r=%228%22/><ellipse cx=%2250%22 cy=%2228%22 rx=%227%22 ry=%2212%22/><ellipse cx=%2271%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(72 71 43)%22/><ellipse cx=%2263%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(144 63 68)%22/><ellipse cx=%2237%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-144 37 68)%22/><ellipse cx=%2229%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-72 29 43)%22/></g></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;1,6..96,400;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', system-ui, sans-serif;
-  --ff-logo: 'Jua', sans-serif;
+  /* Paradiso 39 — Beige + Emerald (Paradise) */
+  --ff: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ff-logo: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --ff-display: 'DM Sans', 'Pretendard Variable', sans-serif;
   --fs: clamp(14px, 1.35vw, 16px);
-  --bg0: #fafaf8; --bg1: #ffffff; --bg2: #f3f1ed; --bg3: #eae8e3;
-  --bgI: #ffffff; --bd: #d8d5cf; --bd2: #e8e5e0; --bd3: #d8d5cf;
-  --t1: #0d0d0c; --t2: #3a3835; --t3: #7a7772;
-  --ac: #0a5c47; --ac2: #084d3b;
-  --acG: rgba(10,92,71,0.08); --acL: #e8f5f1;
-  --cy: #0a5c47; --cyL: #e8f5f1;
-  --hlB: #fef9c3; --hlT: #713f12;
-  --cSh: #94a3b8; --cSt: #0a5c47; --cWk: #b45309;
-  --cIn: #0f766e; --cFm: #be185d; --cOt: #6d28d9;
-  --cDp: #475569; --cNh: #0f766e; --cFq: #dc2626; --cSc: #7c3aed;
-  --sh1: 0 1px 3px rgba(13,13,12,0.06);
-  --sh2: 0 4px 16px rgba(13,13,12,0.10);
-  --shG: 0 0 0 3px rgba(10,92,71,0.15);
-  --shD: 0 4px 16px rgba(13,13,12,0.12);
+
+  /* Brand tokens (light) */
+  --color-primary: #0EA37B;           /* vivid emerald — paradise */
+  --color-primary-ink: #085E48;
+  --color-primary-soft: #7DD8B8;
+  --color-accent:  #FF6B5B;           /* coral — sunrise */
+  --color-accent-deep: #E0513E;
+  --color-accent-soft: #FFB8A8;
+  --color-surface: #F4EDDC;           /* warm sand beige */
+  --color-surface-2: #EBE0C5;
+  --color-surface-dark: #0B2A24;
+  --color-text: #152823;
+  --color-text-muted: #5E5A4E;
+  --color-border: #D8CAB0;
+  --color-success: #0EA37B;
+  --color-warning: #E68A3A;
+  --color-error:   #E05B4A;
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-full: 9999px;
+  --shadow-card: 0 2px 12px rgba(31,107,94,0.10);
+
+  /* Mapped legacy vars → Paradiso tokens */
+  --bg0: #F4EDDC; --bg1: #FBF6EA; --bg2: #EBE0C5; --bg3: #DFD1B0;
+  --bgI: #FBF6EA; --bd: #D8CAB0; --bd2: #E2D6BA; --bd3: #D8CAB0;
+  --t1: #152823; --t2: #36443F; --t3: #5E5A4E;
+  --ac: #0EA37B; --ac2: #0A8264;
+  --acG: rgba(14,163,123,0.10); --acL: #D6F0E6;
+  --cy: #FF6B5B; --cyL: #FFE2DB;
+  --hlB: #FFE2DB; --hlT: #8A3426;
+  --cSh: #8FA69E; --cSt: #0EA37B; --cWk: #E68A3A;
+  --cIn: #0EA37B; --cFm: #A84A6B; --cOt: #6d28d9;
+  --cDp: #4A5954; --cNh: #0EA37B; --cFq: #E05B4A; --cSc: #7c3aed;
+  --sh1: 0 1px 3px rgba(11,42,36,0.07);
+  --sh2: 0 4px 18px rgba(11,42,36,0.12);
+  --shG: 0 0 0 3px rgba(255,107,91,0.25);
+  --shD: 0 10px 30px rgba(11,42,36,0.22);
 }
 [data-theme="dark"] {
-  --bg0: #111110; --bg1: #1a1917; --bg2: #222120; --bg3: #1a1917;
-  --bgI: #111110; --bd: #2e2d2b; --bd2: #252422; --bd3: #2e2d2b;
-  --t1: #e8e6e1; --t2: #9a9895; --t3: #5a5855;
-  --ac: #34d399; --ac2: #10b981;
-  --acG: rgba(52,211,153,0.10); --acL: #0d2a20;
-  --cy: #34d399; --cyL: #0d2a20;
-  --hlB: #3a2a00; --hlT: #fbbf24;
-  --cNh: #2dd4bf; --cFq: #fca5a5; --cSc: #c084fc;
-  --sh1: 0 1px 4px rgba(0,0,0,0.3);
-  --sh2: 0 8px 24px rgba(0,0,0,0.4);
-  --shG: 0 0 0 3px rgba(52,211,153,0.2);
-  --shD: 0 8px 24px rgba(0,0,0,0.5);
+  --bg0: #0B2A24; --bg1: #113B32; --bg2: #184B40; --bg3: #205A4E;
+  --bgI: #0B2A24; --bd: #2D5A50; --bd2: #224A41; --bd3: #2D5A50;
+  --t1: #F3EEDF; --t2: #C7BFA8; --t3: #8C8572;
+  --ac: #34D4A8; --ac2: #17B388;
+  --acG: rgba(52,212,168,0.14); --acL: #163E36;
+  --cy: #FF8B7A; --cyL: #3A1E1A;
+  --hlB: #3A1E1A; --hlT: #FFB5A5;
+  --cNh: #34D4A8; --cFq: #FF8B7A; --cSc: #c084fc;
+  --sh1: 0 1px 4px rgba(0,0,0,0.35);
+  --sh2: 0 8px 24px rgba(0,0,0,0.5);
+  --shG: 0 0 0 3px rgba(255,139,122,0.28);
+  --shD: 0 12px 32px rgba(0,0,0,0.55);
 }
 html { font-size: var(--fs); scroll-behavior: smooth; }
 body, input, button, textarea { font-family: var(--ff) !important; }
 body { background: transparent !important; color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: color 0.3s; }
 
-#starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.3s ease, opacity 2s ease; }
+#starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.6s ease, opacity 2s ease; }
+.hero-container::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--bg0) 10%, transparent), color-mix(in srgb, var(--bg0) 65%, transparent) 75%); pointer-events: none; z-index: -1; transition: opacity 0.6s; }
+body.searched .hero-container::before { opacity: 0; }
+.logo-sub { font-family: var(--ff-display, var(--ff)); }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); z-index: 50; }
 .header-inner { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 680px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
@@ -58,16 +86,35 @@ body.searched .logo-area { flex-direction: row; gap: 0.5rem; flex-shrink: 0; }
 body.searched .logo-svg { width: 36px; height: 36px; }
 .logo-text { display: flex; flex-direction: column; align-items: center; transition: all 0.7s ease; }
 body.searched .logo-text { align-items: flex-start; }
-.logo-brand { font-family: var(--ff-logo) !important; font-size: 3.4rem; font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; color: var(--t1); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+.logo-brand { font-family: var(--ff-logo) !important; font-size: 4.6rem; font-weight: 500; letter-spacing: -0.025em; line-height: 0.92; color: var(--color-primary-ink, #085E48); font-optical-sizing: auto; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); display: inline-flex; align-items: baseline; gap: 0.12em; }
+[data-theme="dark"] .logo-brand { color: var(--t1); }
+.logo-brand .logo-39 { font-style: italic; font-weight: 600; color: var(--color-accent, #FF6B5B); letter-spacing: -0.04em; font-feature-settings: "tnum" 1; margin-left: 0.05em; }
+.logo-area:hover .logo-svg .rocket-flyer { transform: translateY(-5px); }
+.logo-svg .rocket-flyer { transition: transform 0.6s cubic-bezier(0.34,1.56,0.64,1); }
 body.searched .logo-brand { font-size: 1.4rem; }
 .logo-sub { font-size: 0.7rem; font-weight: 500; color: var(--t3); letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.4s ease; }
 body.searched .logo-sub { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
 .rocket-flyer { transition: transform 0.1s; transform-origin: center; }
 .exhaust { opacity: 0; transition: opacity 0.2s ease-in-out; }
-body.launching .rocket-flyer { animation: moonshotLaunch 0.7s cubic-bezier(0.5,0,0.2,1) forwards; }
-body.launching .exhaust { opacity: 1; animation: flicker 0.1s infinite alternate; }
-@keyframes moonshotLaunch { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(150px,-150px) scale(0.5); opacity: 0; } }
-@keyframes flicker { from { transform: scale(0.9); opacity: 0.7; } to { transform: scale(1.1); opacity: 1; } }
+/* Anagram motion: Paradiso letters slide to Diaspora positions AND crossfade to target char.
+   Each .al span contains .src (Paradiso char, visible at rest) and .tgt (Diaspora char, visible mid-animation).
+   Neat linear motion (no Y scatter) so the mid-state reads cleanly as "Diaspora". */
+.logo-brand { perspective: 800px; }
+.logo-brand .al { display: inline-block; position: relative; transition: transform 0.75s cubic-bezier(0.65, 0, 0.28, 1), opacity 0.4s ease, filter 0.5s; will-change: transform, opacity; }
+.logo-brand .al .src, .logo-brand .al .tgt { display: inline-block; transition: opacity 0.45s ease 0.3s; }
+.logo-brand .al .tgt { position: absolute; left: 0; top: 0; opacity: 0; color: var(--color-accent); }
+.logo-brand .l39 { display: inline-block; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.5s; }
+body.anagram-run .logo-brand .al { transform: translate3d(var(--ax,0px), 0, 0); }
+body.anagram-run .logo-brand .al .src { opacity: 0; transition-delay: 0.25s; }
+body.anagram-run .logo-brand .al .tgt { opacity: 1; transition-delay: 0.5s; }
+body.anagram-run .logo-brand .l39 { transform: translateY(-8px) scale(0.75); opacity: 0; }
+body.launching .logo-brand .al { opacity: 0; transform: translate3d(var(--ax,0px), 10px, 0) scale(0.88); transition-duration: 0.45s; filter: blur(1px); }
+body.launching .logo-brand .l39 { opacity: 0; }
+body.searched .logo-brand .al, body.searched .logo-brand .l39 { opacity: 1; transform: none; filter: none; }
+body.searched .logo-brand .al .src { opacity: 1; }
+body.searched .logo-brand .al .tgt { opacity: 0; }
+/* Legacy exhaust class retained for SVG waves */
+.exhaust { opacity: 1; }
 .search-wrap { width: 100%; position: relative; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .search-wrap { max-width: 480px; flex: 1; min-width: 180px; }
 .sbar { position: relative; display: flex; align-items: center; background: var(--bgI); border: 1.5px solid var(--bd); border-radius: 8px; box-shadow: var(--sh1); transition: all 0.2s ease; z-index: 20; }
@@ -137,51 +184,218 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 [data-theme="dark"] .doc-chk-item.critical { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
 
 /* General Result List Styling */
-.rlist { display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 3rem; }
-.vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 8px; box-shadow: var(--sh1); transition: box-shadow 0.2s; animation: cIn 0.25s ease both; }
-.vc:hover { box-shadow: var(--sh2); }
-@keyframes cIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.vc-h { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--bg2); cursor: pointer; user-select: none; border-radius: 8px 8px 0 0; transition: background 0.15s; flex-wrap: wrap; }
-.vc-h:hover { background: color-mix(in srgb, var(--ac) 8%, var(--bg2)); }
-.bc { font-family: var(--ff); font-weight: 800; font-size: 0.82rem; color: var(--ac); background: var(--acL); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.03em; }
-.vt { font-weight: 700; font-size: 0.92rem; color: var(--t1); }
-.bp { font-size: 0.65rem; color: var(--tPt); background: var(--tPb); padding: 2px 7px; border-radius: 4px; white-space: nowrap; font-weight: 600; }
-.bn { font-size: 0.65rem; color: var(--t3); background: var(--bg3); padding: 2px 7px; border-radius: 4px; font-weight: 700; }
-.bd { font-size: 0.65rem; color: #065f46; background: #d1fae5; padding: 2px 7px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
+/* Apple-style search results:
+   - generous whitespace & breathing room
+   - soft 16px radius
+   - subtle lift-on-hover (no hard shadow pop)
+   - typographic hierarchy with refined weights and spacing
+   - staggered reveal animation */
+.rlist { display: flex; flex-direction: column; gap: 0.85rem; padding-bottom: 5rem; padding-top: 0.5rem; }
+.vc {
+    background: var(--bg1);
+    border: 1px solid var(--bd2);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), box-shadow 0.28s cubic-bezier(0.4,0,0.2,1), border-color 0.28s;
+    animation: cIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+    overflow: hidden;
+}
+[data-theme="dark"] .vc { box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.vc:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    border-color: color-mix(in srgb, var(--ac) 25%, var(--bd2));
+}
+[data-theme="dark"] .vc:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.3); }
+@keyframes cIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.vc-h {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.1rem 1.35rem;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 16px 16px 0 0;
+    transition: background 0.2s;
+    flex-wrap: wrap;
+}
+.vc-h:hover { background: color-mix(in srgb, var(--ac) 4%, transparent); }
+
+/* Visa code — monospace-feel tabular, stands out as the "product number" */
+.bc {
+    font-family: var(--ff-display), var(--ff);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--ac);
+    background: var(--acL);
+    padding: 5px 11px;
+    border-radius: 8px;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+}
+/* Visa name — editorial scale */
+.vt {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--t1);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+/* Sub-badges — subtler, smaller */
+.bp, .bn, .bd {
+    font-size: 0.7rem;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+.bp { color: var(--tPt); background: var(--tPb); }
+.bn { color: var(--t3); background: var(--bg3); font-weight: 700; }
+.bd { color: #065f46; background: #d1fae5; }
 [data-theme="dark"] .bd { color: #6ee7b7; background: #064e3b; }
-.tgl { margin-left: auto; color: var(--t3); font-size: 0.68rem; transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
-.vc.open .tgl { transform: rotate(180deg); }
-.vc-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1); }
+
+.tgl {
+    margin-left: auto;
+    color: var(--t3);
+    font-size: 0.75rem;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    padding: 0.4rem;
+    border-radius: 50%;
+}
+.vc.open .tgl { transform: rotate(180deg); background: color-mix(in srgb, var(--ac) 10%, transparent); color: var(--ac); }
+
+.vc-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.4,0,0.2,1); }
 .vc.open .vc-cw { grid-template-rows: 1fr; }
 .vc-c { overflow: hidden; }
-.vs { padding: 0.85rem 1rem; border-top: 1px solid var(--bd3); }
-.ai-cta { background: var(--acG); border-bottom: 1px solid var(--bd2); padding: 0.9rem 1rem; display: flex; justify-content: center; }
-.tl { display: inline-flex; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px; margin-bottom: 0.45rem; }
+.vs { padding: 1.2rem 1.35rem; border-top: 1px solid var(--bd3); }
+
+.ai-cta {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--ac) 8%, var(--bg2)) 0%, color-mix(in srgb, var(--cy, var(--ac)) 6%, var(--bg2)) 100%);
+    border-bottom: 1px solid var(--bd2);
+    padding: 1rem 1.35rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Content category labels — more refined */
+.tl {
+    display: inline-flex;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 0.65rem;
+}
 .tl-n { background: var(--tNb); color: var(--tNt); }
 .tl-e { background: var(--tEb); color: var(--tEt); }
-.tl-f { background: var(--tFb); color: var(--tFb); }
+.tl-f { background: var(--tFb); color: var(--tFt); }
 .tl-s { background: var(--tSb); color: var(--tSt); }
-.ct { font-size: 0.86rem; color: var(--t2); line-height: 1.65; white-space: pre-line; word-break: keep-all; }
-.data-date { font-size: 0.65rem; color: var(--t3); padding: 0.4rem 1rem; border-top: 1px dashed var(--bd3); text-align: right; }
-.ss { background: var(--bg2); border-top: 1px solid var(--bd3); padding-bottom: 0.5rem; }
-.ss-t { padding: 0.65rem 1rem 0.45rem; font-size: 0.72rem; font-weight: 800; color: var(--t3); display: flex; align-items: center; gap: 0.45rem; }
-.ss-t b { background: var(--tSb); color: var(--tSt); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; }
-.su { border-top: 1px solid var(--bd3); background: var(--bg1); margin: 0 0.5rem; border-radius: 6px; box-shadow: var(--sh1); margin-top: 0.4rem; overflow: hidden; }
-.su-h { display: flex; align-items: center; gap: 0.55rem; padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
-.su-h:hover { background: var(--bg0); }
-.s-c { font-size: 0.82rem; font-weight: 800; color: var(--ac); min-width: 3.8rem; }
-.s-n { font-size: 0.82rem; font-weight: 700; color: var(--t1); }
-.su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s cubic-bezier(0.4,0,0.2,1); background: var(--bg0); border-top: 1px dashed var(--bd3); }
+
+/* Body content — refined reading experience */
+.ct {
+    font-size: 0.92rem;
+    color: var(--t2);
+    line-height: 1.75;
+    white-space: pre-line;
+    word-break: keep-all;
+    letter-spacing: -0.005em;
+}
+
+.data-date {
+    font-size: 0.68rem;
+    color: var(--t3);
+    padding: 0.7rem 1.35rem;
+    border-top: 1px dashed var(--bd3);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+/* Sub-code section — keep visually quieter */
+.ss { background: color-mix(in srgb, var(--bg0) 50%, var(--bg2)); border-top: 1px solid var(--bd3); padding: 0.5rem 0 0.85rem; }
+.ss-t {
+    padding: 0.8rem 1.35rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--t3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.ss-t b {
+    background: var(--tSb);
+    color: var(--tSt);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+.su {
+    border-top: 1px solid var(--bd3);
+    background: var(--bg1);
+    margin: 0 0.85rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    margin-top: 0.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+.su:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+[data-theme="dark"] .su:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.su-h { display: flex; align-items: center; gap: 0.65rem; padding: 0.75rem 1.1rem; cursor: pointer; transition: background 0.15s; }
+.su-h:hover { background: color-mix(in srgb, var(--ac) 5%, transparent); }
+.s-c {
+    font-family: var(--ff-display), var(--ff);
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--ac);
+    min-width: 4rem;
+    letter-spacing: 0.01em;
+}
+.s-n {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--t1);
+    letter-spacing: -0.005em;
+}
+.su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1); background: var(--bg0); border-top: 1px dashed var(--bd3); }
 .su.open .su-cw { grid-template-rows: 1fr; }
 .su.open .tgl { transform: rotate(180deg); }
 .su-c { overflow: hidden; }
-.su-s { padding: 0.65rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.su-s { padding: 0.85rem 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 .su-s + .su-s { border-top: 1px dashed var(--bd3); }
-.badge-req { display: inline-block; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; margin-bottom: 0.3rem; }
+
+.badge-req {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0284c7;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+}
 [data-theme="dark"] .badge-req { background: #082f49; color: #7dd3fc; }
 
-mark.h { background: var(--hlB); color: var(--hlT); padding: 0.05em 0.2em; border-radius: 3px; font-weight: 700; }
-.es { text-align: center; padding: 3.5rem 1rem; }
+mark.h {
+    background: color-mix(in srgb, var(--ac) 22%, transparent);
+    color: var(--ac);
+    padding: 0.08em 0.3em;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.es { text-align: center; padding: 4.5rem 1rem; }
 .es-t { font-weight: 800; font-size: 1.05rem; color: var(--t2); margin-bottom: 0.35rem; }
 .es-d { font-size: 0.88rem; color: var(--t3); line-height: 1.6; }
 .ft { text-align: center; padding: 1.5rem 1rem; font-size: 0.68rem; color: var(--t3); border-top: 1px solid var(--bd); max-width: 1160px; margin: 0 auto; opacity: 0; transition: opacity 0.4s ease 0.3s; }
@@ -189,6 +403,7 @@ body.searched .ft { opacity: 1; }
 .ft-logo { font-family: var(--ff-logo) !important; font-size: 0.8rem; font-weight: 400; color: var(--t3); }
 .ai-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--ac); color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.1rem; font-size: 0.83rem; font-weight: 700; font-family: var(--ff) !important; box-shadow: var(--sh2); cursor: pointer; z-index: 1000; transition: background 0.2s, transform 0.2s; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
 .ai-fab:hover { background: var(--ac2); transform: translateY(-1px); }
+.ai-fab .fab-spark { color: var(--color-accent, #C97A4A); font-size: 0.95rem; line-height: 1; }
 
 /* Common Modal Styles */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s; padding: 1rem; }
@@ -304,44 +519,70 @@ body.searched .ft { opacity: 1; }
 }
     </style>
 </head>
-<body class="landing" data-theme="dark">
+<body class="landing" data-theme="light">
 <canvas id="starCanvas"></canvas>
-<button id="mainThemeBtn" onclick="toggleTheme()" style="position:fixed; top:1.2rem; right:1.2rem; z-index:100; background:var(--bg2); border:1px solid var(--bd); color:var(--t1); padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:700; transition:all 0.2s;">🌗 테마 변경</button>
+
+<!-- Top-right controls: City picker + Theme toggle -->
+<div id="topCtrls" style="position:fixed; top:1.2rem; right:1.2rem; z-index:100; display:flex; gap:0.5rem; align-items:center;">
+    <div id="cityWrap" style="position:relative;">
+        <button id="cityBtn" onclick="toggleCityMenu()" title="위치 설정" style="background:var(--bg2); border:1px solid var(--bd); color:var(--t1); padding:0.5rem 0.9rem; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.2s; font-family:var(--ff); display:flex; align-items:center; gap:0.5rem; font-size:0.85rem;">
+            <span id="cityBtnFlag" style="font-size:0.95rem;">🌐</span>
+            <span id="cityBtnLabel">Seoul</span>
+            <span id="cityBtnTime" style="font-family:var(--ff-display); font-variant-numeric:tabular-nums; color:var(--color-accent, var(--ac)); font-weight:700; letter-spacing:0.02em;">—:—</span>
+        </button>
+        <div id="cityMenu" style="display:none; position:absolute; top:calc(100% + 0.5rem); right:0; width:320px; max-height:70vh; overflow-y:auto; background:var(--bg1); border:1px solid var(--bd); border-radius:10px; box-shadow:var(--sh2, 0 12px 32px rgba(0,0,0,0.25)); padding:0.6rem; backdrop-filter:blur(12px);">
+            <input type="text" id="citySearch" placeholder="도시 검색..." oninput="filterCities(this.value)" style="width:100%; box-sizing:border-box; padding:0.55rem 0.8rem; background:var(--bg0); border:1px solid var(--bd); border-radius:6px; color:var(--t1); font-family:var(--ff); font-size:0.88rem; margin-bottom:0.5rem; outline:none;">
+            <div id="cityList"></div>
+        </div>
+    </div>
+    <button id="mainThemeBtn" onclick="toggleTheme()" style="background:var(--bg2); border:1px solid var(--bd); color:var(--t1); padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:700; transition:all 0.2s;">◐ 테마 변경</button>
+</div>
 
 <div class="hero-container" id="hero">
     <div class="header-inner">
 
         <div class="logo-area" onclick="if(document.body.classList.contains('searched')) resetToLanding()">
-            <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="85" cy="25" r="1.5" fill="#cbd5e1" opacity=".5"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite"/></circle>
-                <circle cx="95" cy="50" r="1.2" fill="#94a3b8" opacity=".4"/>
-                <circle cx="25" cy="40" r="2" fill="#cbd5e1" opacity=".3"/>
-                <path d="M 30,90 A 45,45 0 1,0 90,30 A 55,55 0 1,1 30,90 Z" fill="url(#gMoon)" opacity=".95"/>
-                <g class="rocket-flyer">
-                    <g transform="translate(48, 72) rotate(45)">
-                        <rect x="-8" y="-18" width="16" height="34" rx="8" fill="url(#gRocket)"/>
-                        <path d="M -8,-10 L 0,-28 L 8,-10 Z" fill="#3b82f6"/>
-                        <path d="M -8,5 L -16,20 L -8,12 Z" fill="#6366f1"/>
-                        <path d="M 8,5 L 16,20 L 8,12 Z" fill="#6366f1"/>
-                        <circle cx="0" cy="-2" r="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
-                        <g class="exhaust">
-                            <path d="M -5,16 L 0,35 L 5,16 Z" fill="#f59e0b"/>
-                            <path d="M -2.5,16 L 0,26 L 2.5,16 Z" fill="#fef08a"/>
-                        </g>
-                    </g>
-                </g>
+            <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Paradiso 39 — Sunrise over Horizon">
+                <!-- Paradiso 39: sun rising over mountain/sea horizon.
+                     Name is Diaspora rearranged — scattered rays converge into one rising sun. -->
                 <defs>
-                    <linearGradient id="gMoon" x1="20" y1="20" x2="100" y2="100">
-                        <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>
+                    <clipPath id="p39clip"><circle cx="60" cy="60" r="54"/></clipPath>
+                    <linearGradient id="p39sky" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--color-surface, #F4EDDC)"/>
+                        <stop offset="60%" stop-color="var(--color-accent-soft, #FFB8A8)"/>
+                        <stop offset="100%" stop-color="var(--color-accent, #FF6B5B)"/>
                     </linearGradient>
-                    <linearGradient id="gRocket" x1="0" y1="-20" x2="0" y2="20">
-                        <stop offset="0%" stop-color="#f1f5f9"/><stop offset="100%" stop-color="#94a3b8"/>
+                    <linearGradient id="p39sea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--color-primary, #0EA37B)"/>
+                        <stop offset="100%" stop-color="var(--color-primary-ink, #085E48)"/>
                     </linearGradient>
                 </defs>
+                <g clip-path="url(#p39clip)">
+                    <!-- sky -->
+                    <rect x="0" y="0" width="120" height="72" fill="url(#p39sky)"/>
+                    <!-- sun (rises on hover via .rocket-flyer legacy hook) -->
+                    <g class="rocket-flyer">
+                        <circle cx="60" cy="62" r="18" fill="var(--color-surface, #F4EDDC)"/>
+                        <circle cx="60" cy="62" r="18" fill="var(--color-accent, #FF6B5B)" opacity="0.85"/>
+                    </g>
+                    <!-- mountain silhouette -->
+                    <path d="M -4,78 L 22,54 L 40,70 L 58,44 L 82,72 L 102,58 L 128,78 L 128,120 L -4,120 Z"
+                          fill="var(--color-primary-ink, #085E48)" opacity="0.35"/>
+                    <!-- sea -->
+                    <rect x="0" y="72" width="120" height="48" fill="url(#p39sea)"/>
+                    <!-- sea waves -->
+                    <g class="exhaust" stroke="var(--color-surface, #F4EDDC)" stroke-width="1.2" fill="none" opacity="0.55" stroke-linecap="round">
+                        <path d="M 10,84 Q 30,80 50,84 T 90,84 T 130,84"/>
+                        <path d="M 0,94 Q 22,90 44,94 T 86,94 T 130,94"/>
+                        <path d="M 12,104 Q 34,100 56,104 T 98,104 T 140,104"/>
+                    </g>
+                </g>
+                <!-- outer ring -->
+                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--color-primary-ink, #085E48)" stroke-width="2"/>
             </svg>
             <div class="logo-text">
-                <span class="logo-brand">Moonshot</span>
-                <span class="logo-sub">출입국 민원·비자 통합 검색 플랫폼</span>
+                <span class="logo-brand"><span class="al" data-i="0" data-tgt="4"><span class="src">P</span><span class="tgt">p</span></span><span class="al" data-i="1" data-tgt="2"><span class="src">a</span><span class="tgt">a</span></span><span class="al" data-i="2" data-tgt="6"><span class="src">r</span><span class="tgt">r</span></span><span class="al" data-i="3" data-tgt="7"><span class="src">a</span><span class="tgt">a</span></span><span class="al" data-i="4" data-tgt="0"><span class="src">d</span><span class="tgt">D</span></span><span class="al" data-i="5" data-tgt="1"><span class="src">i</span><span class="tgt">i</span></span><span class="al" data-i="6" data-tgt="3"><span class="src">s</span><span class="tgt">s</span></span><span class="al" data-i="7" data-tgt="5"><span class="src">o</span><span class="tgt">o</span></span> <em class="logo-39 l39">39</em></span>
+                <span class="logo-sub">대한민국 39가지 체류자격, 하나의 플랫폼으로</span>
             </div>
         </div>
 
@@ -422,7 +663,7 @@ body.searched .ft { opacity: 1; }
             <button class="modal-close" data-action="close-ai-modal">✕</button>
         </div>
         <div class="modal-body">
-            <p style="font-size:0.85rem; color:var(--t3); line-height:1.5;">현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.</p>
+            <p style="font-size:0.85rem; color:var(--t3); line-height:1.5;">현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Paradiso 39 AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.</p>
             <textarea id="aiInput" class="ai-textarea" placeholder="예: 미국 국적이며 현재 이태원에 거주 중입니다. 한국 대학교 4년제 학사를 졸업했고 D-10 구직 비자 상태인데 E-7으로 취업하고 싶습니다."></textarea>
             
             <div class="ai-quick-actions">
@@ -580,10 +821,10 @@ body.searched .ft { opacity: 1; }
 </div>
 
 <footer class="ft">
-    <span class="ft-logo">Moonshot</span> v37 · ※ 본 서비스는 베타 테스트 중이며, 제공되는 정보는 법적 효력을 갖지 않습니다. 정확한 정보는 반드시 1345(외국인종합안내센터)에 확인하시기 바랍니다.
+    <span class="ft-logo">Paradiso 39</span> v38 · ※ 본 서비스는 베타 테스트 중이며, 제공되는 정보는 법적 효력을 갖지 않습니다. 정확한 정보는 반드시 1345(외국인종합안내센터)에 확인하시기 바랍니다.
 </footer>
 
-<a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
+<a href="ai.html" class="ai-fab"><span class="fab-spark" aria-hidden="true">✦</span> Paradiso 39 AI</a>
 
 <script>
 function escapeHtml(s){
@@ -664,47 +905,386 @@ const DOC_DICT = {
     "doc_arc_reissue": "외국인등록증 재발급 신청서 (통합신청서), 여권, 사유 소명 서류(경찰서 분실신고증 등), 사진 1매"
 };
 
-(async function initStars() {
+(async function initParadisoHorizon() {
+    // Paradiso 39 — sunrise-over-horizon ambient scene.
+    // Replaces the legacy starfield. The canvas stays <canvas id="starCanvas">
+    // so zero HTML/structure changes; only pixels are different.
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let stars = [];
-    let skyOpacity = 0.8;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let mouseX = 0.5, mouseY = 0.5;
 
     function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        w = window.innerWidth; h = window.innerHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
     window.addEventListener('resize', resize);
+    window.addEventListener('pointermove', (e) => {
+        mouseX = e.clientX / w; mouseY = e.clientY / h;
+    }, { passive: true });
 
-    function generateStars(count = 150) {
-        stars = Array.from({ length: count }, () => ({
-            x: Math.random(),
-            y: Math.random(),
-            r: Math.random() * 1.2 + 0.2,
-            d: Math.random() * 4 + 2,
-            phase: Math.random() * Math.PI * 2
-        }));
+    // --- HOUR-BASED PALETTE SYSTEM -----------------------------------------
+    // Returns a palette object based on current hour (0-23). Smooth-interpolated
+    // between 7 key phases to give a continuous day→night cycle.
+    //
+    // Phases (hour: keyframe):
+    //   0:  deep-night (stars, moon high)
+    //   5:  pre-dawn (indigo warming to pink)
+    //   7:  sunrise (golden horizon)
+    //   12: midday (bright blue sky, sun high)
+    //   17: afternoon (soft warm light)
+    //   19: sunset (dramatic orange/magenta)
+    //   21: dusk (deep purple with first stars)
+    //   23: returns to deep-night
+    const PHASES = [
+        { h: 0,  skyTop:'#030812', skyMid:'#0A1628', skyBot:'#102235', sunA:'rgba(200,220,255,0.30)', mtn1:'#02060A', mtn2:'#05101A', mtn3:'#0A1B27', wave:'rgba(52,212,168,0.14)', waveHi:'rgba(200,230,255,0.08)', sunDisc:'rgba(240,245,255,0.82)', sunY:0.32, stars:0.95 },
+        { h: 5,  skyTop:'#1B1640', skyMid:'#3A2850', skyBot:'#6B3E55', sunA:'rgba(255,180,160,0.45)', mtn1:'#0A0818', mtn2:'#1A1028', mtn3:'#2E1E38', wave:'rgba(120,100,180,0.22)', waveHi:'rgba(255,210,220,0.18)', sunDisc:'rgba(255,200,180,0.7)', sunY:0.10, stars:0.35 },
+        { h: 7,  skyTop:'#FFD4A8', skyMid:'#FFAD75', skyBot:'#FF8B6E', sunA:'rgba(255,220,150,0.85)', mtn1:'#7A4A38', mtn2:'#5A3226', mtn3:'#3E1E18', wave:'rgba(255,170,120,0.28)', waveHi:'rgba(255,245,210,0.30)', sunDisc:'rgba(255,245,200,0.98)', sunY:0.14, stars:0 },
+        { h: 12, skyTop:'#87CEEB', skyMid:'#B8DEF0', skyBot:'#DCEEF5', sunA:'rgba(255,255,220,0.55)', mtn1:'#4A6B55', mtn2:'#6B8A72', mtn3:'#8BA892', wave:'rgba(14,163,200,0.18)', waveHi:'rgba(255,255,255,0.40)', sunDisc:'rgba(255,250,220,1)', sunY:0.48, stars:0 },
+        { h: 17, skyTop:'#FFD4B0', skyMid:'#F5B992', skyBot:'#E8A080', sunA:'rgba(255,180,130,0.60)', mtn1:'#8A6848', mtn2:'#6E4F35', mtn3:'#523825', wave:'rgba(230,140,100,0.20)', waveHi:'rgba(255,235,200,0.35)', sunDisc:'rgba(255,210,140,0.95)', sunY:0.22, stars:0 },
+        { h: 19, skyTop:'#B84A5C', skyMid:'#E56B4A', skyBot:'#F59040', sunA:'rgba(255,120,60,0.80)', mtn1:'#3E1820', mtn2:'#2A0F18', mtn3:'#1A0812', wave:'rgba(255,120,80,0.28)', waveHi:'rgba(255,200,140,0.28)', sunDisc:'rgba(255,140,70,1)', sunY:0.06, stars:0 },
+        { h: 21, skyTop:'#1A1035', skyMid:'#2E1A48', skyBot:'#4A2858', sunA:'rgba(180,140,220,0.35)', mtn1:'#0A0518', mtn2:'#130828', mtn3:'#201038', wave:'rgba(80,60,140,0.22)', waveHi:'rgba(200,170,230,0.14)', sunDisc:'rgba(230,210,250,0.8)', sunY:0.22, stars:0.65 },
+        { h: 24, skyTop:'#030812', skyMid:'#0A1628', skyBot:'#102235', sunA:'rgba(200,220,255,0.30)', mtn1:'#02060A', mtn2:'#05101A', mtn3:'#0A1B27', wave:'rgba(52,212,168,0.14)', waveHi:'rgba(200,230,255,0.08)', sunDisc:'rgba(240,245,255,0.82)', sunY:0.32, stars:0.95 }
+    ];
+
+    function mix(a, b, t) { return a + (b - a) * t; }
+    function mixRgbStr(a, b, t) {
+        // parse "#rrggbb" or "rgba(r,g,b,a)"
+        const pa = parseColor(a), pb = parseColor(b);
+        const r = Math.round(mix(pa[0], pb[0], t));
+        const g = Math.round(mix(pa[1], pb[1], t));
+        const bl = Math.round(mix(pa[2], pb[2], t));
+        const al = mix(pa[3], pb[3], t);
+        return `rgba(${r},${g},${bl},${al.toFixed(3)})`;
     }
-    generateStars();
+    function parseColor(s) {
+        if (s[0] === '#') {
+            const n = parseInt(s.slice(1), 16);
+            return [(n>>16)&255, (n>>8)&255, n&255, 1];
+        }
+        const m = s.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+            const p = m[1].split(',').map(x => parseFloat(x.trim()));
+            return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+        }
+        return [0, 0, 0, 1];
+    }
+
+    function getHour() {
+        const a = document.body.getAttribute('data-hour');
+        if (a != null && a !== '') return parseFloat(a);
+        // fallback: local browser hour
+        const d = new Date();
+        return d.getHours() + d.getMinutes() / 60;
+    }
+
+    function themeColors() {
+        const hour = getHour();
+        // find surrounding phases
+        let lo = PHASES[0], hi = PHASES[PHASES.length - 1];
+        for (let i = 0; i < PHASES.length - 1; i++) {
+            if (hour >= PHASES[i].h && hour < PHASES[i+1].h) {
+                lo = PHASES[i]; hi = PHASES[i+1]; break;
+            }
+        }
+        const t = (hour - lo.h) / (hi.h - lo.h);
+        // smoothstep for nicer easing
+        const st = t * t * (3 - 2 * t);
+        return {
+            skyTop: mixRgbStr(lo.skyTop, hi.skyTop, st),
+            skyMid: mixRgbStr(lo.skyMid, hi.skyMid, st),
+            skyBot: mixRgbStr(lo.skyBot, hi.skyBot, st),
+            sunA:   mixRgbStr(lo.sunA, hi.sunA, st),
+            sunB:   'rgba(255,255,255,0)',
+            mtn1:   mixRgbStr(lo.mtn1, hi.mtn1, st),
+            mtn2:   mixRgbStr(lo.mtn2, hi.mtn2, st),
+            mtn3:   mixRgbStr(lo.mtn3, hi.mtn3, st),
+            wave:   mixRgbStr(lo.wave, hi.wave, st),
+            waveHi: mixRgbStr(lo.waveHi, hi.waveHi, st),
+            sunDisc:mixRgbStr(lo.sunDisc, hi.sunDisc, st),
+            sunY:   mix(lo.sunY, hi.sunY, st),
+            starAlpha: mix(lo.stars, hi.stars, st)
+        };
+    }
+
+    // precompute star positions (persistent, so twinkle is stable)
+    const stars = [];
+    for (let i = 0; i < 110; i++) {
+        stars.push({
+            x: Math.random(),
+            y: Math.random() * 0.55,   // above horizon only
+            r: 0.4 + Math.random() * 1.2,
+            tw: Math.random() * 6.28,
+            sp: 0.6 + Math.random() * 1.6
+        });
+    }
+
+    function mountainPath(baseY, amp, freq, offset, t) {
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        const step = 6;
+        for (let x = 0; x <= w + step; x += step) {
+            const n = Math.sin((x + offset) * freq) * 0.6
+                    + Math.sin((x + offset) * freq * 2.3 + 1.7) * 0.3
+                    + Math.sin((x + offset) * freq * 0.5 + t) * 0.1;
+            const y = baseY - (n + 1) * amp * 0.5;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h); ctx.closePath();
+    }
+
+    function wavePath(baseY, amp, freq, phase) {
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        const step = 4;
+        for (let x = 0; x <= w + step; x += step) {
+            const y = baseY + Math.sin(x * freq + phase) * amp
+                            + Math.sin(x * freq * 2.1 + phase * 1.3) * amp * 0.4;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h); ctx.closePath();
+    }
 
     function draw(ts) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const theme = document.body.getAttribute('data-theme') || 'dark';
-        const color = theme === 'dark' ? '232,230,225' : '30, 41, 59';
-        const displayOpacity = Math.max(skyOpacity, theme === 'dark' ? 0.4 : 0.6);
+        const c = themeColors();
+        const t = reduced ? 0 : ts * 0.0004;
+        const px = (mouseX - 0.5) * 20;
+        const py = (mouseY - 0.5) * 10;
+        const horizonY = h * 0.62 + py * 0.3;
 
-        stars.forEach(s => {
-            const twinkle = 0.6 + 0.4 * Math.sin(ts / 1000 / s.d * Math.PI * 2 + s.phase);
-            ctx.beginPath();
-            ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${color}, ${displayOpacity * twinkle})`;
+        // sky gradient
+        const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
+        sky.addColorStop(0, c.skyTop);
+        sky.addColorStop(0.6, c.skyMid);
+        sky.addColorStop(1, c.skyBot);
+        ctx.fillStyle = sky; ctx.fillRect(0, 0, w, horizonY);
+
+        // stars (fade in/out based on hour — c.starAlpha is 0-1)
+        if (c.starAlpha > 0.02) {
+            ctx.fillStyle = 'rgba(255,255,255,1)';
+            for (let i = 0; i < stars.length; i++) {
+                const s = stars[i];
+                const yAbs = s.y * horizonY;
+                const a = c.starAlpha * (0.35 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.tw)));
+                ctx.globalAlpha = a;
+                ctx.beginPath();
+                ctx.arc(s.x * w, yAbs, s.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // sun/moon position: driven by hour-of-day palette (c.sunY is 0-1 of sky height)
+        const sunYOffset = h * (c.sunY || 0.08);
+
+        const sunX = w * 0.5 + px * 0.6;
+        const sunY = horizonY - sunYOffset + Math.sin(t * 0.6) * 2;
+        const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, h * 0.55);
+        glow.addColorStop(0, c.sunA);
+        glow.addColorStop(1, c.sunB);
+        ctx.fillStyle = glow; ctx.fillRect(0, 0, w, horizonY + 40);
+
+        // sun / moon disc
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, h * 0.08, 0, Math.PI * 2);
+        ctx.fillStyle = c.sunDisc;
+        ctx.fill();
+
+        // far mountain
+        mountainPath(horizonY + 4, 80, 0.0018, 0 - px * 0.4, t * 0.3);
+        ctx.fillStyle = c.mtn1; ctx.globalAlpha = 0.85; ctx.fill();
+        // mid mountain
+        mountainPath(horizonY + 28, 55, 0.0030, 320 - px * 0.8, t * 0.5);
+        ctx.fillStyle = c.mtn2; ctx.globalAlpha = 0.92; ctx.fill();
+        // near mountain
+        mountainPath(horizonY + 48, 36, 0.0045, 600 - px * 1.4, t * 0.7);
+        ctx.fillStyle = c.mtn3; ctx.globalAlpha = 1; ctx.fill();
+
+        // sea base
+        ctx.fillStyle = c.skyBot;
+        ctx.fillRect(0, horizonY + 44, w, h - horizonY - 44);
+
+        // waves
+        for (let i = 0; i < 4; i++) {
+            const by = horizonY + 60 + i * (h * 0.08);
+            const amp = 3 + i * 2;
+            const freq = 0.012 - i * 0.0018;
+            const phase = t * (1 + i * 0.4) + i * 1.3;
+            wavePath(by, amp, freq, phase);
+            ctx.fillStyle = i % 2 === 0 ? c.wave : c.waveHi;
+            ctx.globalAlpha = 0.75 - i * 0.1;
             ctx.fill();
-        });
+        }
+        ctx.globalAlpha = 1;
+
         requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
+})();
+
+// --- CITY / TIMEZONE PICKER ------------------------------------------------
+// User selects a city → body[data-hour] is set to local hour of that timezone
+// → canvas draws appropriate scene phase.
+const CITIES = [
+    { n: 'Seoul',        tz: 'Asia/Seoul',          flag: '🇰🇷', region: '아시아' },
+    { n: 'Busan',        tz: 'Asia/Seoul',          flag: '🇰🇷', region: '아시아' },
+    { n: 'Tokyo',        tz: 'Asia/Tokyo',          flag: '🇯🇵', region: '아시아' },
+    { n: 'Osaka',        tz: 'Asia/Tokyo',          flag: '🇯🇵', region: '아시아' },
+    { n: 'Beijing',      tz: 'Asia/Shanghai',       flag: '🇨🇳', region: '아시아' },
+    { n: 'Shanghai',     tz: 'Asia/Shanghai',       flag: '🇨🇳', region: '아시아' },
+    { n: 'Hong Kong',    tz: 'Asia/Hong_Kong',      flag: '🇭🇰', region: '아시아' },
+    { n: 'Taipei',       tz: 'Asia/Taipei',         flag: '🇹🇼', region: '아시아' },
+    { n: 'Singapore',    tz: 'Asia/Singapore',      flag: '🇸🇬', region: '아시아' },
+    { n: 'Bangkok',      tz: 'Asia/Bangkok',        flag: '🇹🇭', region: '아시아' },
+    { n: 'Ho Chi Minh',  tz: 'Asia/Ho_Chi_Minh',    flag: '🇻🇳', region: '아시아' },
+    { n: 'Jakarta',      tz: 'Asia/Jakarta',        flag: '🇮🇩', region: '아시아' },
+    { n: 'Manila',       tz: 'Asia/Manila',         flag: '🇵🇭', region: '아시아' },
+    { n: 'Kuala Lumpur', tz: 'Asia/Kuala_Lumpur',   flag: '🇲🇾', region: '아시아' },
+    { n: 'Mumbai',       tz: 'Asia/Kolkata',        flag: '🇮🇳', region: '아시아' },
+    { n: 'Delhi',        tz: 'Asia/Kolkata',        flag: '🇮🇳', region: '아시아' },
+    { n: 'Dubai',        tz: 'Asia/Dubai',          flag: '🇦🇪', region: '중동' },
+    { n: 'Riyadh',       tz: 'Asia/Riyadh',         flag: '🇸🇦', region: '중동' },
+    { n: 'Tehran',       tz: 'Asia/Tehran',         flag: '🇮🇷', region: '중동' },
+    { n: 'Istanbul',     tz: 'Europe/Istanbul',     flag: '🇹🇷', region: '중동' },
+    { n: 'Moscow',       tz: 'Europe/Moscow',       flag: '🇷🇺', region: '유럽' },
+    { n: 'Berlin',       tz: 'Europe/Berlin',       flag: '🇩🇪', region: '유럽' },
+    { n: 'Paris',        tz: 'Europe/Paris',        flag: '🇫🇷', region: '유럽' },
+    { n: 'London',       tz: 'Europe/London',       flag: '🇬🇧', region: '유럽' },
+    { n: 'Madrid',       tz: 'Europe/Madrid',       flag: '🇪🇸', region: '유럽' },
+    { n: 'Rome',         tz: 'Europe/Rome',         flag: '🇮🇹', region: '유럽' },
+    { n: 'Amsterdam',    tz: 'Europe/Amsterdam',    flag: '🇳🇱', region: '유럽' },
+    { n: 'Stockholm',    tz: 'Europe/Stockholm',    flag: '🇸🇪', region: '유럽' },
+    { n: 'Cairo',        tz: 'Africa/Cairo',        flag: '🇪🇬', region: '아프리카' },
+    { n: 'Lagos',        tz: 'Africa/Lagos',        flag: '🇳🇬', region: '아프리카' },
+    { n: 'Nairobi',      tz: 'Africa/Nairobi',      flag: '🇰🇪', region: '아프리카' },
+    { n: 'Johannesburg', tz: 'Africa/Johannesburg', flag: '🇿🇦', region: '아프리카' },
+    { n: 'New York',     tz: 'America/New_York',    flag: '🇺🇸', region: '북미' },
+    { n: 'Chicago',      tz: 'America/Chicago',     flag: '🇺🇸', region: '북미' },
+    { n: 'Los Angeles',  tz: 'America/Los_Angeles', flag: '🇺🇸', region: '북미' },
+    { n: 'Toronto',      tz: 'America/Toronto',     flag: '🇨🇦', region: '북미' },
+    { n: 'Vancouver',    tz: 'America/Vancouver',   flag: '🇨🇦', region: '북미' },
+    { n: 'Mexico City',  tz: 'America/Mexico_City', flag: '🇲🇽', region: '북미' },
+    { n: 'São Paulo',    tz: 'America/Sao_Paulo',   flag: '🇧🇷', region: '남미' },
+    { n: 'Buenos Aires', tz: 'America/Argentina/Buenos_Aires', flag: '🇦🇷', region: '남미' },
+    { n: 'Lima',         tz: 'America/Lima',        flag: '🇵🇪', region: '남미' },
+    { n: 'Sydney',       tz: 'Australia/Sydney',    flag: '🇦🇺', region: '오세아니아' },
+    { n: 'Melbourne',    tz: 'Australia/Melbourne', flag: '🇦🇺', region: '오세아니아' },
+    { n: 'Auckland',     tz: 'Pacific/Auckland',    flag: '🇳🇿', region: '오세아니아' },
+    { n: 'Honolulu',     tz: 'Pacific/Honolulu',    flag: '🇺🇸', region: '오세아니아' }
+];
+
+let SELECTED_CITY = null;
+
+function getTzHour(tz) {
+    try {
+        const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz, hour: 'numeric', minute: 'numeric', hour12: false
+        }).formatToParts(new Date());
+        const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
+        const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
+        return (h === 24 ? 0 : h) + m / 60;
+    } catch (e) {
+        const d = new Date();
+        return d.getHours() + d.getMinutes() / 60;
+    }
+}
+
+function formatTzTime(tz) {
+    try {
+        return new Intl.DateTimeFormat('ko-KR', {
+            timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+        }).format(new Date());
+    } catch (e) { return '—:—'; }
+}
+
+function applyCity(city) {
+    SELECTED_CITY = city;
+    try { localStorage.setItem('paradiso_city', JSON.stringify(city)); } catch(e) {}
+    document.getElementById('cityBtnFlag').textContent = city.flag;
+    document.getElementById('cityBtnLabel').textContent = city.n;
+    updateHourFromCity();
+}
+
+function updateHourFromCity() {
+    if (!SELECTED_CITY) return;
+    const hour = getTzHour(SELECTED_CITY.tz);
+    document.body.setAttribute('data-hour', hour.toFixed(3));
+    const timeEl = document.getElementById('cityBtnTime');
+    if (timeEl) timeEl.textContent = formatTzTime(SELECTED_CITY.tz);
+}
+
+function renderCityList(filter) {
+    filter = (filter || '').toLowerCase().trim();
+    const list = document.getElementById('cityList');
+    if (!list) return;
+    const byRegion = {};
+    CITIES.forEach(c => {
+        if (filter && !c.n.toLowerCase().includes(filter) && !c.region.includes(filter)) return;
+        if (!byRegion[c.region]) byRegion[c.region] = [];
+        byRegion[c.region].push(c);
+    });
+    list.innerHTML = '';
+    Object.keys(byRegion).forEach(region => {
+        const h = document.createElement('div');
+        h.textContent = region;
+        h.style.cssText = 'font-size:0.7rem; color:var(--t3); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.6rem 0.5rem 0.3rem;';
+        list.appendChild(h);
+        byRegion[region].forEach(c => {
+            const row = document.createElement('button');
+            row.style.cssText = 'width:100%; display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0.6rem; background:transparent; border:0; border-radius:6px; cursor:pointer; color:var(--t1); font-family:var(--ff); font-size:0.88rem; text-align:left; transition:background 0.15s;';
+            row.onmouseenter = () => row.style.background = 'var(--bg2)';
+            row.onmouseleave = () => row.style.background = 'transparent';
+            row.onclick = () => { applyCity(c); toggleCityMenu(false); };
+            row.innerHTML = `<span style="font-size:1.05rem;">${c.flag}</span><span style="flex:1;">${c.n}</span><span style="font-family:var(--ff-display); font-variant-numeric:tabular-nums; color:var(--t2); font-size:0.78rem;">${formatTzTime(c.tz)}</span>`;
+            list.appendChild(row);
+        });
+    });
+    if (list.children.length === 0) {
+        list.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--t3); font-size:0.85rem;">검색 결과 없음</div>';
+    }
+}
+
+function filterCities(v) { renderCityList(v); }
+
+function toggleCityMenu(force) {
+    const menu = document.getElementById('cityMenu');
+    if (!menu) return;
+    const show = (force === true) ? true : (force === false ? false : menu.style.display === 'none');
+    menu.style.display = show ? 'block' : 'none';
+    if (show) {
+        renderCityList('');
+        const s = document.getElementById('citySearch');
+        if (s) { s.value = ''; setTimeout(() => s.focus(), 50); }
+    }
+}
+
+document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('cityWrap');
+    if (wrap && !wrap.contains(e.target)) {
+        const menu = document.getElementById('cityMenu');
+        if (menu && menu.style.display !== 'none') menu.style.display = 'none';
+    }
+});
+
+// Initialize: try localStorage, else detect browser timezone, else Seoul
+(function initCity() {
+    let initial = null;
+    try {
+        const saved = localStorage.getItem('paradiso_city');
+        if (saved) initial = JSON.parse(saved);
+    } catch(e) {}
+    if (!initial) {
+        const browserTz = (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone;
+        initial = CITIES.find(c => c.tz === browserTz) || CITIES.find(c => c.n === 'Seoul');
+    }
+    if (initial) applyCity(initial);
+    // refresh displayed time every 30s
+    setInterval(updateHourFromCity, 30000);
 })();
 
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
@@ -747,9 +1327,9 @@ function openAiModal(visaCode) {
     
     const descEl = document.querySelector('#aiModalOverlay .modal-body p');
     if (['faq', 'scn', 'nhis'].includes(visa.cat)) {
-        descEl.innerHTML = `현재 직면한 상황(사건 경위, 체류 상태, 국적 등)을 상세히 적어주시면, Moonshot AI가 2026년 출입국관리법 및 매뉴얼 원문에 근거하여 <strong>자의적 해석 없이 철저한 법적 판단 및 구제 절차</strong>를 검증해 드립니다.`;
+        descEl.innerHTML = `현재 직면한 상황(사건 경위, 체류 상태, 국적 등)을 상세히 적어주시면, Paradiso 39 AI가 2026년 출입국관리법 및 매뉴얼 원문에 근거하여 <strong>자의적 해석 없이 철저한 법적 판단 및 구제 절차</strong>를 검증해 드립니다.`;
     } else {
-        descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
+        descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Paradiso 39 AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
     }
     
     const jobCodeBtn = document.getElementById('btnJobCode');
@@ -952,7 +1532,7 @@ async function loadJobcodeData() {
                     continue;
                 }
                 _jobcodeData = json;
-                console.log(`[Moonshot] ✅ 직종코드 DB 로드 성공: ${path} (${json.total_count}건)`);
+                console.log(`[Paradiso39] ✅ 직종코드 DB 로드 성공: ${path} (${json.total_count}건)`);
                 return json;
             } catch (err) {
                 errors.push(`${path}: ${err.message}`);
@@ -1694,13 +2274,43 @@ function executeSearch() {
     }
 
     if (document.body.classList.contains('landing')) {
-        document.body.classList.add('launching');
+        // Paradiso → Diaspora anagram: letters slide to target slots AND crossfade to target chars.
+        try {
+            const letters = document.querySelectorAll('.logo-brand .al');
+            const brand = document.querySelector('.logo-brand');
+            const brandRect = brand ? brand.getBoundingClientRect() : null;
+            const letterRects = Array.from(letters).map(l => l.getBoundingClientRect());
+            letters.forEach((el, i) => {
+                const tgtIdx = parseInt(el.dataset.tgt || i, 10);
+                if (!brandRect) return;
+                const srcX = letterRects[i].left - brandRect.left;
+                const tgtX = letterRects[tgtIdx].left - brandRect.left;
+                el.style.setProperty('--ax', (tgtX - srcX) + 'px');
+                // stagger slightly based on travel distance for organic feel
+                const travel = Math.abs(tgtIdx - i);
+                el.style.transitionDelay = (travel * 35) + 'ms';
+            });
+            document.body.classList.add('anagram-run');
+        } catch(e) { /* non-fatal */ }
+
+        // Phase timing:
+        //   0–900ms:    letters rearrange + crossfade to Diaspora
+        //   900–2700ms: hold (user reads "Diaspora")  ← 1.8s
+        //   2700–3200ms: fade + collapse
         setTimeout(() => {
-            document.body.classList.remove('landing', 'launching');
+            document.body.classList.add('launching');
+        }, 2700);
+        setTimeout(() => {
+            document.body.classList.remove('landing', 'launching', 'anagram-run');
+            document.body.setAttribute('data-scene', 'searched');
+            document.querySelectorAll('.logo-brand .al').forEach(el => {
+                el.style.transitionDelay = '';
+                el.style.removeProperty('--ax');
+            });
             document.body.classList.add('searched');
             renderResults(query);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 600);
+        }, 3200);
     } else {
         renderResults(query);
     }
@@ -1732,9 +2342,10 @@ function renderResults(query){
     }
     
     const fg=document.createDocumentFragment();
-    filtered.forEach((v)=>{
+    filtered.forEach((v,idx)=>{
         const c=document.createElement('article'); c.className='vc';
         c.style.setProperty('--cbc', CC[v.cat]||CC.other);
+        c.style.setProperty('--i', Math.min(idx,10));
         
         const isVisaCode = !['faq', 'scn', 'nhis'].includes(v.cat);
         const hs=v.subCodes&&v.subCodes.length>0;
@@ -1787,7 +2398,7 @@ function renderResults(query){
                     <div class="ai-cta" style="flex-direction:column; align-items:center; text-align:center; padding:2.5rem 1rem; background:var(--bg0);">
                         <div style="font-size:2.5rem; margin-bottom:0.8rem;">⚖️</div>
                         <h4 style="color:var(--t1); font-weight:800; font-size:1.1rem; margin-bottom:0.5rem;">특수 사례 심층 분석</h4>
-                        <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1.5rem; word-break:keep-all; max-width:400px;">이 시나리오는 체류 이력, 범죄 여부 등에 따라 법령 적용이 매우 복잡합니다. 단편적인 요약 대신 <strong>Moonshot AI의 2026년 출입국관리법령 심층 팩트체크</strong>를 직접 실행하십시오.</p>
+                        <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1.5rem; word-break:keep-all; max-width:400px;">이 시나리오는 체류 이력, 범죄 여부 등에 따라 법령 적용이 매우 복잡합니다. 단편적인 요약 대신 <strong>Paradiso 39 AI의 2026년 출입국관리법령 심층 팩트체크</strong>를 직접 실행하십시오.</p>
                         <button class="ai-btn" style="width:100%; max-width:320px; justify-content:center; box-shadow:var(--shD);" data-action="open-ai-modal" data-visa-code="${escapeHtml(v.code)}">
                             🤖 AI 심층 법률 검증 시작
                         </button>
@@ -1876,7 +2487,7 @@ function toggleTheme(){
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.body.setAttribute('data-theme', newTheme);
     const btn = document.getElementById('mainThemeBtn');
-    if(btn) btn.innerHTML = newTheme === 'dark' ? '☀️ 라이트 모드' : '🌙 다크 모드';
+    if(btn) btn.innerHTML = newTheme === 'dark' ? '◑ 라이트 모드' : '◐ 다크 모드';
 }
 
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
@@ -2121,15 +2732,15 @@ async function loadVisaData() {
         if (!API_BASE && (window.location.protocol === 'data:' || window.location.protocol === 'about:')) {
              throw new Error("미리보기 환경에서는 로컬 API 호출이 제한됩니다.");
         }
-        console.log(`[Moonshot] Primary API fetch 시도: ${API_URL}`);
+        console.log(`[Paradiso39] Primary API fetch 시도: ${API_URL}`);
         const res = await fetch(API_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`API 응답 실패 (${res.status})`);
         const arr = parse(await res.json());
-        console.log(`[Moonshot] ✅ API 로드 성공: ${arr.length}개`);
+        console.log(`[Paradiso39] ✅ API 로드 성공: ${arr.length}개`);
         applySuccess(arr, 'API 연동');
         return;
     } catch (e) {
-        console.warn(`[Moonshot] ⚠ API 로드 실패, JSON 폴백 시도:`, e.message);
+        console.warn(`[Paradiso39] ⚠ API 로드 실패, JSON 폴백 시도:`, e.message);
     }
 
     const fallbackUrl = './visa_data.json';
@@ -2137,14 +2748,14 @@ async function loadVisaData() {
         if (window.location.protocol === 'data:' || window.location.protocol === 'about:') {
             throw new Error("미리보기 환경에서는 상대 경로(./)를 해석할 수 없습니다.");
         }
-        console.log(`[Moonshot] Fallback JSON fetch 시도: ${fallbackUrl}`);
+        console.log(`[Paradiso39] Fallback JSON fetch 시도: ${fallbackUrl}`);
         const res = await fetch(fallbackUrl, { cache: 'no-store' });
         if (!res.ok) throw new Error(`JSON 응답 실패 (${res.status})`);
         const arr = parse(await res.json());
-        console.log(`[Moonshot] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
+        console.log(`[Paradiso39] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
         applySuccess(arr, '정적 백업');
     } catch (e) {
-        console.error(`[Moonshot] ❌ 외부 데이터 로드 실패 (내장 데이터로 자동 전환):`, e.message);
+        console.error(`[Paradiso39] ❌ 외부 데이터 로드 실패 (내장 데이터로 자동 전환):`, e.message);
         const offlineData = parse([]);
         applySuccess(offlineData, '오프라인 내장 데이터');
     }
