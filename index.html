@@ -184,12 +184,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 [data-theme="dark"] .doc-chk-item.critical { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
 
 /* General Result List Styling */
-/* Apple-style search results:
-   - generous whitespace & breathing room
-   - soft 16px radius
-   - subtle lift-on-hover (no hard shadow pop)
-   - typographic hierarchy with refined weights and spacing
-   - staggered reveal animation */
 .rlist { display: flex; flex-direction: column; gap: 0.85rem; padding-bottom: 5rem; padding-top: 0.5rem; }
 .vc {
     background: var(--bg1);
@@ -224,7 +218,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 }
 .vc-h:hover { background: color-mix(in srgb, var(--ac) 4%, transparent); }
 
-/* Visa code — monospace-feel tabular, stands out as the "product number" */
 .bc {
     font-family: var(--ff-display), var(--ff);
     font-weight: 700;
@@ -236,7 +229,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
     letter-spacing: 0.01em;
     font-variant-numeric: tabular-nums;
 }
-/* Visa name — editorial scale */
 .vt {
     font-weight: 600;
     font-size: 1.02rem;
@@ -244,7 +236,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
     letter-spacing: -0.01em;
     line-height: 1.3;
 }
-/* Sub-badges — subtler, smaller */
 .bp, .bn, .bd {
     font-size: 0.7rem;
     padding: 3px 9px;
@@ -281,7 +272,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
     justify-content: center;
 }
 
-/* Content category labels — more refined */
 .tl {
     display: inline-flex;
     font-size: 0.68rem;
@@ -297,7 +287,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 .tl-f { background: var(--tFb); color: var(--tFt); }
 .tl-s { background: var(--tSb); color: var(--tSt); }
 
-/* Body content — refined reading experience */
 .ct {
     font-size: 0.92rem;
     color: var(--t2);
@@ -317,7 +306,6 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
     letter-spacing: 0.02em;
 }
 
-/* Sub-code section — keep visually quieter */
 .ss { background: color-mix(in srgb, var(--bg0) 50%, var(--bg2)); border-top: 1px solid var(--bd3); padding: 0.5rem 0 0.85rem; }
 .ss-t {
     padding: 0.8rem 1.35rem 0.55rem;
@@ -907,8 +895,6 @@ const DOC_DICT = {
 
 (async function initParadisoHorizon() {
     // Paradiso 39 — sunrise-over-horizon ambient scene.
-    // Replaces the legacy starfield. The canvas stays <canvas id="starCanvas">
-    // so zero HTML/structure changes; only pixels are different.
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -928,19 +914,6 @@ const DOC_DICT = {
         mouseX = e.clientX / w; mouseY = e.clientY / h;
     }, { passive: true });
 
-    // --- HOUR-BASED PALETTE SYSTEM -----------------------------------------
-    // Returns a palette object based on current hour (0-23). Smooth-interpolated
-    // between 7 key phases to give a continuous day→night cycle.
-    //
-    // Phases (hour: keyframe):
-    //   0:  deep-night (stars, moon high)
-    //   5:  pre-dawn (indigo warming to pink)
-    //   7:  sunrise (golden horizon)
-    //   12: midday (bright blue sky, sun high)
-    //   17: afternoon (soft warm light)
-    //   19: sunset (dramatic orange/magenta)
-    //   21: dusk (deep purple with first stars)
-    //   23: returns to deep-night
     const PHASES = [
         { h: 0,  skyTop:'#030812', skyMid:'#0A1628', skyBot:'#102235', sunA:'rgba(200,220,255,0.30)', mtn1:'#02060A', mtn2:'#05101A', mtn3:'#0A1B27', wave:'rgba(52,212,168,0.14)', waveHi:'rgba(200,230,255,0.08)', sunDisc:'rgba(240,245,255,0.82)', sunY:0.32, stars:0.95 },
         { h: 5,  skyTop:'#1B1640', skyMid:'#3A2850', skyBot:'#6B3E55', sunA:'rgba(255,180,160,0.45)', mtn1:'#0A0818', mtn2:'#1A1028', mtn3:'#2E1E38', wave:'rgba(120,100,180,0.22)', waveHi:'rgba(255,210,220,0.18)', sunDisc:'rgba(255,200,180,0.7)', sunY:0.10, stars:0.35 },
@@ -954,7 +927,6 @@ const DOC_DICT = {
 
     function mix(a, b, t) { return a + (b - a) * t; }
     function mixRgbStr(a, b, t) {
-        // parse "#rrggbb" or "rgba(r,g,b,a)"
         const pa = parseColor(a), pb = parseColor(b);
         const r = Math.round(mix(pa[0], pb[0], t));
         const g = Math.round(mix(pa[1], pb[1], t));
@@ -978,14 +950,12 @@ const DOC_DICT = {
     function getHour() {
         const a = document.body.getAttribute('data-hour');
         if (a != null && a !== '') return parseFloat(a);
-        // fallback: local browser hour
         const d = new Date();
         return d.getHours() + d.getMinutes() / 60;
     }
 
     function themeColors() {
         const hour = getHour();
-        // find surrounding phases
         let lo = PHASES[0], hi = PHASES[PHASES.length - 1];
         for (let i = 0; i < PHASES.length - 1; i++) {
             if (hour >= PHASES[i].h && hour < PHASES[i+1].h) {
@@ -993,7 +963,6 @@ const DOC_DICT = {
             }
         }
         const t = (hour - lo.h) / (hi.h - lo.h);
-        // smoothstep for nicer easing
         const st = t * t * (3 - 2 * t);
         return {
             skyTop: mixRgbStr(lo.skyTop, hi.skyTop, st),
@@ -1012,12 +981,11 @@ const DOC_DICT = {
         };
     }
 
-    // precompute star positions (persistent, so twinkle is stable)
     const stars = [];
     for (let i = 0; i < 110; i++) {
         stars.push({
             x: Math.random(),
-            y: Math.random() * 0.55,   // above horizon only
+            y: Math.random() * 0.55,
             r: 0.4 + Math.random() * 1.2,
             tw: Math.random() * 6.28,
             sp: 0.6 + Math.random() * 1.6
@@ -1057,14 +1025,12 @@ const DOC_DICT = {
         const py = (mouseY - 0.5) * 10;
         const horizonY = h * 0.62 + py * 0.3;
 
-        // sky gradient
         const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
         sky.addColorStop(0, c.skyTop);
         sky.addColorStop(0.6, c.skyMid);
         sky.addColorStop(1, c.skyBot);
         ctx.fillStyle = sky; ctx.fillRect(0, 0, w, horizonY);
 
-        // stars (fade in/out based on hour — c.starAlpha is 0-1)
         if (c.starAlpha > 0.02) {
             ctx.fillStyle = 'rgba(255,255,255,1)';
             for (let i = 0; i < stars.length; i++) {
@@ -1079,9 +1045,7 @@ const DOC_DICT = {
             ctx.globalAlpha = 1;
         }
 
-        // sun/moon position: driven by hour-of-day palette (c.sunY is 0-1 of sky height)
         const sunYOffset = h * (c.sunY || 0.08);
-
         const sunX = w * 0.5 + px * 0.6;
         const sunY = horizonY - sunYOffset + Math.sin(t * 0.6) * 2;
         const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, h * 0.55);
@@ -1089,27 +1053,21 @@ const DOC_DICT = {
         glow.addColorStop(1, c.sunB);
         ctx.fillStyle = glow; ctx.fillRect(0, 0, w, horizonY + 40);
 
-        // sun / moon disc
         ctx.beginPath();
         ctx.arc(sunX, sunY, h * 0.08, 0, Math.PI * 2);
         ctx.fillStyle = c.sunDisc;
         ctx.fill();
 
-        // far mountain
         mountainPath(horizonY + 4, 80, 0.0018, 0 - px * 0.4, t * 0.3);
         ctx.fillStyle = c.mtn1; ctx.globalAlpha = 0.85; ctx.fill();
-        // mid mountain
         mountainPath(horizonY + 28, 55, 0.0030, 320 - px * 0.8, t * 0.5);
         ctx.fillStyle = c.mtn2; ctx.globalAlpha = 0.92; ctx.fill();
-        // near mountain
         mountainPath(horizonY + 48, 36, 0.0045, 600 - px * 1.4, t * 0.7);
         ctx.fillStyle = c.mtn3; ctx.globalAlpha = 1; ctx.fill();
 
-        // sea base
         ctx.fillStyle = c.skyBot;
         ctx.fillRect(0, horizonY + 44, w, h - horizonY - 44);
 
-        // waves
         for (let i = 0; i < 4; i++) {
             const by = horizonY + 60 + i * (h * 0.08);
             const amp = 3 + i * 2;
@@ -1127,9 +1085,6 @@ const DOC_DICT = {
     requestAnimationFrame(draw);
 })();
 
-// --- CITY / TIMEZONE PICKER ------------------------------------------------
-// User selects a city → body[data-hour] is set to local hour of that timezone
-// → canvas draws appropriate scene phase.
 const CITIES = [
     { n: 'Seoul',        tz: 'Asia/Seoul',          flag: '🇰🇷', region: '아시아' },
     { n: 'Busan',        tz: 'Asia/Seoul',          flag: '🇰🇷', region: '아시아' },
@@ -1271,7 +1226,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Initialize: try localStorage, else detect browser timezone, else Seoul
 (function initCity() {
     let initial = null;
     try {
@@ -1283,7 +1237,6 @@ document.addEventListener('click', (e) => {
         initial = CITIES.find(c => c.tz === browserTz) || CITIES.find(c => c.n === 'Seoul');
     }
     if (initial) applyCity(initial);
-    // refresh displayed time every 30s
     setInterval(updateHourFromCity, 30000);
 })();
 
@@ -1681,7 +1634,6 @@ async function searchJobcodeWithAI() {
                  actualKeywords.indKw = [input];
              }
         } else {
-            // 수정점 1: fetch URL을 백엔드 라우트와 동일하게 /api/jobcodekeywords 로 맞춤 (언더스코어 제거)
             const response = await fetch(`${API_BASE}/api/jobcodekeywords`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1695,7 +1647,6 @@ async function searchJobcodeWithAI() {
             
             const data = await response.json();
             
-            // 수정점 2: 백엔드 수정 사항(job_keywords) 적용 및 기존 키(jobkeywords) 폴백 유지
             actualKeywords.jobKw = data.job_keywords || data.jobkeywords || data.keywords || [];
             actualKeywords.indKw = data.industry_keywords || data.industrykeywords || [];
             
@@ -2274,32 +2225,30 @@ function executeSearch() {
     }
 
     if (document.body.classList.contains('landing')) {
-        // Paradiso → Diaspora anagram: letters slide to target slots AND crossfade to target chars.
         try {
             const letters = document.querySelectorAll('.logo-brand .al');
-            const brand = document.querySelector('.logo-brand');
-            const brandRect = brand ? brand.getBoundingClientRect() : null;
             const letterRects = Array.from(letters).map(l => l.getBoundingClientRect());
-            letters.forEach((el, i) => {
-                const tgtIdx = parseInt(el.dataset.tgt || i, 10);
-                if (!brandRect) return;
-                const srcX = letterRects[i].left - brandRect.left;
-                const tgtX = letterRects[tgtIdx].left - brandRect.left;
-                el.style.setProperty('--ax', (tgtX - srcX) + 'px');
-                // stagger slightly based on travel distance for organic feel
-                const travel = Math.abs(tgtIdx - i);
-                el.style.transitionDelay = (travel * 35) + 'ms';
-            });
-            document.body.classList.add('anagram-run');
+            
+            if (letterRects.length === 8) {
+                const totalWidth = letterRects[7].right - letterRects[0].left;
+                const slotWidth = totalWidth / 8;
+                
+                letters.forEach((el, i) => {
+                    const tgtIdx = parseInt(el.dataset.tgt || i, 10);
+                    const srcX = letterRects[i].left - letterRects[0].left;
+                    const tgtX = (tgtIdx * slotWidth) + (slotWidth - letterRects[i].width) / 2;
+                    el.style.setProperty('--ax', (tgtX - srcX) + 'px');
+                    
+                    const travel = Math.abs(tgtIdx - i);
+                    el.style.transitionDelay = (travel * 35) + 'ms';
+                });
+                document.body.classList.add('anagram-run');
+            }
         } catch(e) { /* non-fatal */ }
 
-        // Phase timing:
-        //   0–900ms:    letters rearrange + crossfade to Diaspora
-        //   900–2700ms: hold (user reads "Diaspora")  ← 1.8s
-        //   2700–3200ms: fade + collapse
         setTimeout(() => {
             document.body.classList.add('launching');
-        }, 2700);
+        }, 2200);
         setTimeout(() => {
             document.body.classList.remove('landing', 'launching', 'anagram-run');
             document.body.setAttribute('data-scene', 'searched');
@@ -2310,7 +2259,7 @@ function executeSearch() {
             document.body.classList.add('searched');
             renderResults(query);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 3200);
+        }, 2700);
     } else {
         renderResults(query);
     }
