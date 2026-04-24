@@ -2,6 +2,7 @@ from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
 import os, re, json, logging, httpx, asyncpg
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -34,6 +35,11 @@ GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
 SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
 SITE_TITLE = "Moonshot Immigration AI"
 
+# --- 공공데이터 API 인증키 및 RAG 캐시 변수 ---
+PUBLIC_DATA_KEY = "1673ea6ebbafabcb7d1bc2a9bbab40ed1444fb61a84d85ea8d839ea09d76d031"
+cached_public_visa_data = "DATA MISSING"
+cached_public_job_data = "DATA MISSING"
+
 # /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
     ("moonshotai/kimi-k2:free",       "openrouter"),  
@@ -44,11 +50,10 @@ ASK_MODELS = [
 
 # /api/jobcodekeywords 용 모델 폴백 체인
 KEYWORD_MODELS = [
-    ("moonshotai/kimi-k2:free",       "openrouter"),  # 2순위 (무료)
-    ("google/gemma-3-27b-it:free",    "openrouter"),  # 3순위 (무료)
-    ("llama-3.3-70b-versatile",       "groq"),        # 4순위
+    ("moonshotai/kimi-k2:free",       "openrouter"),  
+    ("google/gemma-3-27b-it:free",    "openrouter"),  
+    ("llama-3.3-70b-versatile",       "groq"),        
 ]
-
 
 def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> dict:
     if provider == "openrouter":
@@ -72,10 +77,85 @@ def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> d
     else:
         raise ValueError(f"알 수 없는 provider: {provider}")
 
+async def init_public_data_cache():
+    """서버 구동 시 공공데이터 API 2종(체류자격, 산업직업분류)을 호출하여 메모리에 캐싱"""
+    global cached_public_visa_data, cached_public_job_data
+    logger.info("공공데이터 API(법무부, 국가데이터처) 초기 캐싱을 시작한다.")
+    
+    # Base URL & Parameters
+    odcloud_base = "https://api.odcloud.kr/api"
+    params = {
+        "serviceKey": PUBLIC_DATA_KEY,
+        "perPage": 50,
+        "returnType": "JSON"
+    }
+    
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        # 1. 법무부_체류자격 코드정보 (Namespace: 15103561/v1)
+        try:
+            res_visa = await client.get(f"{odcloud_base}/15103561/v1/uddi:15103561", params=params)
+            if res_visa.status_code == 200:
+                data = res_visa.json().get("data", [])
+                cached_public_visa_data = json.dumps(data[:10], ensure_ascii=False) if data else "DATA MISSING"
+            else:
+                logger.warning(f"체류자격 API HTTP 오류: {res_visa.status_code}")
+        except Exception as e:
+            logger.error(f"체류자격 공공데이터 패치 실패: {e}")
+
+        # 2. 국가데이터처_산업직업분류 (Namespace: 15117819/v1)
+        try:
+            res_job = await client.get(f"{odcloud_base}/15117819/v1/uddi:15117819", params=params)
+            if res_job.status_code == 200:
+                data = res_job.json().get("data", [])
+                cached_public_job_data = json.dumps(data[:10], ensure_ascii=False) if data else "DATA MISSING"
+            else:
+                logger.warning(f"산업직업분류 API HTTP 오류: {res_job.status_code}")
+        except Exception as e:
+            logger.error(f"산업직업분류 공공데이터 패치 실패: {e}")
+
+async def fetch_realtime_law_data(query: str) -> str:
+    """국가법령정보공유서비스 실시간 연동 (출입국관리법 한정)"""
+    # 불필요한 API 호출 방지 (키워드 트리거)
+    triggers = ["법", "벌금", "불법", "퇴거", "위반", "체류", "연장", "사증", "비자", "출입국"]
+    if not any(t in query for t in triggers):
+        return "DATA MISSING"
+
+    url = "https://apis.data.go.kr/1170000/law"
+    params = {
+        "serviceKey": PUBLIC_DATA_KEY,
+        "target": "law",
+        "type": "XML",
+        "query": "출입국관리법",
+        "display": 3
+    }
+    
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            res = await client.get(url, params=params)
+            if res.status_code != 200:
+                return "DATA MISSING"
+            
+            # XML 파싱
+            root = ET.fromstring(res.text)
+            extracted_laws = []
+            for item in root.findall(".//law"):
+                title = item.findtext("법령명", default="")
+                # 실제 조문 내용은 상세조회 API가 필요하나, 목록/요약이라도 추출
+                extracted_laws.append(f"[{title}] 출입국관리법령 검색 됨 (엄격 적용 요망)")
+            
+            if extracted_laws:
+                return " | ".join(extracted_laws)
+            return "DATA MISSING"
+    except Exception as e:
+        logger.error(f"국가법령정보 실시간 조회 실패: {e}")
+        return "DATA MISSING"
 
 @app.on_event("startup")
 async def startup_event():
     global db_pool
+    # 공공데이터 RAG 캐싱 실행
+    await init_public_data_cache()
+    
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
         logger.warning("DATABASE_URL 미설정 — DB 기능 비활성화, JSON 폴백 모드로 실행")
@@ -87,13 +167,11 @@ async def startup_event():
         logger.error(f"Database connection failed: {e}")
         logger.warning("DB 연결 실패 — JSON 폴백 모드로 실행")
 
-
 @app.on_event("shutdown")
 async def shutdown_event():
     if db_pool:
         await db_pool.close()
         logger.info("PostgreSQL 커넥션 풀 종료.")
-
 
 class AskRequest(BaseModel):
     question: str
@@ -101,10 +179,8 @@ class AskRequest(BaseModel):
     context: Optional[str] = ""
     lang: Optional[str] = "ko"
 
-
 class KeywordRequest(BaseModel):
     query: str
-
 
 def classify_category(question: str) -> str:
     q = question.lower()
@@ -115,7 +191,6 @@ def classify_category(question: str) -> str:
     if any(w in q for w in ["건강보험", "건보", "보험료"]): return "nhis"
     if any(w in q for w in ["영주권", "국적", "f-5", "귀화"]): return "permanent"
     return "general"
-
 
 def append_log(category: str, success: bool):
     try:
@@ -128,7 +203,6 @@ def append_log(category: str, success: bool):
             json.dump(logs, f, ensure_ascii=False, indent=2)
     except Exception as e:
         logger.error(f"로그 기록 실패: {e}")
-
 
 @app.get("/api/visas")
 async def get_visas():
@@ -145,7 +219,6 @@ async def get_visas():
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
 
-
 @app.post("/api/jobcodekeywords")
 async def extract_jobcodekeywords(req: KeywordRequest):
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
@@ -155,23 +228,18 @@ async def extract_jobcodekeywords(req: KeywordRequest):
         raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY 또는 GROQ_API_KEY가 설정되지 않았습니다.")
 
     system_prompt = (
-        "당신은 대한민국 통계청 '한국표준직업분류(KSCO)' 및 '한국표준산업분류(KSIC)' 데이터베이스 검색을 위한 형태소/어근 추출 전문가입니다.\n"
-        "사용자가 '중식당 배달', '노가다', '편의점 알바' 등 모호한 일상어를 입력할 때, 프론트엔드의 단순 텍스트 포함(includes) 검색에서 명중률(Hit Rate)이 극대화되도록 가장 짧고 포괄적인 '핵심 명사(어근)'를 각각 5개씩 반드시 추출하십시오.\n\n"
-        "[분리 및 추출 절대 원칙]\n"
-        "1. jobkeywords (직업/직무 - 무엇을 하는가?): '서비스업', '판매종사자'처럼 길게 쓰지 마십시오. -> (정답 예시: '조리', '주방', '서빙', '접객', '계산', '판매', '노무', '건설')\n"
-        "2. industrykeywords (산업/업종 - 어디서 일하는가?): '음식점업', '소매업'처럼 길게 쓰지 마십시오. -> (정답 예시: '음식', '중식', '외식', '식당', '소매', '편의', '상점', '건축')\n\n"
-        "절대 빈 배열을 반환하지 마십시오. 입력값이 아무리 짧아도 가장 확률이 높은 단어로 유추하여 무조건 5개를 꽉 채우십시오.\n"
-        "출력은 마크다운 기호가 일절 포함되지 않은 순수 JSON 객체여야 합니다:\n"
+        "당신은 대한민국 통계청 '한국표준직업분류(KSCO)' 및 '한국표준산업분류(KSIC)' 데이터베이스 검색을 위한 형태소/어근 추출 전문가이다.\n"
+        "사용자가 모호한 일상어를 입력할 때 프론트엔드 검색 명중률을 극대화하도록 가장 짧고 포괄적인 '핵심 명사(어근)'를 각각 5개씩 반드시 추출하라.\n\n"
+        "[절대 원칙]\n"
+        "1. 직업/직무: 행위 중심 명사 (정답 예시: '조리', '주방', '서빙', '계산', '건설')\n"
+        "2. 산업/업종: 장소/분야 중심 명사 (정답 예시: '음식', '중식', '식당', '소매', '건축')\n"
+        "출력은 마크다운 기호가 일절 포함되지 않은 순수 JSON 객체여야 한다:\n"
         '{"jobkeywords": ["kw1","kw2","kw3","kw4","kw5"], "industrykeywords": ["kw1","kw2","kw3","kw4","kw5"]}'
     )
 
     for model, provider in KEYWORD_MODELS:
-        if provider == "openrouter" and not openrouter_key:
-            logger.warning(f"[{model}] OPENROUTER_API_KEY 없음 — 건너뜀")
-            continue
-        if provider == "groq" and not groq_key:
-            logger.warning(f"[{model}] GROQ_API_KEY 없음 — 건너뜀")
-            continue
+        if provider == "openrouter" and not openrouter_key: continue
+        if provider == "groq" and not groq_key: continue
 
         config = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
@@ -181,9 +249,9 @@ async def extract_jobcodekeywords(req: KeywordRequest):
                 {"role": "user",   "content": req.query},
             ],
             "max_tokens": 300,
-            "temperature": 0.1,
+            "temperature": 0.0, # Zero Creativity
         }
-        # gemma 계열은 response_format json_object 미지원 → 조건부 적용
+        
         if "gemma" not in model:
             payload["response_format"] = {"type": "json_object"}
 
@@ -196,25 +264,21 @@ async def extract_jobcodekeywords(req: KeywordRequest):
 
                 json_match = re.search(r"\{.*\}", answer, flags=re.DOTALL)
                 if not json_match:
-                    raise ValueError("JSON 객체를 파싱할 수 없습니다.")
+                    raise ValueError("JSON 파싱 실패")
 
                 parsed = json.loads(json_match.group(0))
                 
-                # 프론트엔드와 맞추기 위해 반환 키를 job_keywords, industry_keywords로 변경
                 result = {
                     "job_keywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
                     "industry_keywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
                 }
-
-                logger.info(f"[jobcodekeywords] 성공 — provider={provider}, model={model}")
                 return result
 
         except Exception as e:
-            logger.error(f"[{provider}/{model}] 직종 키워드 추출 실패: {e}")
+            logger.error(f"[{provider}/{model}] 추출 실패: {e}")
             continue
 
-    raise HTTPException(status_code=503, detail="AI 모델 응답 지연 또는 JSON 파싱 실패로 키워드를 추출할 수 없습니다.")
-
+    raise HTTPException(status_code=503, detail="AI 응답 지연 또는 파싱 실패. DATA MISSING.")
 
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
@@ -222,7 +286,7 @@ async def ask_ai(req: AskRequest):
     groq_key       = os.environ.get("GROQ_API_KEY", "")
 
     if not openrouter_key and not groq_key:
-        raise HTTPException(status_code=500, detail="서버 구성 오류: API 키가 설정되지 않았습니다.")
+        raise HTTPException(status_code=500, detail="API 키 미설정 상태.")
 
     category = classify_category(req.question)
 
@@ -231,20 +295,32 @@ async def ask_ai(req: AskRequest):
     except Exception:
         user_lang = "ko"
 
-    system_prompt = f"""You are an elite Korean immigration law assistant.
-The user's query language appears to be '{user_lang}'.
-If it is not Korean, answer in the user's language, but accurately translate and explain the Korean legal terms.
-Always base your answer on the 2026 Korean Immigration Act and Visa Manuals.
-Be direct, objective, and precise. DO NOT hallucinate. Do not use markdown blocks unless necessary.
-Context: {req.context}"""
+    # [국가법령정보 실시간 호출]
+    realtime_law_context = await fetch_realtime_law_data(req.question)
+
+    # [RAG 컨텍스트 강제 주입 (Zero Creativity, Strict Fact-Based)]
+    system_prompt = f"""You are an elite, strict, and highly objective Korean immigration law assistant (2026 Manual Standard).
+Answer in the user's language ('{user_lang}'), but accurately translate and retain Korean legal terms.
+Always base your answer strictly on the 2026 Korean Immigration Act and the provided Public Data APIs.
+DO NOT hallucinate. Do not provide unwarranted sympathy. If a request is legally impossible, state it firmly.
+If exact answers are not found in the provided contexts, state "DATA MISSING" and refuse to guess.
+
+[프론트엔드 제공 컨텍스트]:
+{req.context if req.context else "DATA MISSING"}
+
+[공공데이터(RAG) - 법무부 체류자격 코드 캐시]:
+{cached_public_visa_data}
+
+[공공데이터(RAG) - 통계청 산업/직업분류 캐시]:
+{cached_public_job_data}
+
+[국가법령정보공유서비스 - 출입국관리법 실시간 조회]:
+{realtime_law_context}
+"""
 
     for model_name, provider in ASK_MODELS:
-        if provider == "openrouter" and not openrouter_key:
-            logger.warning(f"[{model_name}] OPENROUTER_API_KEY 없음 — 건너뜀")
-            continue
-        if provider == "groq" and not groq_key:
-            logger.warning(f"[{model_name}] GROQ_API_KEY 없음 — 건너뜀")
-            continue
+        if provider == "openrouter" and not openrouter_key: continue
+        if provider == "groq" and not groq_key: continue
 
         config = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
@@ -254,7 +330,7 @@ Context: {req.context}"""
                 {"role": "user",   "content": req.question},
             ],
             "max_tokens": 2048,
-            "temperature": 0.4,
+            "temperature": 0.0, # Zero Creativity 강제
             "top_p": 0.9,
         }
 
@@ -264,7 +340,7 @@ Context: {req.context}"""
                 resp.raise_for_status()
                 data   = resp.json()
                 answer = data["choices"][0]["message"]["content"]
-                logger.info(f"[ask] 성공 — provider={provider}, model={model_name}")
+                
                 append_log(category, success=True)
                 return {"answer": answer}
 
@@ -273,23 +349,20 @@ Context: {req.context}"""
             continue
 
     append_log(category, success=False)
-    raise HTTPException(status_code=503, detail="현재 AI 서버 트래픽 폭주로 응답할 수 없습니다. 잠시 후 시도하십시오.")
-
+    raise HTTPException(status_code=503, detail="현재 AI 트래픽 폭주. 잠시 후 재시도할 것.")
 
 @app.get("/")
 @app.get("/index.html")
 async def serve_index():
     if os.path.exists("index.html"):
         return FileResponse("index.html")
-    raise HTTPException(status_code=404, detail="index.html 파일을 찾을 수 없습니다.")
-
+    raise HTTPException(status_code=404, detail="DATA MISSING: index.html")
 
 @app.get("/ai.html")
 async def serve_ai():
     if os.path.exists("ai.html"):
         return FileResponse("ai.html")
-    raise HTTPException(status_code=404, detail="ai.html 파일을 찾을 수 없습니다.")
-
+    raise HTTPException(status_code=404, detail="DATA MISSING: ai.html")
 
 if __name__ == "__main__":
     import uvicorn
