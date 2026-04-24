@@ -1,0 +1,237 @@
+{
+  "doc_passport": {
+    "name": "여권 원본 및 사본",
+    "desc": "유효기간이 남아있는 여권",
+    "issuer": "본국 정부"
+  },
+  "doc_photo": {
+    "name": "표준규격 사진",
+    "desc": "최근 6개월 이내 촬영한 3.5cm x 4.5cm 사진",
+    "issuer": "본인 준비"
+  },
+  "doc_photo_file": {
+    "name": "사진 파일",
+    "desc": "온라인 업로드용 사진 파일",
+    "issuer": "본인 준비"
+  },
+  "doc_fee": {
+    "name": "수수료",
+    "desc": "정부수입인지 또는 현금 결제 (자격별 상이)",
+    "issuer": "본인 준비"
+  },
+  "doc_fee_card": {
+    "name": "수수료 (전자결제)",
+    "desc": "신용카드 또는 온라인 결제 수수료",
+    "issuer": "본인 준비"
+  },
+  "doc_fee_exempt": {
+    "name": "수수료 면제",
+    "desc": "국제 관례 또는 협정에 따른 수수료 면제 대상",
+    "issuer": "해당 없음"
+  },
+  "doc_fee_reg": {
+    "name": "외국인등록 수수료",
+    "desc": "외국인등록증 발급을 위한 수수료(통상 3만원)",
+    "issuer": "본인 준비"
+  },
+  "doc_visa_app_form_17": {
+    "name": "사증발급신청서",
+    "desc": "재외공관용 별지 제17호 서식",
+    "issuer": "출입국·외국인정책본부"
+  },
+  "doc_visa_issuance_form_21": {
+    "name": "사증발급인정신청서",
+    "desc": "국내 관할관서용 별지 제21호 서식",
+    "issuer": "출입국·외국인정책본부"
+  },
+  "doc_stay_app_form_34": {
+    "name": "통합신청서(신고서)",
+    "desc": "체류민원 전반에 사용되는 별지 제34호 서식",
+    "issuer": "출입국·외국인정책본부"
+  },
+  "doc_id_app_form": {
+    "name": "신분증 발급 신청서",
+    "desc": "외교관, 관용, SOFA 등 특수 신분증 발급 서식",
+    "issuer": "소관 부처(외교부 등)"
+  },
+  "doc_residence_report_form": {
+    "name": "국내거소신고서",
+    "desc": "재외동포(F-4) 전용 서식",
+    "issuer": "출입국·외국인정책본부"
+  },
+  "doc_residence_proof": {
+    "name": "체류지 입증서류",
+    "desc": "부동산 임대차계약서, 숙소제공확인서 등 (출입국관리법 제36조 의무사항)",
+    "issuer": "본인 또는 숙소제공자"
+  },
+  "doc_statement_of_reasons": {
+    "name": "사유서",
+    "desc": "단기비자 연장 또는 예외적 출국기한 유예 사유 상세 소명",
+    "issuer": "신청인 작성"
+  },
+  "doc_proof_of_unavoidable_reason": {
+    "name": "출국 불가 입증서류",
+    "desc": "항공편 결항 증명, 사고 증명 등 객관적 소명 자료",
+    "issuer": "항공사, 관계 기관"
+  },
+  "doc_alien_reg": {
+    "name": "외국인등록증",
+    "desc": "신분증명용 원본 제출 불필요 시 사본",
+    "issuer": "법무부장관"
+  },
+  "doc_keta_if_applicable": {
+    "name": "K-ETA 승인서",
+    "desc": "사증면제국가 국민의 무사증 입국 시 필수 (사전 인가)",
+    "issuer": "대한민국 정부(법무부)"
+  },
+  "doc_flight_ticket": {
+    "name": "항공권",
+    "desc": "왕복 항공권 또는 제3국 통과 항공권",
+    "issuer": "항공사"
+  },
+  "doc_medical_cert": {
+    "name": "의료기관 진단서",
+    "desc": "질병 치료 목적 입증 서류",
+    "issuer": "국내외 의료기관"
+  },
+  "doc_tuberculosis_cert_if_applicable": {
+    "name": "결핵건강진단서",
+    "desc": "결핵 고위험 국가 국민 대상 91일 이상 장기 체류 시 필수",
+    "issuer": "법무부 지정 병원"
+  },
+  "doc_contract": {
+    "name": "표준근로계약서 또는 고용계약서",
+    "desc": "근무조건, 임금, 계약기간이 명시된 서류",
+    "issuer": "고용주 및 피고용인 쌍방"
+  },
+  "doc_contract_ext": {
+    "name": "갱신된 근로계약서",
+    "desc": "연장된 근무기간이 명시된 서류",
+    "issuer": "고용주 및 피고용인 쌍방"
+  },
+  "doc_new_contract": {
+    "name": "신규 근로계약서",
+    "desc": "새로운 근무처와 체결한 계약서",
+    "issuer": "신규 고용주 쌍방"
+  },
+  "doc_biz_reg": {
+    "name": "사업자등록증명원",
+    "desc": "초청인 또는 고용주 사업장 입증 서류",
+    "issuer": "국세청"
+  },
+  "doc_new_biz_reg": {
+    "name": "신규 사업자등록증명원",
+    "desc": "새로운 사업장 또는 이직처 사업장 입증",
+    "issuer": "국세청"
+  },
+  "doc_tax_cert": {
+    "name": "소득금액증명원 등 납세증명",
+    "desc": "전년도 소득 입증 및 세금 체납 여부 확인 (GNI 요건 심사 등)",
+    "issuer": "국세청"
+  },
+  "doc_degree_apostille": {
+    "name": "학위증명서 (아포스티유/영사확인)",
+    "desc": "해외 발급 학위 원본 및 공증본",
+    "issuer": "해외 대학 및 주재국 공관"
+  },
+  "doc_crim_record_apostille": {
+    "name": "해외 범죄경력증명서 (아포스티유)",
+    "desc": "본국 정부 발급 범죄기록 조회서 (공증 필수)",
+    "issuer": "본국 경찰청 또는 정부기관"
+  },
+  "doc_crim_record_apostille_both": {
+    "name": "쌍방 범죄경력증명서",
+    "desc": "결혼이민(F-6) 양 당사자의 범죄경력서",
+    "issuer": "본국 및 한국 정부"
+  },
+  "doc_medical_drug": {
+    "name": "마약검사 포함 채용건강진단서",
+    "desc": "E-2 자격 등록 시 법무부 지정 병원 발급 서류",
+    "issuer": "법무부 지정 병원"
+  },
+  "doc_medical_cert_both": {
+    "name": "쌍방 건강진단서",
+    "desc": "결혼이민(F-6) 양 당사자의 건강진단서(정신질환, 성병 포함)",
+    "issuer": "지정 의료기관"
+  },
+  "doc_dispatch_note": {
+    "name": "파견명령서",
+    "desc": "외교, 공무, 주재, 종교 등 기관 소속 입증 및 파견 증명",
+    "issuer": "본국 정부 또는 본사"
+  },
+  "doc_dispatch_note_official": {
+    "name": "파견명령서 또는 공한",
+    "desc": "국제기구 또는 외국 정부 공무 입증",
+    "issuer": "소속 정부 또는 국제기구"
+  },
+  "doc_recommendation": {
+    "name": "고용추천서",
+    "desc": "소관 중앙행정기관의 장이 발급한 특정활동(E-7) 등 추천서",
+    "issuer": "소관 부처(산업부, 문체부 등)"
+  },
+  "doc_invitation_f6": {
+    "name": "외국인 배우자 초청장",
+    "desc": "결혼이민(F-6) 지정 서식 (법무부 양식)",
+    "issuer": "한국인 배우자 작성"
+  },
+  "doc_background_statement_f6": {
+    "name": "외국인 배우자 배경진술서",
+    "desc": "결혼이민(F-6) 지정 서식 (법무부 양식)",
+    "issuer": "외국인 배우자 작성"
+  },
+  "doc_income_statement_f6": {
+    "name": "가족소득현황 진술서",
+    "desc": "초청인의 소득요건 입증을 위한 법무부 지정 서식",
+    "issuer": "한국인 배우자 작성"
+  },
+  "doc_marriage_cert": {
+    "name": "혼인관계증명서",
+    "desc": "한국 및 본국에서의 혼인 성립을 입증하는 공문서",
+    "issuer": "양국 정부"
+  },
+  "doc_family_rel_proof": {
+    "name": "가족관계 입증서류",
+    "desc": "출생증명서, 호구부 등 혈족 입증 서류",
+    "issuer": "본국 정부"
+  },
+  "doc_release_letter_from_former_employer": {
+    "name": "이적동의서(원근무처 장의 동의서)",
+    "desc": "근무처 변경 시 필수 요구되는 기존 고용주의 동의 서면",
+    "issuer": "이전 고용주"
+  },
+  "doc_admission": {
+    "name": "표준입학허가서",
+    "desc": "대학 총장이 발급한 정규 학위과정 입학 허가 서류",
+    "issuer": "국내 대학"
+  },
+  "doc_bank_30days": {
+    "name": "은행 잔고증명서(30일 이내)",
+    "desc": "체류 경비 입증을 위한 은행 잔고 증명 (발급일로부터 30일 이내만 유효)",
+    "issuer": "금융기관"
+  },
+  "doc_point_table": {
+    "name": "점수표",
+    "desc": "우수인재(F-2-7) 또는 구직(D-10) 자격을 위한 배점 입증 서류",
+    "issuer": "본인 작성 및 입증 자료 첨부"
+  },
+  "doc_employment_permit": {
+    "name": "고용허가서",
+    "desc": "비전문취업(E-9) 사업주의 외국인 고용 허가 입증",
+    "issuer": "고용노동부"
+  },
+  "doc_kiip_cert": {
+    "name": "사회통합프로그램(KIIP) 이수증",
+    "desc": "영주(F-5) 등 자격 신청 시 기본 소양 입증",
+    "issuer": "법무부"
+  },
+  "doc_birth_cert_apostille": {
+    "name": "자녀 출생증명서 (아포스티유)",
+    "desc": "자녀 출생 및 친자관계 입증 공문서",
+    "issuer": "본국 정부 또는 주재국 병원"
+  },
+  "doc_parents_passport": {
+    "name": "부모의 여권 사본",
+    "desc": "국내 출생 자녀 체류자격 부여 시 부모의 신분 입증",
+    "issuer": "부모 준비"
+  }
+}

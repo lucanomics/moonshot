@@ -43,14 +43,15 @@
   --shD: 0 8px 24px rgba(0,0,0,0.5);
 }
 html { font-size: var(--fs); scroll-behavior: smooth; }
-body, input, button { font-family: var(--ff) !important; }
+body, input, button, textarea { font-family: var(--ff) !important; }
 body { background: transparent !important; color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: color 0.3s; }
 
 #starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.3s ease, opacity 2s ease; }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
-body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); }
+body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); z-index: 50; }
 .header-inner { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 680px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .header-inner { flex-direction: row; justify-content: space-between; max-width: 1160px; gap: 1rem; padding: 0.6rem 1.2rem; }
+
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; cursor: pointer; transition: all 0.7s ease; }
 body.searched .logo-area { flex-direction: row; gap: 0.5rem; flex-shrink: 0; }
 .logo-svg { width: 110px; height: 110px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
@@ -97,7 +98,7 @@ body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overf
 .cb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.28rem 0.65rem; font-size: 0.72rem; color: var(--t2); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.15s ease; }
 .cb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
 .cb.on { background: var(--ac); color: #fff; border-color: var(--ac); }
-.landing-hints { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 1.8rem; max-width: 620px; transition: opacity 0.4s, max-height 0.4s; overflow: hidden; }
+.landing-hints { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 1.8rem; max-width: 680px; transition: opacity 0.4s, max-height 0.4s; overflow: hidden; }
 body.searched .landing-hints { opacity: 0; max-height: 0; margin: 0; pointer-events: none; }
 .lh { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.35rem 0.8rem; font-size: 0.78rem; color: var(--t2); cursor: pointer; font-weight: 500; transition: all 0.15s ease; }
 .lh:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); transform: translateY(-1px); }
@@ -107,56 +108,78 @@ body.searched .results-area { opacity: 1; transform: translateY(0); pointer-even
 .qb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.22rem 0.65rem; font-size: 0.7rem; color: var(--t3); cursor: pointer; font-weight: 500; transition: all 0.15s ease; }
 .qb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
 
-/* Document Tags Styling & Information Hierarchy */
-.text-desc { margin-bottom: 0.5rem; line-height: 1.6; }
-.doc-req-box { background: rgba(0,0,0,0.025); border: 1px dashed var(--bd); padding: 0.75rem 0.85rem; border-radius: 8px; margin-top: 0.6rem; }
-[data-theme="dark"] .doc-req-box { background: rgba(255,255,255,0.03); }
-.doc-req-label { font-size: 0.7rem; font-weight: 700; color: var(--t2); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem; }
-.doc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.doc-badge { background: var(--bg3); border: 1px solid var(--bd); padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; color: var(--t1); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.doc-badge.critical { background: #fee2e2; border-color: #ef4444; color: #b91c1c; animation: pulse 2s infinite; }
-[data-theme="dark"] .doc-badge.critical { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+/* Document Modal & Buttons Styling */
+.doc-buttons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin: 1rem 1rem; }
+.doc-trigger-btn { background: var(--bg1); border: 1px solid var(--bd); padding: 1.2rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; color: var(--t2); display: flex; flex-direction: column; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); box-shadow: var(--sh1); font-family: var(--ff) !important; }
+.doc-trigger-btn:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); color: var(--ac); }
+.doc-trigger-btn .icon { font-size: 1.8rem; }
 
+.text-desc { margin-bottom: 0.75rem; line-height: 1.6; font-size: 0.85rem; color: var(--t2); background: rgba(0,0,0,0.02); padding: 0.8rem; border-radius: 6px; border-left: 3px solid var(--bd); }
+[data-theme="dark"] .text-desc { background: rgba(255,255,255,0.02); }
+.doc-req-box { padding: 0.5rem 0; }
+.subcode-warning { font-size: 0.75rem; color: var(--cWk); background: #fef3c7; padding: 0.5rem 0.8rem; border-radius: 6px; margin-bottom: 1rem; font-weight: 700; border-left: 4px solid #d97706; }
+[data-theme="dark"] .subcode-warning { background: #451a03; color: #fde68a; border-left-color: #f59e0b; }
+
+.doc-checklist { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 640px) { .doc-checklist { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+
+.doc-chk-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg1); border: 1px solid var(--bd);
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 0.82rem; font-weight: 700; color: var(--t1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02); line-height: 1.4;
+}
+.doc-chk-item svg { width: 18px; height: 18px; color: var(--ac); flex-shrink: 0; margin-top: 2px; }
+.doc-chk-item.critical { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+.doc-chk-item.critical svg { color: #dc2626; }
+[data-theme="dark"] .doc-chk-item { background: var(--bg2); border-color: var(--bd3); }
+[data-theme="dark"] .doc-chk-item.critical { background: #450a0a; border-color: #dc2626; color: #fca5a5; }
+
+/* General Result List Styling */
 .rlist { display: flex; flex-direction: column; gap: 0.6rem; padding-bottom: 3rem; }
 .vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 8px; box-shadow: var(--sh1); transition: box-shadow 0.2s; animation: cIn 0.25s ease both; }
 .vc:hover { box-shadow: var(--sh2); }
 @keyframes cIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .vc-h { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--bg2); cursor: pointer; user-select: none; border-radius: 8px 8px 0 0; transition: background 0.15s; flex-wrap: wrap; }
 .vc-h:hover { background: color-mix(in srgb, var(--ac) 8%, var(--bg2)); }
-.bc { font-family: var(--ff); font-weight: 700; font-size: 0.78rem; color: var(--ac); background: var(--acL); padding: 2px 7px; border-radius: 4px; letter-spacing: 0.03em; }
-.vt { font-weight: 700; font-size: 0.88rem; color: var(--t1); }
-.bp { font-size: 0.63rem; color: var(--tPt); background: var(--tPb); padding: 2px 7px; border-radius: 4px; white-space: nowrap; font-weight: 600; }
-.bn { font-size: 0.63rem; color: var(--t3); background: var(--bg3); padding: 2px 7px; border-radius: 4px; font-weight: 700; }
-.bd { font-size: 0.6rem; color: #065f46; background: #d1fae5; padding: 2px 7px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
+.bc { font-family: var(--ff); font-weight: 800; font-size: 0.82rem; color: var(--ac); background: var(--acL); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.03em; }
+.vt { font-weight: 700; font-size: 0.92rem; color: var(--t1); }
+.bp { font-size: 0.65rem; color: var(--tPt); background: var(--tPb); padding: 2px 7px; border-radius: 4px; white-space: nowrap; font-weight: 600; }
+.bn { font-size: 0.65rem; color: var(--t3); background: var(--bg3); padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+.bd { font-size: 0.65rem; color: #065f46; background: #d1fae5; padding: 2px 7px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
 [data-theme="dark"] .bd { color: #6ee7b7; background: #064e3b; }
 .tgl { margin-left: auto; color: var(--t3); font-size: 0.68rem; transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
 .vc.open .tgl { transform: rotate(180deg); }
 .vc-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1); }
 .vc.open .vc-cw { grid-template-rows: 1fr; }
 .vc-c { overflow: hidden; }
-.vs { padding: 0.65rem 1rem; border-top: 1px solid var(--bd3); }
-.tl { display: inline-flex; font-size: 0.63rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 4px; margin-bottom: 0.35rem; }
+.vs { padding: 0.85rem 1rem; border-top: 1px solid var(--bd3); }
+.ai-cta { background: var(--acG); border-bottom: 1px solid var(--bd2); padding: 0.9rem 1rem; display: flex; justify-content: center; }
+.tl { display: inline-flex; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px; margin-bottom: 0.45rem; }
 .tl-n { background: var(--tNb); color: var(--tNt); }
 .tl-e { background: var(--tEb); color: var(--tEt); }
 .tl-f { background: var(--tFb); color: var(--tFb); }
 .tl-s { background: var(--tSb); color: var(--tSt); }
-.ct { font-size: 0.84rem; color: var(--t2); line-height: 1.65; white-space: pre-line; word-break: keep-all; }
-.data-date { font-size: 0.63rem; color: var(--t3); padding: 0.35rem 1rem; border-top: 1px dashed var(--bd3); text-align: right; }
-.ss { background: var(--bg2); border-top: 1px solid var(--bd3); }
-.ss-t { padding: 0.45rem 1rem; font-size: 0.68rem; font-weight: 700; color: var(--t3); display: flex; align-items: center; gap: 0.35rem; }
-.ss-t b { background: var(--tSb); color: var(--tSt); padding: 2px 7px; border-radius: 4px; font-size: 0.63rem; }
-.su { border-top: 1px solid var(--bd3); }
-.su-h { display: flex; align-items: center; gap: 0.45rem; padding: 0.5rem 1rem 0.5rem 1.4rem; cursor: pointer; transition: background 0.15s; }
-.su-h:hover { background: var(--bg2); }
-.s-c { font-size: 0.78rem; font-weight: 700; color: var(--ac); min-width: 3.2rem; }
-.s-n { font-size: 0.78rem; font-weight: 600; color: var(--t1); }
-.su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s cubic-bezier(0.4,0,0.2,1); background: var(--bg2); }
+.ct { font-size: 0.86rem; color: var(--t2); line-height: 1.65; white-space: pre-line; word-break: keep-all; }
+.data-date { font-size: 0.65rem; color: var(--t3); padding: 0.4rem 1rem; border-top: 1px dashed var(--bd3); text-align: right; }
+.ss { background: var(--bg2); border-top: 1px solid var(--bd3); padding-bottom: 0.5rem; }
+.ss-t { padding: 0.65rem 1rem 0.45rem; font-size: 0.72rem; font-weight: 800; color: var(--t3); display: flex; align-items: center; gap: 0.45rem; }
+.ss-t b { background: var(--tSb); color: var(--tSt); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; }
+.su { border-top: 1px solid var(--bd3); background: var(--bg1); margin: 0 0.5rem; border-radius: 6px; box-shadow: var(--sh1); margin-top: 0.4rem; overflow: hidden; }
+.su-h { display: flex; align-items: center; gap: 0.55rem; padding: 0.6rem 1rem; cursor: pointer; transition: background 0.15s; }
+.su-h:hover { background: var(--bg0); }
+.s-c { font-size: 0.82rem; font-weight: 800; color: var(--ac); min-width: 3.8rem; }
+.s-n { font-size: 0.82rem; font-weight: 700; color: var(--t1); }
+.su-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s cubic-bezier(0.4,0,0.2,1); background: var(--bg0); border-top: 1px dashed var(--bd3); }
 .su.open .su-cw { grid-template-rows: 1fr; }
 .su.open .tgl { transform: rotate(180deg); }
-.su-c { overflow: hidden; border-left: 2px solid var(--ac); margin-left: 1.4rem; }
-.su-s { padding: 0.38rem 1rem; }
+.su-c { overflow: hidden; }
+.su-s { padding: 0.65rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
 .su-s + .su-s { border-top: 1px dashed var(--bd3); }
+.badge-req { display: inline-block; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; margin-bottom: 0.3rem; }
+[data-theme="dark"] .badge-req { background: #082f49; color: #7dd3fc; }
+
 mark.h { background: var(--hlB); color: var(--hlT); padding: 0.05em 0.2em; border-radius: 3px; font-weight: 700; }
 .es { text-align: center; padding: 3.5rem 1rem; }
 .es-t { font-weight: 800; font-size: 1.05rem; color: var(--t2); margin-bottom: 0.35rem; }
@@ -166,6 +189,37 @@ body.searched .ft { opacity: 1; }
 .ft-logo { font-family: var(--ff-logo) !important; font-size: 0.8rem; font-weight: 400; color: var(--t3); }
 .ai-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--ac); color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.1rem; font-size: 0.83rem; font-weight: 700; font-family: var(--ff) !important; box-shadow: var(--sh2); cursor: pointer; z-index: 1000; transition: background 0.2s, transform 0.2s; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
 .ai-fab:hover { background: var(--ac2); transform: translateY(-1px); }
+
+/* Common Modal Styles */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-box { background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; width: 100%; max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shD); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.modal-overlay.active .modal-box { transform: scale(1); }
+.modal-header { padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--bd2); display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: var(--t1); font-size: 1.1rem; }
+.modal-close { background: none; border: none; color: var(--t3); cursor: pointer; font-size: 1.4rem; transition: color 0.2s; padding: 0.2rem; }
+.modal-close:hover { color: var(--t1); }
+.modal-body { padding: 1.4rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+
+/* FAQ Specific Styles */
+.faq-item { border: 1px solid var(--bd2); border-radius: 8px; margin-bottom: 0.8rem; overflow: hidden; background: var(--bg0); }
+.faq-q { background: var(--bg2); padding: 0.8rem 1rem; font-weight: 800; color: var(--ac); border-bottom: 1px solid var(--bd2); font-size: 0.85rem; }
+.faq-a { padding: 1rem; font-size: 0.85rem; color: var(--t2); line-height: 1.6; }
+
+/* AI Specific Styles */
+.ai-btn { display: inline-flex; align-items: center; gap: 0.4rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+.ai-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+.ai-textarea { width: 100%; min-height: 100px; padding: 0.8rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 0.9rem; resize: vertical; outline: none; transition: border-color 0.2s; }
+.ai-textarea:focus { border-color: var(--ac); }
+.ai-quick-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.ai-action-btn { background: var(--bg2); color: var(--ac); border: 1px solid var(--ac); padding: 0.8rem; border-radius: 8px; font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex: 1; min-width: 140px; gap: 0.4rem; font-family: var(--ff) !important; text-align: center; line-height: 1.3;}
+.ai-action-btn.primary { background: var(--ac); color: white; border-color: var(--ac); flex-basis: 100%; min-width: 100%; }
+.ai-action-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(10,92,71,0.1); }
+.ai-action-btn.primary:hover:not(:disabled) { background: var(--ac2); box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3); }
+.ai-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.ai-result { background: var(--bg2); border-radius: 8px; padding: 1.2rem; font-size: 0.88rem; color: var(--t2); line-height: 1.65; display: none; border-left: 4px solid var(--ac); word-break: keep-all; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); margin-top: 0.5rem; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: currentColor; animation: spin 1s ease-in-out infinite; display: none; }
+.primary .spinner { border-top-color: white; }
+
 @media (max-width: 640px) {
   .logo-brand { font-size: 2.6rem; }
   body.searched .logo-brand { font-size: 1.2rem; }
@@ -173,6 +227,80 @@ body.searched .ft { opacity: 1; }
   body.searched .header-inner { padding: 0.5rem 0.8rem; }
   .ctrls { display: none; }
   .ai-fab { bottom: 1rem; right: 1rem; padding: 0.65rem 0.95rem; font-size: 0.78rem; }
+  .su { margin: 0; border-radius: 0; box-shadow: none; border-left: 0; border-right: 0; }
+  .ai-action-btn { flex-basis: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   직종/산업 코드 검색 모달 (정적 DB 기반) + Split View
+   ═══════════════════════════════════════════════════════════════ */
+.jc-split-layout { display: flex; gap: 1rem; margin-top: 0.5rem; flex-direction: column; }
+@media (min-width: 768px) { .jc-split-layout { flex-direction: row; } }
+.jc-pane { flex: 1; display: flex; flex-direction: column; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); overflow: hidden; }
+.jc-pane-title { padding: 0.7rem; font-weight: 800; background: var(--bg2); border-bottom: 1px solid var(--bd); color: var(--ac); font-size: 0.95rem; text-align: center; }
+.jc-results-split { max-height: 45vh; overflow-y: auto; padding: 0.4rem; flex: 1; }
+
+.jc-search-wrap { position: relative; margin-bottom: 0.8rem; }
+.jc-search-input { width: 100%; padding: 0.75rem 5rem 0.75rem 1rem; border: 1.5px solid var(--bd); border-radius: 8px; background: var(--bgI); color: var(--t1); font-size: 0.95rem; font-family: var(--ff) !important; outline: none; transition: border-color 0.2s; }
+.jc-search-input:focus { border-color: var(--ac); box-shadow: var(--shG); }
+.jc-count-badge { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: var(--bg2); color: var(--t2); padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; pointer-events: none; }
+
+.jc-loading, .jc-empty { padding: 2rem 1rem; text-align: center; color: var(--t3); font-size: 0.88rem; line-height: 1.5; }
+.jc-item { display: grid; grid-template-columns: auto 1fr auto; gap: 0.7rem; align-items: center; padding: 0.65rem 0.8rem; border-radius: 6px; margin-bottom: 0.25rem; transition: background 0.15s; }
+.jc-item:hover { background: var(--acL); }
+.jc-item:last-child { margin-bottom: 0; }
+.jc-code { font-family: 'SF Mono', Monaco, Consolas, monospace; font-weight: 800; background: var(--ac); color: #fff; padding: 0.28rem 0.6rem; border-radius: 4px; font-size: 0.82rem; min-width: 3.5rem; text-align: center; letter-spacing: 0.02em; }
+[data-theme="dark"] .jc-code { color: #0f172a; }
+.jc-code.lv1 { background: #dc2626; }
+.jc-code.lv2 { background: #ea580c; }
+.jc-code.lv3 { background: #ca8a04; }
+.jc-code.lv4 { background: #0891b2; }
+.jc-code.lv5 { background: var(--ac); }
+.jc-desc { font-size: 0.88rem; color: var(--t1); line-height: 1.4; word-break: keep-all; }
+.jc-level-tag { display: inline-block; font-size: 0.68rem; color: var(--t3); background: var(--bg2); padding: 0.08rem 0.4rem; border-radius: 3px; margin-right: 0.3rem; font-weight: 600; }
+.jc-copy-btn { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.35rem 0.7rem; font-size: 0.72rem; color: var(--t2); cursor: pointer; font-weight: 700; font-family: var(--ff) !important; transition: all 0.15s; white-space: nowrap; }
+.jc-copy-btn:hover { background: var(--ac); color: #fff; border-color: var(--ac); }
+.jc-copy-btn.copied { background: #10b981; color: #fff; border-color: #10b981; }
+
+.jc-disclaimer { margin-top: 1rem; padding: 0.75rem 0.9rem; background: var(--hlB); color: var(--hlT); border-radius: 6px; font-size: 0.78rem; line-height: 1.6; border-left: 3px solid var(--cWk); }
+.jc-disclaimer a { color: var(--hlT); text-decoration: underline; font-weight: 700; }
+
+/* ═══════════════════════════════════════════════════════════════
+   관할관서 안내 모달
+   ═══════════════════════════════════════════════════════════════ */
+.jur-section { padding: 1rem; background: var(--bg2); border-radius: 8px; margin-bottom: 0.8rem; }
+.jur-section:last-child { margin-bottom: 0; }
+.jur-section.jur-exception { background: var(--acL); border-left: 3px solid var(--ac); }
+.jur-label { font-size: 0.78rem; font-weight: 700; color: var(--t2); margin-bottom: 0.4rem; }
+.jur-big { font-size: 2.4rem; font-weight: 900; color: var(--ac); letter-spacing: 0.08em; margin: 0.2rem 0; font-family: 'SF Mono', Monaco, Consolas, monospace; }
+.jur-sub { font-size: 0.78rem; color: var(--t3); line-height: 1.5; }
+.jur-btn-primary { display: inline-block; background: var(--ac); color: #fff; padding: 0.7rem 1.4rem; border-radius: 8px; text-decoration: none; font-weight: 700; margin: 0.3rem 0; font-size: 0.9rem; transition: background 0.2s; }
+.jur-btn-primary:hover { background: var(--ac2); }
+.jur-list { list-style: none; padding: 0; margin: 0.3rem 0 0 0; }
+.jur-list li { padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.85rem; color: var(--t1); line-height: 1.5; }
+.jur-list li::before { content: '•'; position: absolute; left: 0.3rem; color: var(--ac); font-weight: 900; }
+
+.jur-search-box { background: var(--bg0); border: 1px solid var(--bd); padding: 1.2rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--ac); }
+.jur-select-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.jur-select { flex: 1; min-width: 140px; padding: 0.7rem; border: 1px solid var(--bd); border-radius: 6px; background: var(--bgI); color: var(--t1); font-family: var(--ff) !important; font-size: 0.85rem; outline: none; font-weight: 600; transition: border-color 0.2s; }
+.jur-select:focus { border-color: var(--ac); box-shadow: var(--shG); }
+.jur-select:disabled { background: var(--bg2); cursor: not-allowed; opacity: 0.7; }
+.jur-result-card { background: var(--acL); padding: 1.2rem; border-radius: 8px; display: none; margin-top: 0.5rem; }
+.jur-result-card.active { display: block; animation: cIn 0.3s ease; }
+.jur-msg { font-size: 0.85rem; font-weight: 700; color: var(--t1); margin-bottom: 0.8rem; line-height: 1.5; }
+.jur-msg b { color: #dc2626; font-weight: 900; font-size: 0.95rem; }
+.jur-office-name { font-size: 1.15rem; font-weight: 900; color: var(--ac); margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+.jur-office-addr { font-size: 0.82rem; color: var(--t2); margin-bottom: 1rem; font-weight: 600; word-break: keep-all; }
+.jur-map-btns { display: flex; gap: 0.6rem; }
+.jur-map-btn { flex: 1; text-align: center; padding: 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.3rem; transition: filter 0.2s, transform 0.1s; }
+.jur-map-btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
+.btn-naver { background: #03c75a; color: #fff; box-shadow: 0 2px 4px rgba(3,199,90,0.2); }
+.btn-kakao { background: #fee500; color: #000; box-shadow: 0 2px 4px rgba(254,229,0,0.2); }
+
+@media (max-width: 600px) {
+    .jc-item { grid-template-columns: auto 1fr; }
+    .jc-copy-btn { grid-column: 1 / -1; justify-self: end; margin-top: 0.3rem; }
+    .jur-big { font-size: 1.8rem; }
 }
     </style>
 </head>
@@ -182,6 +310,7 @@ body.searched .ft { opacity: 1; }
 
 <div class="hero-container" id="hero">
     <div class="header-inner">
+
         <div class="logo-area" onclick="if(document.body.classList.contains('searched')) resetToLanding()">
             <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="85" cy="25" r="1.5" fill="#cbd5e1" opacity=".5"><animate attributeName="opacity" values=".2;.6;.2" dur="3s" repeatCount="indefinite"/></circle>
@@ -235,8 +364,50 @@ body.searched .ft { opacity: 1; }
             <button class="cb" onclick="toggleAccordions(true)">접기</button>
             <button class="cb" onclick="toggleAccordions(false)">펼치기</button>
         </div>
+
+        <style>
+.qa-main { 
+    display: flex; 
+    gap: 0.8rem; 
+    justify-content: center; 
+    margin-top: 1.8rem; 
+    transition: opacity 0.4s; 
+    flex-wrap: wrap; 
+}
+
+.qa-btn { 
+    background: var(--bg1); 
+    border: 1px solid var(--bd); 
+    padding: 0.8rem 1.5rem; 
+    border-radius: 10px; 
+    font-weight: 800; 
+    font-size: 0.95rem; 
+    color: var(--t2); 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    box-shadow: var(--sh1); 
+    font-family: var(--ff) !important; 
+}
+
+.qa-btn:hover { 
+    background: var(--acL); 
+    border-color: var(--ac); 
+    color: var(--ac); 
+    transform: translateY(-3px); 
+    box-shadow: var(--shD); 
+}
+        </style>
+
+<div class="qa-main" id="qaMain">
+    <button class="qa-btn" onclick="openJobCodeModal()">💼 취업신고용 업종/직종 코드 찾기</button>
+    <button class="qa-btn" onclick="openJurisdictionModal()">🏛 관할 출입국관서 조회</button>
+</div>
+        
+        <div class="landing-hints" id="landingHints"></div>
     </div>
-    <div class="landing-hints" id="landingHints"></div>
 </div>
 
 <div class="results-area" id="resultsArea">
@@ -244,66 +415,255 @@ body.searched .ft { opacity: 1; }
     <div class="rlist" id="rlist"></div>
 </div>
 
+<div class="modal-overlay" id="aiModalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>✨ <span id="aiModalTitle">AI 맞춤 상황 분석</span></span>
+            <button class="modal-close" data-action="close-ai-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.85rem; color:var(--t3); line-height:1.5;">현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.</p>
+            <textarea id="aiInput" class="ai-textarea" placeholder="예: 미국 국적이며 현재 이태원에 거주 중입니다. 한국 대학교 4년제 학사를 졸업했고 D-10 구직 비자 상태인데 E-7으로 취업하고 싶습니다."></textarea>
+            
+            <div class="ai-quick-actions">
+                <button class="ai-action-btn primary" data-type="analyze">
+                    <span>✨ 종합 상황 분석 요청</span>
+                    <div class="spinner"></div>
+                </button>
+                <button class="ai-action-btn" data-type="doc_guide">
+                    <span>✨ 서류 다국어 풀이 및 발급처 안내</span>
+                    <div class="spinner"></div>
+                </button>
+                <button class="ai-action-btn" data-type="jurisdiction" id="btnJurisdiction">
+                    <span>🏛 관할 관서 조회 & 1345 안내</span>
+                </button>
+                <button class="ai-action-btn" data-type="job_code" id="btnJobCode" style="display:none;">
+                    <span>💼 취업신고용 업종/직종 코드 찾기</span>
+                </button>
+            </div>
+
+            <div id="aiResult" class="ai-result"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="jobCodeModalOverlay">
+    <div class="modal-box" style="max-width: 860px;">
+        <div class="modal-header">
+            <span>💼 취업신고용 업종/직종 코드 찾기</span>
+            <button class="modal-close" onclick="closeJobCodeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="jc-search-wrap">
+                <input type="text" id="jcSearchInput" class="jc-search-input"
+                       placeholder="명칭 또는 상황 검색 (예: 건설현장 노가다, 중식당 배달)" autocomplete="off">
+                <span id="jcCountBadge" class="jc-count-badge">0건</span>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-bottom: 0.8rem;">
+                <button class="ai-btn" onclick="searchJobcodeWithAI()" style="width:100%; justify-content:center; padding:0.8rem;">
+                    <span>🤖 AI 자연어 분석으로 공식 직종 및 업종 찾기</span>
+                    <div class="spinner" id="jcAiSpinner" style="margin-left:8px;"></div>
+                </button>
+            </div>
+
+            <div class="jc-split-layout">
+                <div class="jc-pane">
+                    <div class="jc-pane-title">👔 직종(직업) 코드 결과</div>
+                    <div id="jcJobResults" class="jc-results-split">
+                        <div class="jc-empty">처음 열면 데이터를 불러옵니다.</div>
+                    </div>
+                </div>
+                <div class="jc-pane">
+                    <div class="jc-pane-title">🏭 업종(산업) 코드 결과</div>
+                    <div id="jcIndResults" class="jc-results-split">
+                        <div class="jc-empty">처음 열면 데이터를 불러옵니다.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="jc-disclaimer">
+                ⚠️ <b>[실무 주의 사항]</b> HiKorea 외국인 취업정보 온라인 신고 시 <b>직종(직업)</b> 코드와 <b>업종(산업)</b> 코드를 모두 입력해야 하며, <b>연간소득</b> 정보도 필수입니다. 변동사항 발생 시 15일 이내에 신고하지 않으면 출입국관리법에 따라 범칙금이 부과될 수 있습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="jurisdictionModalOverlay">
+    <div class="modal-box" style="max-width: 560px;">
+        <div class="modal-header">
+            <span>🏛 관할 출입국관서 조회</span>
+            <button class="modal-close" onclick="closeJurisdictionModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="jur-search-box">
+                <div class="jur-label" style="font-size: 0.9rem; color: var(--ac);">🔍 내 관할 출입국관서 정확히 찾기</div>
+                <div class="jur-sub" style="margin-bottom: 1rem;">현재 거주 중인 체류지(외국인등록증 상의 주소)를 선택하십시오.</div>
+                <div class="jur-select-group">
+                    <select id="jurSido" class="jur-select" onchange="updateSigungu()">
+                        <option value="">시/도 선택</option>
+                    </select>
+                    <select id="jurSigungu" class="jur-select" onchange="showJurisdiction()" disabled>
+                        <option value="">시/군/구 선택</option>
+                    </select>
+                </div>
+                <div id="jurResultCard" class="jur-result-card">
+                    <div class="jur-msg" id="jurMsg"></div>
+                    <div class="jur-office-name" id="jurOfficeName"></div>
+                    <div class="jur-office-addr" id="jurOfficeAddr"></div>
+                    <div class="jur-map-btns">
+                        <a href="#" id="jurNaver" target="_blank" rel="noopener" class="jur-map-btn btn-naver">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16.08 11.25L7.92 1.34H1.4v21.32h6.53v-9.91l8.16 9.91h6.51V1.34h-6.52v9.91z"/></svg> 네이버 지도
+                        </a>
+                        <a href="#" id="jurKakao" target="_blank" rel="noopener" class="jur-map-btn btn-kakao">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-5.52 0-10 3.58-10 8 0 2.87 1.84 5.4 4.67 6.84-.44 1.63-1.6 5.86-1.63 5.96-.05.18.06.33.22.36.13.02.26-.03.35-.13.1-.11 4.54-3.08 6.03-4.13.12.01.24.01.36.01 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg> 카카오맵
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="jur-section">
+                <div class="jur-label">📞 외국인종합안내센터</div>
+                <div class="jur-big">1345</div>
+                <div class="jur-sub">평일 09:00~18:00 · 20개 언어 지원 · 무료</div>
+            </div>
+            <div class="jur-section">
+                <div class="jur-label">🌐 HiKorea 관할관서 조회 & 방문 예약</div>
+                <a href="https://www.hikorea.go.kr/Main.pt" target="_blank" rel="noopener" class="jur-btn-primary">
+                    HiKorea 바로가기 →
+                </a>
+                <div class="jur-sub">체류지 주소로 관할관서 확인 · 방문 예약 가능</div>
+            </div>
+            <div class="jur-section">
+                <div class="jur-label">⚠️ 방문 예약 필수</div>
+                <ul class="jur-list">
+                    <li>일반 체류 민원(자격 변경·연장·외국인등록)은 <strong>사전 예약 필수</strong></li>
+                    <li>예약 없이 방문 시 당일 처리 불가</li>
+                    <li>예약 10분 전 도착, 지각 시 무효 처리</li>
+                </ul>
+            </div>
+            <div class="jur-section jur-exception">
+                <div class="jur-label">✅ 비예약 방문 가능 업무</div>
+                <ul class="jur-list">
+                    <li>체류지 변경 신고 (시·군·구청·읍면동 주민센터에서도 가능)</li>
+                    <li>등록외국인 여권 변경 신고</li>
+                    <li>외국인등록증 분실·훼손 재발급</li>
+                    <li>모바일 외국인등록증 발급</li>
+                    <li>전자민원 허가 후 연장 스티커 부착</li>
+                    <li>체류기간 만료 당일 방문자 (취약계층 및 인도적 사유)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="docModalOverlay">
+    <div class="modal-box" style="max-width: 640px;">
+        <div class="modal-header">
+            <span id="docModalTitle">구비서류 확인</span>
+            <button class="modal-close" data-action="close-doc-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="docModalDesc" class="text-desc" style="display:none;"></div>
+            <div id="docModalChecklist"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="faqModalOverlay">
+    <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-header">
+            <span>💡 <span id="faqModalTitle">자주 묻는 질문 (FAQ)</span></span>
+            <button class="modal-close" data-action="close-faq-modal">✕</button>
+        </div>
+        <div class="modal-body" id="faqModalBody">
+        </div>
+    </div>
+</div>
+
 <footer class="ft">
-    <span class="ft-logo">Moonshot</span> v24 · Moonshot/Moonshot.ai의 검색 및 답변 결과는 사전 안내 목적이므로, 법적 근거로 활용될 수 없습니다. 최종 결정 전 반드시 관할 출입국관서의 확인을 거치시기 바랍니다.
+    <span class="ft-logo">Moonshot</span> v37 · ※ 본 서비스는 베타 테스트 중이며, 제공되는 정보는 법적 효력을 갖지 않습니다. 정확한 정보는 반드시 1345(외국인종합안내센터)에 확인하시기 바랍니다.
 </footer>
 
 <a href="ai.html" class="ai-fab">🌕 Moonshot AI</a>
 
 <script>
-// 공식 서류 딕셔너리 (치명적 결격 사유 강조 및 실무 명칭으로 전면 보완)
+function escapeHtml(s){
+    const d=document.createElement('div');
+    d.textContent=s ?? '';
+    return d.innerHTML;
+}
+
+function escapeRegExp(s){
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+}
+
+function hl(t,k){
+    const text = String(t ?? '');
+    if(!k || !k.length) return escapeHtml(text);
+    return escapeHtml(text).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>');
+}
+
+const COMMON_NEW = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_photo', 'doc_id', 'doc_fee_new', 'doc_arc_fee'];
+const COMMON_EXT = ['doc_app_form', 'doc_passport_org', 'doc_passport_copy', 'doc_id', 'doc_fee_ext'];
+
 const DOC_DICT = {
-    "doc_app_form": "통합신청서(별지 34호)",
-    "doc_passport": "여권",
-    "doc_passport_org": "여권 원본",
-    "doc_passport_copy": "여권 사본",
-    "doc_id": "외국인등록증",
-    "doc_photo": "표준규격사진 1매",
-    "doc_fee": "수수료",
+    "doc_app_form": "통합신청서 (별지 제34호 서식)",
+    "doc_passport": "여권 원본 및 인적사항면 사본",
+    "doc_passport_org": "여권 원본 (대조용 필수지참)",
+    "doc_passport_copy": "여권 인적사항면 사본",
+    "doc_id": "외국인등록증(또는 거소증) 원본 및 사본 (기존 등록자에 한함)",
+    "doc_photo": "표준규격사진 1매 (3.5x4.5cm, 최근 6개월)",
+    "doc_fee": "수수료 (정부수입인지)",
+    "doc_fee_new": "신규 발급 수수료 (정부수입인지)",
+    "doc_fee_ext": "기간 연장 수수료 (정부수입인지)",
+    "doc_arc_fee": "신분증(외국인등록증, 거소증 등) 발급 수수료 35,000원 (전액 현금 결제, 택배 수령 시 39,000원)",
     "doc_biz_reg": "사업자등록증 사본",
-    "doc_corp_reg": "법인등기사항전부증명서",
-    "doc_tax": "납세증명서",
-    "doc_vat": "부가가치세 과세표준증명",
-    "doc_inc_proof": "소득금액증명원 등 소득입증",
-    "doc_emp_contract": "고용/근로계약서",
-    "doc_emp_recom": "고용추천서",
-    "doc_degree": "학위/학력증명서",
-    "doc_career": "경력증명서",
-    "doc_health": "의료기관 건강진단서(마약검사 필수)", // 직관적 강조
-    "doc_tb": "결핵진단서(고위험 35개국 필수)", // 결핵 위험군 강조
-    "doc_crim": "해외 범죄경력증명서(아포스티유/영사확인)", // 범죄경력의 공증 요건 명시
-    "doc_fam_rel": "가족관계증명서",
-    "doc_mar_rel": "혼인관계증명서",
-    "doc_basic": "기본증명서",
-    "doc_address": "체류지 입증서류(임대차계약서 등)",
-    "doc_guarantee": "신원보증서",
-    "doc_dispatch": "파견명령서",
-    "doc_invitation": "초청장",
-    "doc_bank_bal": "잔고증명서",
-    "doc_enroll": "재학/입학/수료증명서",
-    "doc_transcript": "성적증명서",
-    "doc_attend": "출석확인서",
-    "doc_topik": "TOPIK/한국어능력 입증",
-    "doc_kiip": "사회통합프로그램 이수증",
-    "doc_f4_proof": "동포 입증서류(공적장부)",
-    "doc_job_report": "외국인 직업 신고서",
-    "doc_flight": "왕복항공권",
-    "doc_plan": "계획서/사유서",
+    "doc_corp_reg": "법인등기사항전부증명서 (발급 3개월 이내)",
+    "doc_tax": "납세증명서 (국세 및 지방세 완납증명)",
+    "doc_vat": "부가가치세 과세표준증명 (최근 1년)",
+    "doc_inc_proof": "소득금액증명원 등 소득입증서류",
+    "doc_score": "점수제 평가표 및 해당 항목별 증빙서류 (점수제 적용 비자에 한함)",
+    "doc_emp_contract": "표준근로계약서 또는 고용계약서 원본/사본",
+    "doc_emp_recom": "주무부처 고용추천서 (해당 직종 한정)",
+    "doc_degree": "최종 학위/학력증명서 (아포스티유/영사확인 필수)",
+    "doc_career": "해외 및 국내 경력증명서",
+    "doc_health": "의료기관 건강진단서 (법무부 지정 마약검사 필수 포함)",
+    "doc_tb": "결핵건강진단서 (보건소/지정병원, 고위험 35개국 필수)",
+    "doc_crim": "해외 범죄경력증명서 (자국 정부 발급, 아포스티유/영사확인)",
+    "doc_fam_rel": "가족관계증명서 (본국 권한기관 발급 및 공증/확인)",
+    "doc_fam_rel_kr": "가족관계증명서(상세) (한국인 배우자 명의, 자녀 양육 시 각 자녀 명의로 개별 발급 필수)",
+    "doc_mar_rel": "혼인관계증명서 (상세)",
+    "doc_basic": "기본증명서 (상세)",
+    "doc_address": "체류지 입증서류 (임대차계약서, 숙소제공확인서, 공공요금 영수증 등)",
+    "doc_guarantee": "신원보증서 (보증기간 명시)",
+    "doc_dispatch": "파견명령서 (본사 발급, 파견기간 및 직책 명시)",
+    "doc_invitation": "초청장 (초청목적, 귀국보증 등 상세 명시)",
+    "doc_bank_bal": "은행 잔고증명서 (최근 30일 이내 발급본)",
+    "doc_enroll": "표준입학허가서 또는 재학/수료증명서",
+    "doc_transcript": "성적증명서 (공식 발급본)",
+    "doc_attend": "출석확인서 (출석률 명시)",
+    "doc_topik": "TOPIK 성적표 또는 한국어능력 입증서류",
+    "doc_kiip": "사회통합프로그램(KIIP) 이수증/합격증",
+    "doc_f4_proof": "외국국적동포 입증서류 (공적장부 등)",
+    "doc_job_report": "외국인 취업정보 온라인 신고 내역",
+    "doc_flight": "왕복항공권 (또는 제3국행 예약증)",
+    "doc_plan": "체류/구직/연수 계획서 또는 사유서",
     "doc_consent": "자진출국 각서",
-    "doc_eps": "고용허가서",
-    "doc_invest": "투자/벤처기업 입증서류",
-    "doc_refugee": "난민인정신청서",
-    "doc_medical": "의료기관 진단서",
-    "doc_purpose": "목적 입증서류",
-    "doc_accom": "숙소 제공 확인서",
-    "doc_schedule": "일정표",
-    "doc_finance": "재정능력 입증서류",
-    "doc_training_cont": "연수계속 입증서류",
-    "doc_prof_conf": "지도교수/유학담당자 확인서",
-    "doc_specialty": "전문성 입증서류"
+    "doc_eps": "고용허가서 사본 (고용노동부 발급)",
+    "doc_invest": "외국인투자기업등록증 사본 및 투자금 도입 입증서류",
+    "doc_refugee": "난민인정신청서 원본",
+    "doc_medical": "의료기관 진단서 (상병명, 요양기간 명시)",
+    "doc_purpose": "기타 체류목적 입증서류 (별도 소명자료)",
+    "doc_accom": "숙소 제공 확인서 및 제공자 신분증 사본",
+    "doc_schedule": "국내 체류 일정표 (일자별 작성)",
+    "doc_finance": "재정능력 입증서류 (잔고증명, 소득증명 등 총괄)",
+    "doc_training_cont": "연수계속 입증서류 (출석부, 진도표 등)",
+    "doc_prof_conf": "지도교수 또는 유학담당자 확인서",
+    "doc_specialty": "해당 분야 전문성 입증서류 (국가공인자격증 등)",
+    "doc_address_change": "체류지 변경 신고서 (통합신청서), 신분증, 체류지 입증서류",
+    "doc_passport_change": "등록사항 변경 신고서 (통합신청서), 신여권 원본 및 사본, 기존 외국인등록증",
+    "doc_arc_reissue": "외국인등록증 재발급 신청서 (통합신청서), 여권, 사유 소명 서류(경찰서 분실신고증 등), 사진 1매"
 };
 
-// 1. 별자리 배경 시스템
 (async function initStars() {
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
@@ -347,7 +707,6 @@ const DOC_DICT = {
     requestAnimationFrame(draw);
 })();
 
-// 2. 비자 데이터 엔진
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:')
     ? ""
     : "https://web-production-14f9a.up.railway.app";
@@ -358,71 +717,17 @@ const qEl = document.getElementById('q');
 const goBtn = document.querySelector('.sbar-go');
 const rcEl = document.getElementById('rc');
 
-function setSearchEnabled(enabled) {
-    if (!qEl || !goBtn) return;
-    qEl.disabled = !enabled;
-    goBtn.disabled = !enabled;
-    qEl.style.opacity = enabled ? '1' : '0.6';
-}
+let currentSearchMode = 'and';
+let currentTheme = 'dark';
+const CC = {short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
 
-async function loadVisaData() {
-    const PH_LIST = ["제주 무사증, B-2-2, K-ETA 등 검색","사증면제협정국, B-1, 무비자 차이 검색","F-6 결혼이민, 가정폭력, 혼인단절 검색","E-7 특정활동, E-9 비전문취업 검색","D-2 유학, 아르바이트 활동허가 검색","건강보험 면제, NHIS, 국외체류 검색","난민신청 서류, G-1, RF-1 검색","F-5 영주권, 점수제, F-2-7 검색","오버스테이, 자진신고, 입국규제 검색","K-ETA 국가 목록, 116개국 검색","결핵 고위험국, TB-1, 진단서 검색","F-3 동반 소득요건, 25.7.1 개편 검색"];
-    const applySuccess = (arr, label) => {
-        VISA_DATA = arr;
-        dataReady = true;
-        rcEl.textContent = `데이터 로드 완료 (${VISA_DATA.length}개) - ${label}`;
-        setSearchEnabled(true);
-        initUI();
-        qEl.placeholder = PH_LIST[Math.floor(Math.random() * PH_LIST.length)];
-    };
-    const parse = (raw) => {
-        const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : null);
-        if (!arr || arr.length === 0) throw new Error('데이터가 비어 있습니다.');
-        return arr;
-    };
-
-    const API_URL = `${API_BASE}/api/visas`;
-    try {
-        console.log(`[Moonshot] Primary API fetch 시도: ${API_URL}`);
-        const res = await fetch(API_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`API 응답 실패 (${res.status})`);
-        const arr = parse(await res.json());
-        console.log(`[Moonshot] ✅ API 로드 성공: ${arr.length}개`);
-        applySuccess(arr, 'API 연동');
-        return;
-    } catch (e) {
-        console.warn(`[Moonshot] ⚠ API 로드 실패, JSON 폴백 시도:`, e.message);
-    }
-
-    const fallbackUrl = './visa_data.json';
-    try {
-        console.log(`[Moonshot] Fallback JSON fetch 시도: ${fallbackUrl}`);
-        const res = await fetch(fallbackUrl, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`JSON 응답 실패 (${res.status})`);
-        const arr = parse(await res.json());
-        console.log(`[Moonshot] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
-        applySuccess(arr, '정적 백업');
-    } catch (e) {
-        console.error(`[Moonshot] ❌ 최종 데이터 로드 실패:`, e.message);
-        dataReady = false;
-        rcEl.textContent = '⚠ 데이터 로드 실패 — 서버 및 파일 상태를 확인하세요';
-        qEl.placeholder = '데이터 로드 실패';
-        setSearchEnabled(false);
-    }
-}
-
-// 3. 검색 및 UI 로직
-let currentSearchMode='and', currentTheme='dark';
-const CC={short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
-
-// 라벨링 전면 수정 - '신규 발급 요건' -> '신규 구비서류'
-const CL={
-    short:['신규 구비서류','연장/제한','FAQ'],
-    study:['신규 구비서류','연장 구비서류','FAQ'],
-    work:['신규 구비서류','연장 구비서류','FAQ'],
-    invest:['신규 구비서류','연장 구비서류','FAQ'],
-    family:['신규 구비서류','연장 구비서류','FAQ'],
-    other:['개요/구비서류','연장/절차','FAQ'],
+const CL = {
+    short:['안내사항','연장/제한','FAQ'],
+    study:['안내사항','안내사항','FAQ'],
+    work:['안내사항','안내사항','FAQ'],
+    invest:['안내사항','안내사항','FAQ'],
+    family:['안내사항','안내사항','FAQ'],
+    other:['안내사항','안내사항','FAQ'],
     diplo:['부여 요건','유지','FAQ'],
     nhis:['적용 대상','신청 절차','FAQ'],
     faq:['개요','절차/유의','FAQ'],
@@ -430,36 +735,858 @@ const CL={
 };
 
 function getLabels(v){return v.labels||CL[v.cat]||['개요','상세','FAQ'];}
-function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s ?? '';return d.innerHTML}
-function hl(t,k){
-    const text = String(t ?? '');
-    if(!k.length) return escapeHtml(text);
-    return escapeHtml(text).replace(new RegExp(`(${k.map(escapeRegExp).join('|')})`,'gi'),'<mark class="h">$1</mark>')
+
+let currentAiVisaCode = null;
+let currentAiController = null;
+
+function openAiModal(visaCode) {
+    const visa = VISA_DATA.find(v => v.code === visaCode);
+    if (!visa) return;
+    currentAiVisaCode = visaCode;
+    document.getElementById('aiModalTitle').textContent = `${escapeHtml(visa.code)} (${escapeHtml(visa.name)})`;
+    
+    const descEl = document.querySelector('#aiModalOverlay .modal-body p');
+    if (['faq', 'scn', 'nhis'].includes(visa.cat)) {
+        descEl.innerHTML = `현재 직면한 상황(사건 경위, 체류 상태, 국적 등)을 상세히 적어주시면, Moonshot AI가 2026년 출입국관리법 및 매뉴얼 원문에 근거하여 <strong>자의적 해석 없이 철저한 법적 판단 및 구제 절차</strong>를 검증해 드립니다.`;
+    } else {
+        descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Moonshot AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
+    }
+    
+    const jobCodeBtn = document.getElementById('btnJobCode');
+    if (jobCodeBtn) {
+        const isJobCodeTarget = JOBCODE_TARGET_VISAS.some(prefix => 
+            visa.code === prefix || visa.code.startsWith(prefix + '-') || visa.code.startsWith(prefix)
+        );
+        jobCodeBtn.style.display = isJobCodeTarget ? '' : 'none';
+    }
+    
+    document.getElementById('aiInput').value = '';
+    document.getElementById('aiResult').style.display = 'none';
+    document.getElementById('aiResult').innerHTML = '';
+    document.getElementById('aiModalOverlay').classList.add('active');
 }
 
-// 태그 렌더링 함수 - 시각적 격리 컴포넌트 적용
-function renderDocTags(docKeys, keywords) {
-    if (!docKeys || !docKeys.length) return '';
-    const tagsHtml = docKeys.map(key => {
-        const officialName = DOC_DICT[key] || key;
-        const isCritical = ['doc_health', 'doc_crim', 'doc_tb'].includes(key);
-        const criticalClass = isCritical ? ' critical' : '';
-        const iconPrefix = isCritical ? '🚨 ' : '';
-        return `<span class="doc-badge${criticalClass}">${iconPrefix}${hl(officialName, keywords)}</span>`;
+function closeAiModal() {
+    if (currentAiController) {
+        currentAiController.abort();
+        currentAiController = null;
+    }
+    document.getElementById('aiModalOverlay').classList.remove('active');
+    document.querySelectorAll('.ai-action-btn').forEach(b => {
+        b.disabled = false;
+        const spinner = b.querySelector('.spinner');
+        if (spinner) spinner.style.display = 'none';
+    });
+}
+
+function openDocModal(visaCode, type, subIdx) {
+    const visa = VISA_DATA.find(v => v.code === visaCode);
+    if (!visa) return;
+
+    let title = '', docs = [];
+    let targetCode = visa.code;
+    const isFaq = ['faq', 'scn', 'nhis'].includes(visa.cat);
+
+    if (type === 'new') {
+        title = '신규 발급 필수 구비서류';
+        docs = isFaq ? (visa.newReqDocs || []) : [...new Set([...COMMON_NEW, ...(visa.newReqDocs || [])])];
+    } else if (type === 'ext') {
+        title = '체류기간 연장 필수 구비서류';
+        docs = isFaq ? (visa.extReqDocs || []) : [...new Set([...COMMON_EXT, ...(visa.extReqDocs || [])])];
+    } else if (type === 'sub' && subIdx !== null && subIdx !== undefined) {
+        const sIdx = parseInt(subIdx, 10);
+        if (!isNaN(sIdx) && visa.subCodes && visa.subCodes[sIdx]) {
+            const sub = visa.subCodes[sIdx];
+            title = `${sub.name || '해당 세부항목'} 추가 구비서류`;
+            docs = sub.addReqDocs || [];
+            targetCode = sub.code;
+        } else {
+            title = `세부항목 추가 구비서류`;
+        }
+    }
+
+    document.getElementById('docModalTitle').textContent = `${escapeHtml(visa.code)} - ${escapeHtml(title)}`;
+    
+    const descEl = document.getElementById('docModalDesc');
+    descEl.innerHTML = `🚨 <strong>실무 주의사항</strong>: 본 체크리스트는 법령에 명시된 기본 공통 서류입니다. 심사관의 재량적 판단에 따라 출입국 실무 현장에서 추가 소명 자료가 징구될 수 있습니다.<br>
+    <div style="margin-top:0.6rem; padding-top:0.6rem; border-top:1px dashed var(--bd); color:var(--t2);">
+    🤝 <strong>대리인(가족, 고용주 등) 방문 대리 신청 안내</strong><br>
+    • <strong>대리 자격:</strong> 질병, 만 17세 미만 등 부득이한 사유가 있거나, 배우자/직계친족, 초청자/고용주(소속 직원 포함)에 한함. (※ 영주(F-5) 등 본인 출석 필수 민원은 예외)<br>
+    • <strong>필수 지참:</strong> 위 기본 서류 외에 <strong>① 위임장(소정 양식) ② 대리인 신분증(원본 대조 및 사본) ③ 관계 입증 서류(가족관계증명서, 재직증명서 등)</strong>를 반드시 지참해야 하며, 통합신청서 하단에 대리인 서명이 필수입니다.
+    </div>`;
+    descEl.style.display = 'block';
+
+    document.getElementById('docModalChecklist').innerHTML = renderDocTags(docs, [], type === 'sub', targetCode);
+    document.getElementById('docModalOverlay').classList.add('active');
+}
+
+window.verifyFaqWithAi = function(visaCode, question) {
+    document.getElementById('faqModalOverlay').classList.remove('active');
+    openAiModal(visaCode);
+    document.getElementById('aiInput').value = `[법령 진위여부 검증 요청]\n다음 상황/질문에 대한 2026년 출입국관리법 및 사증/체류 매뉴얼의 정확한 법적 근거와 원문 규정을 확인해 주십시오.\n\n검증 대상: ${question}`;
+    
+    setTimeout(() => {
+        const analyzeBtn = document.querySelector('.ai-action-btn[data-type="analyze"]');
+        if(analyzeBtn) analyzeBtn.click();
+    }, 150);
+};
+
+function openFaqModal(visaCode) {
+    const visa = VISA_DATA.find(v => v.code === visaCode);
+    if (!visa || !visa.faq) return;
+    
+    document.getElementById('faqModalTitle').textContent = `${escapeHtml(visa.code)} 자주 묻는 질문`;
+    
+    const rawFaq = visa.faq;
+    const pairs = rawFaq.split(/Q:\s*/).filter(Boolean);
+    const html = pairs.map(p => {
+        const parts = p.split(/A:\s*/);
+        const q = parts[0].trim();
+        const a = (parts[1] || '').trim();
+        return `<div class="faq-item">
+                  <div class="faq-q">Q. ${escapeHtml(q)}</div>
+                  <div class="faq-a">${escapeHtml(a).replace(/\n/g, '<br>')}
+                    <div style="margin-top:0.85rem; text-align:right; border-top:1px dashed var(--bd2); padding-top:0.6rem;">
+                        <button class="cb" style="color:var(--ac); border-color:var(--ac);" onclick="verifyFaqWithAi('${escapeHtml(visa.code)}', '${escapeHtml(q).replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">🤖 AI 팩트체크 (법령/매뉴얼 근거 확인)</button>
+                    </div>
+                  </div>
+                </div>`;
     }).join('');
     
-    return `<div class="doc-req-box">
-                <div class="doc-req-label">
-                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    필수 구비서류 목록
+    document.getElementById('faqModalBody').innerHTML = html || '<div class="text-desc">등록된 자주 묻는 질문이 없습니다.</div>';
+    document.getElementById('faqModalOverlay').classList.add('active');
+}
+
+document.body.addEventListener('click', (e) => {
+    const openAiBtn = e.target.closest('[data-action="open-ai-modal"]');
+    if (openAiBtn) {
+        openAiModal(openAiBtn.getAttribute('data-visa-code'));
+        return;
+    }
+
+    const closeAiBtn = e.target.closest('[data-action="close-ai-modal"]');
+    if (closeAiBtn || (e.target.id === 'aiModalOverlay' && e.target === e.currentTarget)) {
+        closeAiModal();
+        return;
+    }
+
+    const actionBtn = e.target.closest('.ai-action-btn');
+    if (actionBtn) {
+        submitAiAnalysis(actionBtn.getAttribute('data-type'), actionBtn);
+        return;
+    }
+
+    const docBtn = e.target.closest('[data-action="open-doc-modal"]');
+    if (docBtn) {
+        openDocModal(docBtn.getAttribute('data-vcode'), docBtn.getAttribute('data-type'), docBtn.getAttribute('data-subidx'));
+        return;
+    }
+
+    const closeDocBtn = e.target.closest('[data-action="close-doc-modal"]');
+    if (closeDocBtn || (e.target.id === 'docModalOverlay' && e.target === e.currentTarget)) {
+        document.getElementById('docModalOverlay').classList.remove('active');
+        return;
+    }
+
+    const openFaqBtn = e.target.closest('[data-action="open-faq-modal"]');
+    if (openFaqBtn) {
+        openFaqModal(openFaqBtn.getAttribute('data-vcode'));
+        return;
+    }
+
+    const closeFaqBtn = e.target.closest('[data-action="close-faq-modal"]');
+    if (closeFaqBtn || (e.target.id === 'faqModalOverlay' && e.target === e.currentTarget)) {
+        document.getElementById('faqModalOverlay').classList.remove('active');
+        return;
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (document.getElementById('aiModalOverlay').classList.contains('active')) closeAiModal();
+        if (document.getElementById('docModalOverlay').classList.contains('active')) document.getElementById('docModalOverlay').classList.remove('active');
+        if (document.getElementById('faqModalOverlay').classList.contains('active')) document.getElementById('faqModalOverlay').classList.remove('active');
+    }
+});
+
+const JOBCODE_TARGET_VISAS = [
+    'E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7',
+    'E-8', 'E-9', 'E-10',
+    'H-1', 'H-2',
+    'D-8', 'D-9', 'D-10',
+    'F-2', 'F-4', 'F-5', 'F-6'
+];
+
+let _jobcodeData = null;
+let _jobcodeLoadPromise = null;
+let _jcSearchDebounce = null;
+
+const JOBCODE_JSON_PATHS = [
+    './data/jobcode_master.json',   
+    './data/output.json',            
+    './jobcode_master.json',         
+    './output.json'                  
+];
+
+async function loadJobcodeData() {
+    if (_jobcodeData) return _jobcodeData;
+    if (_jobcodeLoadPromise) return _jobcodeLoadPromise;
+
+    _jobcodeLoadPromise = (async () => {
+        const errors = [];
+        
+        if (window.location.protocol === 'data:' || window.location.protocol === 'about:') {
+             throw new Error("현재 미리보기(샌드박스) 환경에서는 로컬 JSON 파일을 읽어올 수 없습니다. 코드를 다운로드하여 로컬 웹 서버를 통해 실행하십시오.");
+        }
+        
+        for (const path of JOBCODE_JSON_PATHS) {
+            try {
+                const res = await fetch(path, { cache: 'default' });
+                if (!res.ok) {
+                    errors.push(`${path}: HTTP ${res.status}`);
+                    continue;
+                }
+                const json = await res.json();
+                if (!json.data || !Array.isArray(json.data)) {
+                    errors.push(`${path}: 데이터 형식 오류`);
+                    continue;
+                }
+                _jobcodeData = json;
+                console.log(`[Moonshot] ✅ 직종코드 DB 로드 성공: ${path} (${json.total_count}건)`);
+                return json;
+            } catch (err) {
+                errors.push(`${path}: ${err.message}`);
+            }
+        }
+        _jobcodeLoadPromise = null;
+        throw new Error(`모든 경로 시도 실패:\n${errors.join('\n')}`);
+    })();
+    return _jobcodeLoadPromise;
+}
+
+async function openJobCodeModal() {
+    const overlay = document.getElementById('jobCodeModalOverlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+
+    const input = document.getElementById('jcSearchInput');
+    const badge = document.getElementById('jcCountBadge');
+
+    if (input) {
+        input.value = '';
+        setTimeout(() => input.focus(), 100);
+    }
+
+    document.getElementById('jcJobResults').innerHTML = '<div class="jc-loading">데이터 로드 중... (최초 1회만)</div>';
+    document.getElementById('jcIndResults').innerHTML = '<div class="jc-loading">데이터 로드 중... (최초 1회만)</div>';
+    
+    try {
+        await loadJobcodeData();
+        renderJobcodeResults('');  
+    } catch (err) {
+        const errorHtml = `<div class="jc-empty" style="color:#ef4444; text-align:left; padding:1.2rem;">
+            ⚠ <strong>데이터 로드 실패</strong><br><br>
+            <small style="color:#64748b;">상세 오류: ${escapeHtml(err.message)}</small>
+        </div>`;
+        document.getElementById('jcJobResults').innerHTML = errorHtml;
+        document.getElementById('jcIndResults').innerHTML = errorHtml;
+        if (badge) badge.textContent = '오류';
+    }
+}
+
+function closeJobCodeModal() {
+    const overlay = document.getElementById('jobCodeModalOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+function renderJobcodeResults(query) {
+    const jobBox = document.getElementById('jcJobResults');
+    const indBox = document.getElementById('jcIndResults');
+    const badge = document.getElementById('jcCountBadge');
+    if (!jobBox || !indBox || !_jobcodeData) return;
+
+    const q = (query || '').trim().toLowerCase();
+    
+    const filterAndSort = (type) => {
+        let rows = _jobcodeData.data.filter(r => r.분류 === type);
+        if (q) {
+            rows = rows.filter(r => {
+                const desc = (r.상세설명 || '').toLowerCase();
+                const code = (r.코드값 || '').toLowerCase();
+                return desc.includes(q) || code.includes(q);
+            });
+        } else {
+            rows = rows.filter(r => (r.코드값 || '').length === 1);
+        }
+        rows.sort((a, b) => {
+            const la = (a.코드값 || '').length;
+            const lb = (b.코드값 || '').length;
+            if (la !== lb) return la - lb;
+            return (a.코드값 || '').localeCompare(b.코드값 || '');
+        });
+        return rows;
+    };
+
+    const jobRows = filterAndSort('직업');
+    const indRows = filterAndSort('산업');
+    
+    const renderRows = (rows, box, emptyMsg) => {
+        const MAX_RENDER = 200;
+        const truncated = rows.length > MAX_RENDER;
+        const displayRows = truncated ? rows.slice(0, MAX_RENDER) : rows;
+        
+        if (rows.length === 0) {
+            box.innerHTML = `<div class="jc-empty">${emptyMsg}</div>`;
+            return;
+        }
+        
+        const html = displayRows.map(r => {
+            const code = escapeHtml(r.코드값 || '');
+            const desc = escapeHtml(r.상세설명 || '');
+            const lv = Math.min(code.length, 5);
+            const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
+            return `<div class="jc-item">
+                <span class="jc-code lv${lv}">${code}</span>
+                <div>
+                    <span class="jc-level-tag">${levelLabel}</span>
+                    <span class="jc-desc">${desc}</span>
                 </div>
-                <div class="doc-tags">${tagsHtml}</div>
+                <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
+            </div>`;
+        }).join('');
+        
+        const footer = truncated ? `<div class="jc-empty" style="padding:0.8rem; font-size:0.78rem;">※ 상위 ${MAX_RENDER}건만 표시.</div>` : '';
+        box.innerHTML = html + footer;
+    };
+
+    renderRows(jobRows, jobBox, q ? '검색 결과가 없습니다.' : '데이터 없음');
+    renderRows(indRows, indBox, q ? '검색 결과가 없습니다.' : '데이터 없음');
+    
+    if(badge) badge.textContent = `총 ${jobRows.length + indRows.length}건`;
+}
+
+async function searchJobcodeWithAI() {
+    const input = document.getElementById('jcSearchInput').value.trim();
+    if(!input) {
+        alert("명칭/상황 검색창에 본인의 취업 상황(예: 중식당 주방장, 건설현장 일용직)을 상세히 적어주십시오.");
+        return;
+    }
+    
+    const jobBox = document.getElementById('jcJobResults');
+    const indBox = document.getElementById('jcIndResults');
+    const spinner = document.getElementById('jcAiSpinner');
+    const btn = spinner.parentElement;
+    
+    btn.disabled = true;
+    spinner.style.display = 'inline-block';
+    jobBox.innerHTML = '<div class="jc-loading">직종 스캔 중...</div>';
+    indBox.innerHTML = '<div class="jc-loading">업종 스캔 중...</div>';
+
+    try {
+        let actualKeywords = { jobKw: [], indKw: [] };
+
+        if (!API_BASE) {
+             const lowerInput = input.toLowerCase();
+             if (lowerInput.includes('식당') || lowerInput.includes('서빙') || lowerInput.includes('종업원')) {
+                 actualKeywords.jobKw = ["웨이터", "조리", "서빙", "접객", "주방"];
+                 actualKeywords.indKw = ["음식", "외식", "주점", "식당", "중식"];
+             } else if (lowerInput.includes('배달')) {
+                 actualKeywords.jobKw = ["배달", "택배", "배송", "운전", "기사"];
+                 actualKeywords.indKw = ["운송", "이륜차", "물류", "택배", "배달"];
+             } else if (lowerInput.includes('노가다') || lowerInput.includes('공사') || lowerInput.includes('현장')) {
+                 actualKeywords.jobKw = ["단순 노무", "노무", "작업", "건설", "현장"];
+                 actualKeywords.indKw = ["건설", "토목", "건축", "공사", "시공"];
+             } else {
+                 actualKeywords.jobKw = [input];
+                 actualKeywords.indKw = [input];
+             }
+        } else {
+            // 수정점 1: fetch URL을 백엔드 라우트와 동일하게 /api/jobcodekeywords 로 맞춤 (언더스코어 제거)
+            const response = await fetch(`${API_BASE}/api/jobcodekeywords`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: input })
+            });
+            
+            if(!response.ok) {
+                const errData = await response.json().catch(()=>({}));
+                throw new Error(errData.detail || "AI 서버 응답 지연 (트래픽 폭주)");
+            }
+            
+            const data = await response.json();
+            
+            // 수정점 2: 백엔드 수정 사항(job_keywords) 적용 및 기존 키(jobkeywords) 폴백 유지
+            actualKeywords.jobKw = data.job_keywords || data.jobkeywords || data.keywords || [];
+            actualKeywords.indKw = data.industry_keywords || data.industrykeywords || [];
+            
+            actualKeywords.jobKw = actualKeywords.jobKw.filter(k => k !== '...' && !k.startsWith('kw'));
+            actualKeywords.indKw = actualKeywords.indKw.filter(k => k !== '...' && !k.startsWith('kw'));
+        }
+
+        renderUnifiedAiResults(actualKeywords.jobKw, actualKeywords.indKw);
+
+    } catch(e) {
+        const errorHtml = `<div class="jc-empty" style="color:#ef4444;">AI 분석 오류: ${escapeHtml(e.message)}</div>`;
+        jobBox.innerHTML = errorHtml;
+        indBox.innerHTML = errorHtml;
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+}
+    
+function renderUnifiedAiResults(jobKw, indKw) {
+    const jobBox = document.getElementById('jcJobResults');
+    const indBox = document.getElementById('jcIndResults');
+    const badge = document.getElementById('jcCountBadge');
+    
+    if (!_jobcodeData) {
+        jobBox.innerHTML = '<div class="jc-empty" style="color:#ef4444;">데이터 미로드.</div>';
+        indBox.innerHTML = '<div class="jc-empty" style="color:#ef4444;">데이터 미로드.</div>';
+        return;
+    }
+
+    const getScoredRows = (type, keywords) => {
+        if(!keywords || keywords.length === 0) return [];
+        let rows = _jobcodeData.data.filter(r => r.분류 === type);
+        let scoredRows = rows.map(r => {
+            let score = 0;
+            const desc = (r.상세설명 || '').toLowerCase();
+            keywords.forEach(kw => {
+                if(desc.includes(kw.toLowerCase())) score += 1;
+            });
+            return { ...r, score };
+        }).filter(r => r.score > 0);
+
+        scoredRows.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            const la = (a.코드값 || '').length;
+            const lb = (b.코드값 || '').length;
+            return la - lb || (a.코드값 || '').localeCompare(b.코드값 || '');
+        });
+        return scoredRows.slice(0, 50); 
+    };
+
+    const jobRows = getScoredRows('직업', jobKw);
+    const indRows = getScoredRows('산업', indKw);
+
+    if (badge) badge.textContent = `AI 추천 완료`;
+
+    const buildHtml = (rows, keywords) => {
+        if(rows.length === 0) return `<div class="jc-empty">추천 결과가 없습니다.<br><span style="font-size:0.75rem; color:var(--t3);">탐색 키워드: ${keywords.map(k=>`[${escapeHtml(k)}]`).join(' ')}</span></div>`;
+        
+        let html = `<div style="padding: 0.4rem 0.8rem; background: var(--bg2); color: var(--ac); font-size: 0.75rem; font-weight:700; border-bottom:1px solid var(--bd2);">
+                        🤖 AI 탐색 키워드: ${keywords.map(k => `[${escapeHtml(k)}]`).join(' ')}
+                    </div>`;
+        html += rows.map(r => {
+            const code = escapeHtml(r.코드값 || '');
+            const desc = hl(r.상세설명 || '', keywords); 
+            const lv = Math.min(code.length, 5);
+            const levelLabel = ['', '대분류', '중분류', '소분류', '세분류', '세세분류'][lv] || '';
+            return `<div class="jc-item">
+                <span class="jc-code lv${lv}">${code}</span>
+                <div>
+                    <span class="jc-level-tag">매칭도 ${r.score}</span><span class="jc-level-tag">${levelLabel}</span>
+                    <span class="jc-desc">${desc}</span>
+                </div>
+                <button class="jc-copy-btn" onclick="copyJobcode(this, '${code}')">📋 복사</button>
+            </div>`;
+        }).join('');
+        return html;
+    };
+
+    jobBox.innerHTML = buildHtml(jobRows, jobKw);
+    indBox.innerHTML = buildHtml(indRows, indKw);
+}
+
+function copyJobcode(btnEl, code) {
+    if (!code) return;
+    const done = () => {
+        btnEl.classList.add('copied');
+        const original = btnEl.textContent;
+        btnEl.textContent = '✓ 복사됨';
+        setTimeout(() => {
+            btnEl.classList.remove('copied');
+            btnEl.textContent = original;
+        }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done).catch(() => {
+            fallbackCopy(code);
+            done();
+        });
+    } else {
+        fallbackCopy(code);
+        done();
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta);
+}
+
+const JUR_DB = {
+    "서울특별시": {
+        "관악구": "서울출입국·외국인청", "광진구": "서울출입국·외국인청", "강남구": "서울출입국·외국인청", "강동구": "서울출입국·외국인청", "동작구": "서울출입국·외국인청", "송파구": "서울출입국·외국인청", "성동구": "서울출입국·외국인청", "서초구": "서울출입국·외국인청", "용산구": "서울출입국·외국인청",
+        "종로구": "서울출입국·외국인청 세종로출장소", "중구": "서울출입국·외국인청 세종로출장소", "은평구": "서울출입국·외국인청 세종로출장소", "동대문구": "서울출입국·외국인청 세종로출장소", "중랑구": "서울출입국·외국인청 세종로출장소", "도봉구": "서울출입국·외국인청 세종로출장소", "성북구": "서울출입국·외국인청 세종로출장소", "강북구": "서울출입국·외국인청 세종로출장소", "노원구": "서울출입국·외국인청 세종로출장소",
+        "서대문구": "서울남부출입국·외국인사무소", "마포구": "서울남부출입국·외국인사무소", "강서구": "서울남부출입국·외국인사무소", "양천구": "서울남부출입국·외국인사무소", "영등포구": "서울남부출입국·외국인사무소", "구로구": "서울남부출입국·외국인사무소", "금천구": "서울남부출입국·외국인사무소"
+    },
+    "인천광역시": {
+        "중구": "인천출입국·외국인청", "동구": "인천출입국·외국인청", "미추홀구": "인천출입국·외국인청", "연수구": "인천출입국·외국인청", "남동구": "인천출입국·외국인청", "부평구": "인천출입국·외국인청", "계양구": "인천출입국·외국인청", "서구": "인천출입국·외국인청", "옹진군": "인천출입국·외국인청",
+        "강화군": "인천출입국·외국인청 김포다문화이주민플러스센터"
+    },
+    "경기도": {
+        "성남시": "서울출입국·외국인청", "하남시": "서울출입국·외국인청", "과천시": "서울출입국·외국인청",
+        "부천시": "인천출입국·외국인청", "김포시": "인천출입국·외국인청",
+        "의왕시": "수원출입국·외국인청", "수원시": "수원출입국·외국인청", "용인시": "수원출입국·외국인청", "이천시": "수원출입국·외국인청", "화성시": "수원출입국·외국인청", "광주시": "수원출입국·외국인청", "양평군": "수원출입국·외국인청", "여주시": "수원출입국·외국인청",
+        "평택시": "수원출입국·외국인청 평택출장소", "안성시": "수원출입국·외국인청 평택출장소", "오산시": "수원출입국·외국인청 평택출장소",
+        "안산시": "안산출입국·외국인사무소 종합민원센터", "시흥시": "안산출입국·외국인사무소 종합민원센터", "안양시": "안산출입국·외국인사무소 종합민원센터", "군포시": "안산출입국·외국인사무소 종합민원센터", "광명시": "안산출입국·외국인사무소 종합민원센터",
+        "의정부시": "양주출입국·외국인사무소", "동두천시": "양주출입국·외국인사무소", "구리시": "양주출입국·외국인사무소", "남양주시": "양주출입국·외국인사무소", "양주시": "양주출입국·외국인사무소", "연천군": "양주출입국·외국인사무소", "포천시": "양주출입국·외국인사무소",
+        "고양시": "양주출입국·외국인사무소 고양출장소", "파주시": "양주출입국·외국인사무소 고양출장소",
+        "가평군": "춘천출입국·외국인사무소"
+    },
+    "부산광역시": {
+        "중구": "부산출입국·외국인청 종합민원센터", "서구": "부산출입국·외국인청 종합민원센터", "동구": "부산출입국·외국인청 종합민원센터", "영도구": "부산출입국·외국인청 종합민원센터", "부산진구": "부산출입국·외국인청 종합민원센터", "동래구": "부산출입국·외국인청 종합민원센터", "남구": "부산출입국·외국인청 종합민원센터", "북구": "부산출입국·외국인청 종합민원센터", "해운대구": "부산출입국·외국인청 종합민원센터", "사하구": "부산출입국·외국인청 종합민원센터", "금정구": "부산출입국·외국인청 종합민원센터", "강서구": "부산출입국·외국인청 종합민원센터", "연제구": "부산출입국·외국인청 종합민원센터", "수영구": "부산출입국·외국인청 종합민원센터", "사상구": "부산출입국·외국인청 종합민원센터", "기장군": "부산출입국·외국인청 종합민원센터"
+    },
+    "경상남도": {
+        "김해시": "부산출입국·외국인청 종합민원센터", "양산시": "부산출입국·외국인청 종합민원센터", "밀양시": "부산출입국·외국인청 종합민원센터",
+        "창원시": "창원출입국·외국인사무소", "진주시": "창원출입국·외국인사무소", "산청군": "창원출입국·외국인사무소", "함양군": "창원출입국·외국인사무소", "거창군": "창원출입국·외국인사무소", "합천군": "창원출입국·외국인사무소", "의령군": "창원출입국·외국인사무소", "함안군": "창원출입국·외국인사무소", "창녕군": "창원출입국·외국인사무소", "고성군": "창원출입국·외국인사무소",
+        "거제시": "창원출입국·외국인사무소 거제출장소",
+        "사천시": "창원출입국·외국인사무소 사천출장소", "남해군": "창원출입국·외국인사무소 사천출장소", "하동군": "창원출입국·외국인사무소 사천출장소",
+        "통영시": "창원출입국·외국인사무소 통영출장소"
+    },
+    "울산광역시": {
+        "중구": "울산출입국·외국인사무소", "남구": "울산출입국·외국인사무소", "동구": "울산출입국·외국인사무소", "북구": "울산출입국·외국인사무소", "울주군": "울산출입국·외국인사무소"
+    },
+    "경상북도": {
+        "경주시": "울산출입국·외국인사무소",
+        "포항시": "대구출입국·외국인사무소 포항출장소", "울진군": "대구출입국·외국인사무소 포항출장소", "영덕군": "대구출입국·외국인사무소 포항출장소", "울릉군": "대구출입국·외국인사무소 포항출장소",
+        "구미시": "대구출입국·외국인사무소 구미출장소", "김천시": "대구출입국·외국인사무소 구미출장소", "상주시": "대구출입국·외국인사무소 구미출장소", "문경시": "대구출입국·외국인사무소 구미출장소", "칠곡군": "대구출입국·외국인사무소 구미출장소",
+        "경산시": "대구출입국·외국인사무소", "영천시": "대구출입국·외국인사무소", "청도군": "대구출입국·외국인사무소", "고령군": "대구출입국·외국인사무소", "성주군": "대구출입국·외국인사무소", "의성군": "대구출입국·외국인사무소", "청송군": "대구출입국·외국인사무소", "영양군": "대구출입국·외국인사무소", "안동시": "대구출입국·외국인사무소", "영주시": "대구출입국·외국인사무소", "예천군": "대구출입국·외국인사무소", "봉화군": "대구출입국·외국인사무소"
+    },
+    "대구광역시": {
+        "중구": "대구출입국·외국인사무소", "동구": "대구출입국·외국인사무소", "서구": "대구출입국·외국인사무소", "남구": "대구출입국·외국인사무소", "북구": "대구출입국·외국인사무소", "수성구": "대구출입국·외국인사무소", "달서구": "대구출입국·외국인사무소", "달성군": "대구출입국·외국인사무소", "군위군": "대구출입국·외국인사무소"
+    },
+    "광주광역시": {
+        "동구": "광주출입국·외국인사무소", "서구": "광주출입국·외국인사무소", "남구": "광주출입국·외국인사무소", "북구": "광주출입국·외국인사무소", "광산구": "광주출입국·외국인사무소"
+    },
+    "전라남도": {
+        "여수시": "여수출입국·외국인사무소", "순천시": "여수출입국·외국인사무소",
+        "광양시": "여수출입국·외국인사무소 광양출장소",
+        "목포시": "광주출입국·외국인사무소 목포출장소", "완도군": "광주출입국·외국인사무소 목포출장소", "신안군": "광주출입국·외국인사무소 목포출장소", "무안군": "광주출입국·외국인사무소 목포출장소", "진도군": "광주출입국·외국인사무소 목포출장소", "영암군": "광주출입국·외국인사무소 목포출장소", "해남군": "광주출입국·외국인사무소 목포출장소",
+        "나주시": "광주출입국·외국인사무소", "담양군": "광주출입국·외국인사무소", "곡성군": "광주출입국·외국인사무소", "구례군": "광주출입국·외국인사무소", "고흥군": "광주출입국·외국인사무소", "보성군": "광주출입국·외국인사무소", "화순군": "광주출입국·외국인사무소", "장흥군": "광주출입국·외국인사무소", "강진군": "광주출입국·외국인사무소", "함평군": "광주출입국·외국인사무소", "영광군": "광주출입국·외국인사무소", "장성군": "광주출입국·외국인사무소"
+    },
+    "전북특별자치도": {
+        "군산시": "전주출입국·외국인사무소 군산출장소",
+        "전주시": "전주출입국·외국인사무소", "익산시": "전주출입국·외국인사무소", "정읍시": "전주출입국·외국인사무소", "남원시": "전주출입국·외국인사무소", "김제시": "전주출입국·외국인사무소", "완주군": "전주출입국·외국인사무소", "진안군": "전주출입국·외국인사무소", "무주군": "전주출입국·외국인사무소", "장수군": "전주출입국·외국인사무소", "임실군": "전주출입국·외국인사무소", "순창군": "전주출입국·외국인사무소", "고창군": "전주출입국·외국인사무소", "부안군": "전주출입국·외국인사무소"
+    },
+    "제주특별자치도": {
+        "제주시": "제주출입국·외국인청",
+        "서귀포시": "제주출입국·외국인청"
+    },
+    "강원특별자치도": {
+        "동해시": "춘천출입국·외국인사무소 동해출장소", "강릉시": "춘천출입국·외국인사무소 동해출장소", "삼척시": "춘천출입국·외국인사무소 동해출장소", "태백시": "춘천출입국·외국인사무소 동해출장소", "정선군": "춘천출입국·외국인사무소 동해출장소",
+        "속초시": "춘천출입국·외국인사무소 속초출장소", "양양군": "춘천출입국·외국인사무소 속초출장소", "고성군": "춘천출입국·외국인사무소 속초출장소",
+        "철원군": "양주출입국·외국인사무소",
+        "춘천시": "춘천출입국·외국인사무소", "원주시": "춘천출입국·외국인사무소", "홍천군": "춘천출입국·외국인사무소", "횡성군": "춘천출입국·외국인사무소", "영월군": "춘천출입국·외국인사무소", "평창군": "춘천출입국·외국인사무소", "화천군": "춘천출입국·외국인사무소", "양구군": "춘천출입국·외국인사무소", "인제군": "춘천출입국·외국인사무소"
+    },
+    "대전광역시": {
+        "동구": "대전출입국·외국인사무소", "중구": "대전출입국·외국인사무소", "서구": "대전출입국·외국인사무소", "유성구": "대전출입국·외국인사무소", "대덕구": "대전출입국·외국인사무소"
+    },
+    "세종특별자치시": {
+        "세종특별자치시": "대전출입국·외국인사무소"
+    },
+    "충청남도": {
+        "천안시": "대전출입국·외국인사무소 천안출장소", "아산시": "대전출입국·외국인사무소 천안출장소", "예산군": "대전출입국·외국인사무소 천안출장소",
+        "서산시": "대전출입국·외국인사무소 서산출장소", "태안군": "대전출입국·외국인사무소 서산출장소", "홍성군": "대전출입국·외국인사무소 서산출장소",
+        "당진시": "대전출입국·외국인사무소 당진출장소",
+        "공주시": "대전출입국·외국인사무소", "보령시": "대전출입국·외국인사무소", "논산시": "대전출입국·외국인사무소", "계룡시": "대전출입국·외국인사무소", "금산군": "대전출입국·외국인사무소", "부여군": "대전출입국·외국인사무소", "서천군": "대전출입국·외국인사무소", "청양군": "대전출입국·외국인사무소"
+    },
+    "충청북도": {
+        "영동군": "대전출입국·외국인사무소", "옥천군": "대전출입국·외국인사무소",
+        "청주시": "청주출입국·외국인사무소", "충주시": "청주출입국·외국인사무소", "제천시": "청주출입국·외국인사무소", "보은군": "청주출입국·외국인사무소", "증평군": "청주출입국·외국인사무소", "진천군": "청주출입국·외국인사무소", "괴산군": "청주출입국·외국인사무소", "음성군": "청주출입국·외국인사무소", "단양군": "청주출입국·외국인사무소"
+    }
+};
+
+const OFFICE_INFO = {
+    "서울출입국·외국인청": { addr: "서울특별시 양천구 목동동로 151", naver: "https://map.naver.com/p/search/서울출입국외국인청", kakao: "https://map.kakao.com/link/search/서울출입국외국인청" },
+    "서울출입국·외국인청 세종로출장소": { addr: "서울특별시 종로구 종로 38 서울글로벌센터 2,3층", naver: "https://map.naver.com/p/search/세종로출장소", kakao: "https://map.kakao.com/link/search/세종로출장소" },
+    "서울남부출입국·외국인사무소": { addr: "서울특별시 강서구 마곡서1로 48", naver: "https://map.naver.com/p/search/서울남부출입국외국인사무소", kakao: "https://map.kakao.com/link/search/서울남부출입국외국인사무소" },
+    "인천출입국·외국인청": { addr: "인천광역시 중구 서해대로393(항동 7가 1-31)", naver: "https://map.naver.com/p/search/인천출입국외국인청", kakao: "https://map.kakao.com/link/search/인천출입국외국인청" },
+    "인천출입국·외국인청 김포다문화이주민플러스센터": { addr: "경기도 김포시 양촌읍 황금로110번길 52", naver: "https://map.naver.com/p/search/김포다문화이주민플러스센터", kakao: "https://map.kakao.com/link/search/김포다문화이주민플러스센터" },
+    "수원출입국·외국인청": { addr: "경기도 수원시 영통구 반달로 39", naver: "https://map.naver.com/p/search/수원출입국외국인청", kakao: "https://map.kakao.com/link/search/수원출입국외국인청" },
+    "수원출입국·외국인청 평택출장소": { addr: "경기도 평택시 경기대로 1375 CK타워3,4층", naver: "https://map.naver.com/p/search/수원출입국외국인청평택출장소", kakao: "https://map.kakao.com/link/search/수원출입국외국인청평택출장소" },
+    "안산출입국·외국인사무소 종합민원센터": { addr: "경기도 안산시 단원구 광덕4로 96 (2층)", naver: "https://map.naver.com/p/search/안산출입국외국인사무소", kakao: "https://map.kakao.com/link/search/안산출입국외국인사무소" },
+    "양주출입국·외국인사무소": { addr: "경기도 양주시 평화로 1475번길 23", naver: "https://map.naver.com/p/search/양주출입국외국인사무소", kakao: "https://map.kakao.com/link/search/양주출입국외국인사무소" },
+    "양주출입국·외국인사무소 고양출장소": { addr: "경기도 고양시 덕양구 화중로 104번길 50", naver: "https://map.naver.com/p/search/양주출입국외국인사무소고양출장소", kakao: "https://map.kakao.com/link/search/양주출입국외국인사무소고양출장소" },
+    "부산출입국·외국인청 종합민원센터": { addr: "부산광역시 중구 중앙대로 146 대한항공빌딩 1층,2층", naver: "https://map.naver.com/p/search/부산출입국외국인청", kakao: "https://map.kakao.com/link/search/부산출입국외국인청" },
+    "창원출입국·외국인사무소": { addr: "경상남도 창원시 마산합포구 제2부두로 30", naver: "https://map.naver.com/p/search/창원출입국외국인사무소", kakao: "https://map.kakao.com/link/search/창원출입국외국인사무소" },
+    "창원출입국·외국인사무소 거제출장소": { addr: "경상남도 거제시 연초면 연사1길 24", naver: "https://map.naver.com/p/search/창원출입국외국인사무소거제출장소", kakao: "https://map.kakao.com/link/search/창원출입국외국인사무소거제출장소" },
+    "창원출입국·외국인사무소 사천출장소": { addr: "경상남도 사천시 삼천포대교로 450번지", naver: "https://map.naver.com/p/search/창원출입국외국인사무소사천출장소", kakao: "https://map.kakao.com/link/search/창원출입국외국인사무소사천출장소" },
+    "창원출입국·외국인사무소 통영출장소": { addr: "경상남도 통영시 남망길 5번지", naver: "https://map.naver.com/p/search/창원출입국외국인사무소통영출장소", kakao: "https://map.kakao.com/link/search/창원출입국외국인사무소통영출장소" },
+    "울산출입국·외국인사무소": { addr: "울산광역시 중구 종가로 405-1", naver: "https://map.naver.com/p/search/울산출입국외국인사무소", kakao: "https://map.kakao.com/link/search/울산출입국외국인사무소" },
+    "대구출입국·외국인사무소": { addr: "대구광역시 동구 이노밸리로 345", naver: "https://map.naver.com/p/search/대구출입국외국인사무소", kakao: "https://map.kakao.com/link/search/대구출입국외국인사무소" },
+    "대구출입국·외국인사무소 포항출장소": { addr: "경상북도 포항시 북구 우창동로 13", naver: "https://map.naver.com/p/search/대구출입국외국인사무소포항출장소", kakao: "https://map.kakao.com/link/search/대구출입국외국인사무소포항출장소" },
+    "대구출입국·외국인사무소 구미출장소": { addr: "경상북도 구미시 구미대로 350-27 구미시종합비즈니스지원센터 2,3층", naver: "https://map.naver.com/p/search/대구출입국외국인사무소구미출장소", kakao: "https://map.kakao.com/link/search/대구출입국외국인사무소구미출장소" },
+    "광주출입국·외국인사무소": { addr: "광주광역시 서구 상무대로911번길 22", naver: "https://map.naver.com/p/search/광주출입국외국인사무소", kakao: "https://map.kakao.com/link/search/광주출입국외국인사무소" },
+    "광주출입국·외국인사무소 목포출장소": { addr: "전라남도 목포시 백년대로 412번길 26", naver: "https://map.naver.com/p/search/광주출입국외국인사무소목포출장소", kakao: "https://map.kakao.com/link/search/광주출입국외국인사무소목포출장소" },
+    "여수출입국·외국인사무소": { addr: "전라남도 여수시 무선로 265", naver: "https://map.naver.com/p/search/여수출입국외국인사무소", kakao: "https://map.kakao.com/link/search/여수출입국외국인사무소" },
+    "여수출입국·외국인사무소 광양출장소": { addr: "전라남도 광양시 중동 2길 23", naver: "https://map.naver.com/p/search/여수출입국외국인사무소광양출장소", kakao: "https://map.kakao.com/link/search/여수출입국외국인사무소광양출장소" },
+    "전주출입국·외국인사무소": { addr: "전북특별자치도 전주시 덕진구 동부대로 857", naver: "https://map.naver.com/p/search/전주출입국외국인사무소", kakao: "https://map.kakao.com/link/search/전주출입국외국인사무소" },
+    "전주출입국·외국인사무소 군산출장소": { addr: "전북특별자치도 군산시 대학로 151-1", naver: "https://map.naver.com/p/search/전주출입국외국인사무소군산출장소", kakao: "https://map.kakao.com/link/search/전주출입국외국인사무소군산출장소" },
+    "제주출입국·외국인청": { addr: "제주특별자치도 제주시 용담로 3", naver: "https://map.naver.com/p/search/제주출입국외국인청", kakao: "https://map.kakao.com/link/search/제주출입국외국인청" },
+    "춘천출입국·외국인사무소": { addr: "강원특별자치도 춘천시 동내면 사암길 12", naver: "https://map.naver.com/p/search/춘천출입국외국인사무소", kakao: "https://map.kakao.com/link/search/춘천출입국외국인사무소" },
+    "춘천출입국·외국인사무소 동해출장소": { addr: "강원특별자치도 동해시 해안로 225", naver: "https://map.naver.com/p/search/춘천출입국외국인사무소동해출장소", kakao: "https://map.kakao.com/link/search/춘천출입국외국인사무소동해출장소" },
+    "춘천출입국·외국인사무소 속초출장소": { addr: "강원특별자치도 속초시 청초호반로 189", naver: "https://map.naver.com/p/search/춘천출입국외국인사무소속초출장소", kakao: "https://map.kakao.com/link/search/춘천출입국외국인사무소속초출장소" },
+    "대전출입국·외국인사무소": { addr: "대전광역시 중구 목중로 26번길 7", naver: "https://map.naver.com/p/search/대전출입국외국인사무소", kakao: "https://map.kakao.com/link/search/대전출입국외국인사무소" },
+    "대전출입국·외국인사무소 천안출장소": { addr: "충청남도 천안시 서북구 광장로 215 충남북부상공회의소 403호", naver: "https://map.naver.com/p/search/대전출입국외국인사무소천안출장소", kakao: "https://map.kakao.com/link/search/대전출입국외국인사무소천안출장소" },
+    "대전출입국·외국인사무소 서산출장소": { addr: "충청남도 서산시 읍내3로 28 서림빌딩 6층", naver: "https://map.naver.com/p/search/대전출입국외국인사무소서산출장소", kakao: "https://map.kakao.com/link/search/대전출입국외국인사무소서산출장소" },
+    "대전출입국·외국인사무소 당진출장소": { addr: "충청남도 당진시 송악읍 고대공단2길 79-33 항만지원센터 2층", naver: "https://map.naver.com/p/search/대전출입국외국인사무소당진출장소", kakao: "https://map.kakao.com/link/search/대전출입국외국인사무소당진출장소" },
+    "청주출입국·외국인사무소": { addr: "충청북도 청주시 흥덕구 비하로 12번길 52", naver: "https://map.naver.com/p/search/청주출입국외국인사무소", kakao: "https://map.kakao.com/link/search/청주출입국외국인사무소" }
+};
+
+function initJurisdictionSelects() {
+    const sidoSel = document.getElementById('jurSido');
+    if (!sidoSel || sidoSel.options.length > 1) return;
+    
+    sidoSel.innerHTML = '<option value="">시/도 선택</option>';
+    Object.keys(JUR_DB).forEach(sido => {
+        const opt = document.createElement('option');
+        opt.value = sido; opt.textContent = sido;
+        sidoSel.appendChild(opt);
+    });
+}
+
+function updateSigungu() {
+    const sido = document.getElementById('jurSido').value;
+    const sigunguSel = document.getElementById('jurSigungu');
+    const card = document.getElementById('jurResultCard');
+    
+    card.classList.remove('active');
+    sigunguSel.innerHTML = '<option value="">시/군/구 선택</option>';
+    
+    if (!sido) {
+        sigunguSel.disabled = true;
+        return;
+    }
+    
+    sigunguSel.disabled = false;
+    Object.keys(JUR_DB[sido]).forEach(sigungu => {
+        const opt = document.createElement('option');
+        opt.value = sigungu; opt.textContent = sigungu;
+        sigunguSel.appendChild(opt);
+    });
+}
+
+function showJurisdiction() {
+    const sido = document.getElementById('jurSido').value;
+    const sigungu = document.getElementById('jurSigungu').value;
+    const card = document.getElementById('jurResultCard');
+    
+    if (!sido || !sigungu) {
+        card.classList.remove('active');
+        return;
+    }
+
+    const officeName = JUR_DB[sido][sigungu];
+    const officeInfo = OFFICE_INFO[officeName];
+    
+    if (!officeInfo) {
+        alert("관할 관서 정보가 누락되었습니다. DB를 확인하십시오.");
+        return;
+    }
+
+    document.getElementById('jurMsg').innerHTML = `귀하의 등록된 체류지에 따른 관할 출입국·외국인관서는 <b>[${escapeHtml(officeName)}]</b>입니다.<br>반드시 지정된 관할 관서를 방문해야 하며, 타 관서 방문 시 민원 접수가 즉각 반려됩니다.`;
+    document.getElementById('jurOfficeName').textContent = `🏢 ${officeName}`;
+    document.getElementById('jurOfficeAddr').textContent = `📍 ${officeInfo.addr}`;
+    document.getElementById('jurNaver').href = officeInfo.naver;
+    document.getElementById('jurKakao').href = officeInfo.kakao;
+    
+    card.classList.add('active');
+}
+
+function openJurisdictionModal() {
+    const overlay = document.getElementById('jurisdictionModalOverlay');
+    if (overlay) {
+        overlay.classList.add('active');
+        initJurisdictionSelects();
+    }
+}
+function closeJurisdictionModal() {
+    const overlay = document.getElementById('jurisdictionModalOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('jcSearchInput');
+    if (input) {
+        input.addEventListener('input', () => {
+            clearTimeout(_jcSearchDebounce);
+            _jcSearchDebounce = setTimeout(() => {
+                renderJobcodeResults(input.value);
+            }, 200);
+        });
+    }
+
+    ['jobCodeModalOverlay', 'jurisdictionModalOverlay'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('click', (e) => {
+                if (e.target === el) el.classList.remove('active');
+            });
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeJobCodeModal();
+            closeJurisdictionModal();
+        }
+    });
+});
+
+async function submitAiAnalysis(actionType, btnEl) {
+    if (actionType === 'jurisdiction') {
+        openJurisdictionModal();
+        return;
+    }
+    if (actionType === 'job_code') {
+        openJobCodeModal();
+        return;
+    }
+
+    const userInput = document.getElementById('aiInput').value.trim();
+    if (!userInput) {
+        alert("본인의 상황(국적, 체류자격, 거주지, 직무 등)을 상세히 입력해 주십시오.");
+        return;
+    }
+
+    const visa = VISA_DATA.find(v => v.code === currentAiVisaCode);
+    if (!visa) return;
+
+    const allBtns = document.querySelectorAll('.ai-action-btn');
+    const resultBox = document.getElementById('aiResult');
+    const spinner = btnEl.querySelector('.spinner');
+    
+    allBtns.forEach(b => b.disabled = true);
+    if (spinner) spinner.style.display = 'block';
+    resultBox.style.display = 'none';
+
+    const baseContext = `[관련 법령 및 매뉴얼 지식 기반 활성화]\n다음은 대한민국 출입국 '${visa.code} (${visa.name})' 규정입니다:\n[신규 요건]: ${visa.newReq || '없음'}\n[연장 요건]: ${visa.extReq || '없음'}\n[FAQ/참고사항]: ${visa.faq || '없음'}\n\n민원인(사용자)의 현재 상황:\n"${userInput}"\n\n`;
+    let prompt = '';
+    const isSpecialCat = ['faq', 'scn', 'nhis'].includes(visa.cat);
+
+    if (actionType === 'analyze') {
+        if (isSpecialCat) {
+            prompt = baseContext + `위 규정 및 사례를 바탕으로, 사용자의 구체적 상황에 대하여 2026년 출입국관리법령 및 사증/체류 실무 매뉴얼을 엄격히 적용하여 적법성, 구제 가능성, 패널티(범칙금/강제퇴거 등)를 객관적으로 팩트체크해 주십시오. 자의적 해석을 절대 배제하고 철저히 법령 원문과 매뉴얼에 근거한 사실 위주로 작성하십시오.`;
+        } else {
+            prompt = baseContext + `위 규정을 바탕으로 사용자가 해당 체류자격을 발급, 연장 또는 변경할 가능성을 매우 객관적이고 사실적으로 평가해 주십시오. 사용자 상황에 맞춰 특별히 준비하거나 주의해야 할 서류(마약, 범죄경력, 학위 등 치명적 서류 포함) 및 결격 사유를 현행 법령 및 매뉴얼에 근거하여 점검하고 종합 분석 보고서를 작성해 주십시오. (정확한 사실 위주 작성)`;
+        }
+    } else if (actionType === 'doc_guide') {
+        prompt = baseContext + `위의 비자 규정(구비서류)과 민원인 상황을 바탕으로, 해당 비자의 필수 서류들에 대한 '개념 풀이(외국인이 이해하기 쉽도록 직역을 피하고, 필요한 경우 영문 또는 요청 언어 병기)'를 제공해 주십시오. 아울러 각 서류를 대한민국 또는 본국 어디에서 발급받아야 하는지(예: 세무서, 무인민원발급기, 본국 대사관 등)와, 사증/체류민원 매뉴얼상 아포스티유(Apostille) 또는 영사확인이 필수적인 서류는 무엇인지 명확히 안내하는 '서류 준비 완벽 가이드'를 도출해 주십시오.`;
+    }
+
+    if (currentAiController) currentAiController.abort();
+    currentAiController = new AbortController();
+
+    try {
+        const response = await fetch(`${API_BASE}/api/ask`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question: prompt,
+                consent: true,
+                context: "",
+                lang: "ko"
+            }),
+            signal: currentAiController.signal
+        });
+        
+       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const result = await response.json();
+        const responseText = result.answer || "결과를 생성할 수 없습니다.";
+        
+        let formattedText = escapeHtml(responseText).replace(/\n/g, '<br>');
+        formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        resultBox.innerHTML = formattedText;
+        resultBox.style.display = 'block';
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        resultBox.innerHTML = "<b>⚠ 분석 중 오류가 발생했습니다.</b><br>네트워크 상태 또는 서버 환경을 확인해 주십시오.";
+        resultBox.style.display = 'block';
+    } finally {
+        allBtns.forEach(b => b.disabled = false);
+        if (spinner) spinner.style.display = 'none';
+        currentAiController = null;
+    }
+}
+
+function setSearchEnabled(enabled) {
+    if (!qEl || !goBtn) return;
+    qEl.disabled = !enabled;
+    goBtn.disabled = !enabled;
+    qEl.style.opacity = enabled ? '1' : '0.6';
+}
+
+function renderDocTags(docKeys, keywords, isSubCode = false, visaCode = '') {
+    if (!docKeys || !docKeys.length) return '<div class="text-desc" style="color:var(--t3);">요구되는 추가 서류가 없습니다.</div>';
+    
+    const tagsHtml = docKeys.map(key => {
+        let officialName = DOC_DICT[key] || key;
+        
+        if (key === 'doc_fee_new' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "수수료 면제 (외교·공무·협정 비자)";
+            } else if (visaCode.startsWith('F-5')) {
+                officialName = "수수료 (정부수입인지: 영주(F-5) 자격 변경 20만 원)";
+            } else if (visaCode.startsWith('F-6')) {
+                officialName = "수수료 (정부수입인지: 체류자격 변경 10만 원 / 국내 출생 등 자격 부여 4만 원)";
+            } else {
+                officialName = "수수료 (정부수입인지: 일반 체류자격 변경 10만 원 / 국내 출생 등 자격 부여 8만 원)";
+            }
+        } else if (key === 'doc_fee_ext' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "수수료 면제 (외교·공무·협정 비자)";
+            } else if (visaCode.startsWith('F-6')) {
+                officialName = "수수료 (정부수입인지: 체류기간 연장 3만 원)";
+            } else {
+                officialName = "수수료 (정부수입인지: 일반 체류기간 연장 6만 원)";
+            }
+        } else if (key === 'doc_arc_fee' && visaCode) {
+            if (visaCode.startsWith('A-')) {
+                officialName = "신분증 발급 수수료 면제 (외교·공무·협정 비자)";
+            } else {
+                officialName = DOC_DICT[key];
+            }
+        }
+        
+        const isCritical = ['doc_health', 'doc_crim', 'doc_tb'].includes(key);
+        const criticalClass = isCritical ? ' critical' : '';
+        const iconHtml = isCritical 
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
+        return `<div class="doc-chk-item${criticalClass}">${iconHtml}<span>${hl(officialName, keywords)}</span></div>`;
+    }).join('');
+    
+    const warningHtml = isSubCode 
+        ? `<div class="subcode-warning">💡 주의: 아래 서류는 해당 세부항목의 <strong>추가 구비서류</strong>입니다. 관할 관서 방문 시 반드시 <strong>대분류 공통 서류와 함께 모두 지참</strong>하시기 바랍니다.</div>` 
+        : '';
+
+    return `<div class="doc-req-box" style="margin-top:0; padding:0; border:none; background:transparent;">
+                ${warningHtml}
+                <div class="doc-checklist">${tagsHtml}</div>
             </div>`;
 }
 
 function calculateScore(item,keywords){
-    if(!keywords.length) return 1;
+    if(!keywords || !keywords.length) return 1;
     let score=0;
     const cL=(item.code||'').toLowerCase(), nL=(item.name||'').toLowerCase();
     const aliasL=(item.aliases||[]).map(x=>String(x).toLowerCase());
@@ -493,7 +1620,8 @@ const ALIAS_MAP = {
     "사증면제협정국":"B-1","사증면제협정":"B-1","비자면제협정":"B-1","무사증협정":"B-1","협정국":"B-1",
     "전자여행허가":"K-ETA","케이이티에이":"K-ETA","무사증":"B-2","무비자":"B-2","난민":"RF-1","난민신청":"RF-1","난민서류":"RF-1",
     "불법체류":"OVS-1","불체":"OVS-1","다발국가":"OVS-1","불법체류다발":"OVS-1","중점관리국가":"OVS-1",
-    "동포비자통합":"H-2","H2폐지":"H-2","방문취업폐지":"H-2","동포통합":"F-4"
+    "동포비자통합":"H-2","H2폐지":"H-2","방문취업폐지":"H-2","동포통합":"F-4",
+    "비예약업무":"FAQ-0","예약없이":"FAQ-0","당일방문":"FAQ-0","주민센터":"FAQ-0","체류지변경":"FAQ-0","여권변경":"FAQ-0"
 };
 
 function expandKeywords(keywords){
@@ -512,11 +1640,9 @@ function expandKeywords(keywords){
 }
 
 const PREDEF_KEYWORDS = [
-    "제주 무사증", "제주무사증 입국", "사증면제협정국", "비자면제협정", "K-ETA 제주", "B-2-2 제주 무사증", "B-1 사증면제협정",
-    "F-3 소득요건 개편", "E-7-4 숙련기능", "건강보험 면제 및 감면", "K-ETA 면제조건", "K-ETA 국가 목록",
-    "F-6-3 혼인단절", "B-2-2 제주무비자", "결핵 고위험 35개국", "오버스테이 자진신고",
-    "D-2 유학 아르바이트", "D-10 구직활동", "F-5 영주권 점수제", "하이코리아 방문예약",
-    "제주 무사증 제외국","난민신청 필요서류","중점관리국가 21개국","H-2 F-4 동포비자 통합"
+    "체류지 변경(주민센터)", "여권 갱신(비예약)", "등록증 재발급", "만료 당일/임산부 등", 
+    "제주 무사증", "K-ETA 발급", "숙련기능(E-7-4)", "결혼이민(F-6)", 
+    "동반(F-3) 소득요건", "결핵 제출 대상", "난민신청 절차", "오버스테이"
 ];
 
 function showSuggestions(val) {
@@ -564,7 +1690,7 @@ function executeSearch() {
     if (!query) return;
 
     if(/scn/i.test(query)) {
-        alert("⚠ [경고] 해당 시나리오 검색 결과는 실무자 사전 안내 및 단순 참고용입니다. 실제 행정 처리 및 최종 판단은 관할 출입국관서에 귀속됩니다.");
+        alert("⚠ [경고] 해당 시나리오 검색 결과는 실무자 사전 안내 및 단순 참고용입니다. 실제 행정 처리 및 최종 판단은 관할 출입국·외국인관서에 귀속됩니다.");
     }
 
     if (document.body.classList.contains('landing')) {
@@ -585,6 +1711,7 @@ function resetToLanding(){
     document.body.classList.add('landing');
     qEl.value='';
     document.getElementById('xb').classList.remove('v');
+    document.getElementById('auto-list').classList.remove('active');
     document.getElementById('rlist').innerHTML='';
     rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
 }
@@ -609,6 +1736,7 @@ function renderResults(query){
         const c=document.createElement('article'); c.className='vc';
         c.style.setProperty('--cbc', CC[v.cat]||CC.other);
         
+        const isVisaCode = !['faq', 'scn', 'nhis'].includes(v.cat);
         const hs=v.subCodes&&v.subCodes.length>0;
         let ms=[];
         if(hs&&kw.length) ms=v.subCodes.filter(s=>{const x=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase(); return kwL.some(k=>x.includes(k));});
@@ -617,22 +1745,23 @@ function renderResults(query){
         let sh='';
         if(hs){
             sh=`<div class="ss"><div class="ss-t"><b>세부항목</b>${v.subCodes.length}개</div>`;
-            v.subCodes.forEach(s=>{
+            v.subCodes.forEach((s, idx) => {
                 const x=`${s.code} ${s.name} ${s.addReq||''} ${s.note||''}`.toLowerCase();
                 const im=!kw.length||kwL.some(k=>x.includes(k));
                 sh+=`<div class="su${kw.length&&im?' open':''}"><div class="su-h" onclick="this.parentElement.classList.toggle('open')"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c">`;
                 
-                // 정보 위계 개선: 소분류에서도 텍스트 설명과 배지 목록을 분리
-                if(s.addReq || (s.addReqDocs && s.addReqDocs.length > 0)) {
-                    sh+=`<div class="su-s">
-                            <div class="tl tl-n">안내/추가</div>
-                            ${s.addReq ? `<div class="ct text-desc">${hl(s.addReq,kw)}</div>` : ''}
-                            ${renderDocTags(s.addReqDocs, kw)}
-                         </div>`;
+                sh+=`<div class="su-s">`;
+                
+                if(s.note && String(s.note).trim().length > 0) {
+                    sh+= `<div class="ct text-desc" style="margin-bottom:0.5rem;">${hl(s.note,kw)}</div>`;
                 }
-                if(s.note) {
-                    sh+=`<div class="su-s"><div class="tl tl-f">실무참고</div><div class="ct text-desc">${hl(s.note,kw)}</div></div>`;
-                }
+                
+                sh+=`   <div class="sub-req"><span class="badge-req">📌 세부항목 추가 확인</span></div>
+                        <button class="ai-btn sub-doc-btn" style="background: var(--bg2); color: var(--t1); border: 1px solid var(--bd); padding: 0.6rem 1rem; width: 100%; justify-content: center; box-shadow:var(--sh1); margin-top:0.5rem;" data-action="open-doc-modal" data-vcode="${escapeHtml(v.code)}" data-type="sub" data-subidx="${idx}">
+                            📑 이 세부항목의 추가 구비서류 확인
+                        </button>
+                     </div>`;
+                     
                 sh+=`</div></div></div>`;
             });
             sh+=`</div>`;
@@ -643,7 +1772,6 @@ function renderResults(query){
         
         const lb=getLabels(v);
         
-        // 정보 위계 개선: 대분류 항목에서도 텍스트 설명과 배지 박스를 분리 렌더링
         c.innerHTML=`
             <div class="vc-h" onclick="this.parentElement.classList.toggle('open')">
                 <span class="bc">${hl(v.code,kw)}</span>
@@ -655,20 +1783,60 @@ function renderResults(query){
             </div>
             <div class="vc-cw">
                 <div class="vc-c">
+                    ${v.cat === 'scn' ? `
+                    <div class="ai-cta" style="flex-direction:column; align-items:center; text-align:center; padding:2.5rem 1rem; background:var(--bg0);">
+                        <div style="font-size:2.5rem; margin-bottom:0.8rem;">⚖️</div>
+                        <h4 style="color:var(--t1); font-weight:800; font-size:1.1rem; margin-bottom:0.5rem;">특수 사례 심층 분석</h4>
+                        <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1.5rem; word-break:keep-all; max-width:400px;">이 시나리오는 체류 이력, 범죄 여부 등에 따라 법령 적용이 매우 복잡합니다. 단편적인 요약 대신 <strong>Moonshot AI의 2026년 출입국관리법령 심층 팩트체크</strong>를 직접 실행하십시오.</p>
+                        <button class="ai-btn" style="width:100%; max-width:320px; justify-content:center; box-shadow:var(--shD);" data-action="open-ai-modal" data-visa-code="${escapeHtml(v.code)}">
+                            🤖 AI 심층 법률 검증 시작
+                        </button>
+                    </div>
+                    ` : `
+                    <div class="ai-cta">
+                        <button class="ai-btn" data-action="open-ai-modal" data-visa-code="${escapeHtml(v.code)}">
+                            ${isVisaCode ? '✨ 이 비자에 대해 내 상황 분석하기' : '🤖 AI 법령 팩트체크 및 사례 심층 검증'}
+                        </button>
+                    </div>
+                    ${isVisaCode ? `
+                    <div class="doc-buttons-grid">
+                        <button class="doc-trigger-btn" data-action="open-doc-modal" data-vcode="${escapeHtml(v.code)}" data-type="new">
+                            <span class="icon">📝</span>
+                            <span>신규 발급 구비서류</span>
+                        </button>
+                        <button class="doc-trigger-btn" data-action="open-doc-modal" data-vcode="${escapeHtml(v.code)}" data-type="ext">
+                            <span class="icon">🔄</span>
+                            <span>연장 신청 구비서류</span>
+                        </button>
+                        ${v.faq ? `
+                        <button class="doc-trigger-btn" style="grid-column: 1 / -1; flex-direction: row; justify-content: center; padding: 0.8rem;" data-action="open-faq-modal" data-vcode="${escapeHtml(v.code)}">
+                            <span class="icon" style="font-size:1.2rem;">💡</span>
+                            <span>자주 묻는 질문 (FAQ)</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                    ` : `
+                    <div class="subcode-warning" style="margin: 1rem; background: var(--bg2); border-left: 4px solid var(--t3); color: var(--t2);">
+                        💡 <strong>안내:</strong> 아래 요약된 내용은 단순 참고용입니다. 자의적 해석을 방지하기 위해 반드시 상단의 AI 팩트체크를 통해 본인의 상황에 맞는 법적 근거를 확인하십시오.
+                    </div>
+                    ${v.newReq ? `
                     <div class="vs">
                         <div class="tl tl-n">${lb[0]}</div>
-                        ${v.newReq ? `<div class="ct text-desc">${hl(v.newReq,kw)}</div>` : ''}
-                        ${renderDocTags(v.newReqDocs, kw)}
-                    </div>
+                        <div class="ct text-desc">${hl(v.newReq,kw)}</div>
+                    </div>` : ''}
+                    ${v.extReq ? `
                     <div class="vs">
                         <div class="tl tl-e">${lb[1]}</div>
-                        ${v.extReq ? `<div class="ct text-desc">${hl(v.extReq,kw)}</div>` : ''}
-                        ${renderDocTags(v.extReqDocs, kw)}
-                    </div>
+                        <div class="ct text-desc">${hl(v.extReq,kw)}</div>
+                    </div>` : ''}
+                    ${v.faq ? `
                     <div class="vs">
                         <div class="tl tl-f">${lb[2]}</div>
                         <div class="ct text-desc">${hl(v.faq,kw)}</div>
-                    </div>
+                    </div>` : ''}
+                    `}
+                    `}
+
                     ${sh}
                     ${ddHtml}
                 </div>
@@ -714,18 +1882,271 @@ function toggleTheme(){
 function toggleAccordions(c){document.querySelectorAll('.vc,.su').forEach(el=>{if(c)el.classList.remove('open');else el.classList.add('open');});}
 
 function initUI(){
-    const lf=[{l:'제주 무사증',q:'제주 무사증'},{l:'사증면제협정국',q:'사증면제협정국'},{l:'K-ETA 제주',q:'K-ETA 제주'},{l:'B-1 사증면제협정',q:'B-1 사증면제협정'},{l:'F-3 소득요건(25년)',q:'F-3 소득요건'},{l:'결핵 제출 대상',q:'TB-1'},{l:'오버스테이',q:'SCN-6'},{l:'결혼이민 F-6',q:'F-6'},{l:'건강보험 면제',q:'건강보험 면제'},{l:'가정폭력',q:'가정폭력'},{l:'난민신청',q:'RF-1'},{l:'K-ETA 국가 목록',q:'K-ETA 국가'},{l:'난민신청 서류',q:'RF-1'},{l:'숙련기능점수제',q:'E-7-4'}];
+    const lf=[
+        {l:'체류지 변경(주민센터)',q:'체류지 변경'},
+        {l:'여권 갱신(비예약)',q:'여권 변경'},
+        {l:'등록증 재발급',q:'등록증 재발급'},
+        {l:'만료 당일/임산부 등',q:'비예약 방문'},
+        {l:'제주 무사증',q:'제주 무사증'},
+        {l:'K-ETA 발급',q:'K-ETA'},
+        {l:'숙련기능(E-7-4)',q:'E-7-4'},
+        {l:'결혼이민(F-6)',q:'F-6'},
+        {l:'동반(F-3) 소득요건',q:'F-3 소득요건'},
+        {l:'결핵 제출 대상',q:'TB-1'},
+        {l:'난민신청 절차',q:'RF-1'},
+        {l:'오버스테이',q:'SCN-6'}
+    ];
     const lc=document.getElementById('landingHints');
     if(lc) {
         lc.innerHTML='';
         lf.forEach(x=>{const b=document.createElement('button');b.className='lh';b.textContent=x.l;b.onclick=()=>{qEl.value=x.q;executeSearch();};lc.appendChild(b);});
     }
     
-    const rf=[{l:'F-3 소득',q:'F-3 소득'},{l:'K-ETA',q:'K-ETA'},{l:'K-ETA 국가',q:'K-ETA 국가'},{l:'결핵 가이드',q:'TB-1'},{l:'자격변경 원칙',q:'SCN-1'},{l:'오버스테이',q:'SCN-6'},{l:'건강보험',q:'건강보험 면제'},{l:'하이코리아',q:'하이코리아'},{l:'B-2-2 제주',q:'B-2-2 제주'},{l:'제주 제외국',q:'제주 무사증 제외'},{l:'E-7',q:'E-7'},{l:'E-9',q:'E-9'},{l:'F-6',q:'F-6'},{l:'F-5',q:'F-5'},{l:'G-1',q:'G-1'},{l:'점수제',q:'점수'},{l:'가정폭력',q:'가정폭력'}];
+    const rf=[
+        {l:'체류지 변경',q:'체류지 변경'},
+        {l:'비예약 업무',q:'비예약 방문'},
+        {l:'F-3 소득',q:'F-3 소득'},
+        {l:'K-ETA',q:'K-ETA'},
+        {l:'결핵 가이드',q:'TB-1'},
+        {l:'오버스테이',q:'SCN-6'},
+        {l:'건강보험',q:'건강보험 면제'},
+        {l:'B-2-2 제주',q:'B-2-2 제주'},
+        {l:'E-7',q:'E-7'},
+        {l:'E-9',q:'E-9'},
+        {l:'F-6',q:'F-6'},
+        {l:'F-5',q:'F-5'},
+        {l:'점수제',q:'점수'}
+    ];
     const qc=document.getElementById('qf');
     if(qc) {
         qc.innerHTML='';
         rf.forEach(x=>{const b=document.createElement('button');b.className='qb';b.textContent=x.l;b.onclick=()=>{qEl.value=x.q;qEl.focus();document.getElementById('xb').classList.add('v');renderResults(x.q);};qc.appendChild(b);});
+    }
+}
+
+function injectLocalData(arr) {
+    const walkInCard = {
+        code: "FAQ-0",
+        name: "방문 예약 예외 (당일 비예약 방문 가능 업무)",
+        cat: "faq",
+        period: "상시",
+        dataBadge: "예약 면제 대상",
+        dataDate: "2026 출입국 매뉴얼 기준",
+        newReq: "원칙적으로 출입국·외국인관서 방문은 하이코리아(HiKorea) 사전 예약이 필수입니다. 단, 민원인의 편의와 인도적 사유를 고려하여 다음의 경우에는 예외적으로 당일 비예약 방문 처리가 가능합니다.\n\n[단순 행정 민원]\n1. 등록외국인의 체류지 변경 신고 (시·군·구청 및 읍·면·동 행정복지센터에서도 동일하게 처리 가능)\n2. 등록외국인의 여권 변경 신고 (여권 재발급, 번호 변경 등)\n3. 외국인등록증 분실 및 훼손에 따른 재발급 신청\n4. 모바일 외국인등록증 발급\n5. 전자민원(하이코리아)으로 체류기간 연장 허가를 받은 후, 등록증 뒷면에 변경 기간 스티커 부착\n\n[긴급 및 취약계층 보호]\n6. 체류기간 만료 당일 방문자 (단, 단순 예약 지연이나 고의성이 의심되는 경우 반려될 수 있음)\n7. 임산부, 만 70세 이상 고령자, 장애인 등 이동 및 대기가 어려운 취약계층\n8. 긴급한 병원 치료 등 인도적 사유가 명백한 자\n\n[기타 특수 업무]\n9. 투자이민 사전심사 등 별도로 비예약 접수를 허용한 특정 업무",
+        extReq: "위에서 명시한 예외 대상을 제외한 일반 체류자격 부여, 변경, 연장, 체류자격외 활동허가, 근무처 변경 등의 행정 업무는 당일 비예약 방문 시 절대 처리할 수 없으며, 민원실 창구에서 번호표 자체가 발부되지 않습니다. 반드시 방문 전 하이코리아를 통해 사전 예약을 완료하셔야 합니다.",
+        faq: "Q: 체류지 변경 신고의 관할 및 예외 규정은 무엇입니까?\nA: 출입국관리법 제36조 제1항 및 동법 시행령 제45조에 따라, 체류지 변경 신고는 신체류지를 관할하는 출입국·외국인관서의 장 또는 시·군·구의 장, 읍·면·동의 장에게 전입한 날부터 14일 이내에 신고해야 합니다. 출입국관서 사전 예약 없이 행정복지센터(주민센터) 당일 방문 처리가 법적으로 보장됩니다.\nQ: 여권 갱신 후 변경 신고 기한 및 위반 시 제재 조치는 무엇입니까?\nA: 출입국관리법 제35조 제1항 및 동법 시행규칙 제49조의2에 따라 외국인등록사항(여권번호, 발급일, 유효기간 등)이 변경된 경우 15일 이내에 관할 청장 등에게 신고해야 합니다. 위반 시 동법 제100조에 의거 최대 100만 원 이하의 과태료가 부과되므로 예약 대기가 길 경우 즉시 비예약 당일 방문 또는 하이코리아 전자민원을 활용해야 합니다.\nQ: 외국인등록증 분실 재발급 시 구비서류 및 절차는 어떻게 됩니까?\nA: 출입국관리법 시행령 제41조 제1항에 의거, 여권, 통합신청서, 분실사유 소명자료(경찰서장 발행 분실신고접수증) 및 표준규격사진 1매를 지참하여 관할 출입국·외국인관서에 당일 방문 접수해야 합니다. 여권 단독 지참으로는 접수가 불가합니다.\nQ: 비예약 당일 방문 시 번호표 배부 마감 기준이 있습니까?\nA: 관서별 1일 처리 가능 업무량에 따라 비예약 방문 번호표(Walk-in Ticket) 수량이 제한적으로 배정되므로, 통상 오전 업무 시작 직후 조기 마감될 확률이 높습니다.",
+        subCodes: [
+            {
+                code: "FAQ-0-1",
+                name: "체류지 변경 신고 (전입신고)",
+                addReqDocs: ["doc_address_change"]
+            },
+            {
+                code: "FAQ-0-2",
+                name: "여권 갱신·변경 신고",
+                addReqDocs: ["doc_passport_change"]
+            },
+            {
+                code: "FAQ-0-3",
+                name: "외국인등록증 분실·훼손 재발급",
+                addReqDocs: ["doc_arc_reissue", "doc_arc_fee"]
+            }
+        ]
+    };
+    const exists = arr.some(v => v.code === "FAQ-0");
+    if (!exists) {
+        arr.unshift(walkInCard);
+    }
+    
+    arr.forEach(v => {
+        if (v.code === 'A-1' || v.code === 'A-2' || v.code === 'A-3') {
+            v.newReqDocs = ["doc_dispatch"];
+            v.extReqDocs = [];
+        } else if (v.code === 'C-1') {
+            v.newReqDocs = ["doc_career", "doc_plan"];
+            v.extReqDocs = [];
+        } else if (v.code === 'C-3') {
+            v.newReqDocs = ["doc_purpose", "doc_flight", "doc_accom", "doc_schedule", "doc_finance"];
+            v.extReqDocs = ["doc_purpose"];
+        } else if (v.code === 'C-4') {
+            v.newReqDocs = ["doc_emp_contract", "doc_biz_reg", "doc_specialty", "doc_tb"];
+            v.extReqDocs = [];
+        } else if (v.code === 'D-1') {
+            v.newReqDocs = ["doc_invitation", "doc_plan", "doc_degree", "doc_finance"];
+            v.extReqDocs = ["doc_training_cont", "doc_address"];
+        } else if (v.code === 'D-2') {
+            v.faq = "Q: 해외 발급 학위증명서 원본만 내면 되나요?\nA: 본국 정부의 아포스티유(Apostille) 확인 또는 주재국 한국 영사확인을 받아야 하며, 국/영문이 아닐 경우 번역 공증이 필수입니다.\nQ: D-2 비자로 바로 아르바이트가 가능한가요?\nA: 불가능합니다. 사전에 유학담당자의 추천서를 받아 관할 출입국에서 '체류자격외 활동허가'를 받아야 합법입니다.\nQ: 학점이 낮으면 비자 연장이 안 되나요?\nA: 평균 학점이 지속적으로 낮거나 제적 경고를 받으면 체류 연장이 불허되거나 6개월 단위로 짧게 부여될 수 있습니다.";
+            v.newReqDocs = ["doc_enroll", "doc_degree", "doc_finance", "doc_tb"];
+            v.extReqDocs = ["doc_enroll", "doc_transcript", "doc_attend", "doc_finance", "doc_address"];
+        } else if (v.code === 'D-3') {
+            v.newReqDocs = ["doc_invitation", "doc_biz_reg", "doc_plan", "doc_finance"];
+            v.extReqDocs = ["doc_training_cont", "doc_address"];
+        } else if (v.code === 'D-4') {
+            v.newReqDocs = ["doc_enroll", "doc_biz_reg", "doc_degree", "doc_finance"];
+            v.extReqDocs = ["doc_enroll", "doc_attend", "doc_bank_bal", "doc_address"];
+        } else if (v.code === 'D-5') {
+            v.newReqDocs = ["doc_career", "doc_dispatch", "doc_plan"];
+            v.extReqDocs = ["doc_career", "doc_address"];
+        } else if (v.code === 'D-6') {
+            v.newReqDocs = ["doc_biz_reg", "doc_dispatch", "doc_career"];
+            v.extReqDocs = ["doc_career", "doc_address"];
+        } else if (v.code === 'D-7') {
+            v.newReqDocs = ["doc_dispatch", "doc_corp_reg", "doc_career", "doc_emp_contract", "doc_tax"];
+            v.extReqDocs = ["doc_career", "doc_dispatch", "doc_biz_reg", "doc_tax", "doc_address"];
+        } else if (v.code === 'D-8') {
+            v.newReqDocs = ["doc_corp_reg", "doc_biz_reg", "doc_invest", "doc_finance", "doc_plan"];
+            v.extReqDocs = ["doc_corp_reg", "doc_invest", "doc_tax", "doc_vat", "doc_address"];
+        } else if (v.code === 'D-9') {
+            v.newReqDocs = ["doc_biz_reg", "doc_tax", "doc_plan", "doc_finance"];
+            v.extReqDocs = ["doc_biz_reg", "doc_tax", "doc_vat", "doc_address"];
+        } else if (v.code === 'D-10') {
+            v.newReqDocs = ["doc_degree", "doc_career", "doc_plan", "doc_finance", "doc_tb"];
+            v.extReqDocs = ["doc_purpose", "doc_plan", "doc_finance", "doc_address"];
+        } else if (['E-1', 'E-2', 'E-3', 'E-4', 'E-5'].includes(v.code)) {
+            v.newReqDocs = ["doc_emp_contract", "doc_degree", "doc_career", "doc_biz_reg", "doc_crim", "doc_health", "doc_tb"];
+            v.extReqDocs = ["doc_emp_contract", "doc_tax", "doc_inc_proof", "doc_address"];
+        } else if (v.code === 'E-6') {
+            v.newReqDocs = ["doc_emp_contract", "doc_career", "doc_biz_reg", "doc_purpose", "doc_tb"];
+            v.extReqDocs = ["doc_emp_contract", "doc_tax", "doc_address"];
+        } else if (v.code === 'E-7') {
+            v.faq = "Q: 고용계약서의 임금이 최저임금 수준이어도 되나요?\nA: E-7-1 전문인력은 원칙적으로 전년도 1인당 GNI(국민총소득)의 80% 이상을 지급받아야 합니다.\nQ: 회사 대표가 E-7 비자 이적 동의서를 안 써주면 어떻게 하나요?\nA: E-7 비자는 원칙적으로 해당 고용주와의 계약을 전제로 발급되므로, 이직 시 원고용주의 이적 동의서가 없으면 비자 연장 및 변경이 불가능합니다. 단, 임금체불 등 회사의 귀책사유가 노동청을 통해 인정된 경우는 예외입니다.";
+            v.newReqDocs = ["doc_emp_contract", "doc_biz_reg", "doc_degree", "doc_career", "doc_emp_recom", "doc_crim", "doc_health", "doc_tb"];
+            v.extReqDocs = ["doc_emp_contract", "doc_biz_reg", "doc_inc_proof", "doc_tax", "doc_guarantee", "doc_address"];
+        } else if (v.code === 'E-8') {
+            v.newReqDocs = ["doc_eps", "doc_emp_contract", "doc_health", "doc_tb"];
+            v.extReqDocs = ["doc_eps", "doc_emp_contract", "doc_address"];
+        } else if (v.code === 'E-9') {
+            v.faq = "Q: E-9 비자로 다른 공장으로 마음대로 옮길 수 있나요?\nA: 절대 불가합니다. 임금 체불, 폭행 등 부득이한 사유가 고용노동부를 통해 인정된 경우에 한해 관할 출입국의 근무처 변경 허가를 받아야 합니다.\nQ: 회사 기숙사를 다른 곳으로 옮겼는데 신고해야 하나요?\nA: 네. 체류지가 변경되면 반드시 14일 이내에 관할 주민센터나 출입국에 신고해야 하며, 미신고 시 범칙금이 부과됩니다.";
+            v.newReqDocs = ["doc_eps", "doc_emp_contract", "doc_biz_reg", "doc_health", "doc_crim", "doc_tb"];
+            v.extReqDocs = ["doc_eps", "doc_emp_contract", "doc_biz_reg", "doc_address", "doc_health"];
+        } else if (v.code === 'E-10') {
+            v.newReqDocs = ["doc_emp_contract", "doc_specialty", "doc_health", "doc_tb"];
+            v.extReqDocs = ["doc_emp_contract", "doc_career", "doc_guarantee", "doc_address"];
+            v.faq = "Q: 어선원(E-10-2) 비자로 근무처 변경이 가능한가요?\nA: 원칙적으로 선주의 동의가 있어야 하며, 임금체불 등 선주의 귀책사유가 공적으로 입증된 경우에 한해 관할 출입국의 사전 허가를 받아 변경할 수 있습니다.\nQ: 무단으로 하선하여 육상에서 일하면 어떻게 되나요?\nA: 즉시 불법체류(이탈)로 간주되어 출입국관리법에 따라 강제퇴거 및 입국금지 조치됩니다.";
+        } else if (v.code === 'F-1') {
+            v.newReqDocs = ["doc_id", "doc_fam_rel", "doc_invitation", "doc_finance", "doc_tb"];
+            v.extReqDocs = ["doc_fam_rel", "doc_address"];
+        } else if (v.code === 'F-2') {
+            v.newReqDocs = ["doc_crim", "doc_tb", "doc_finance", "doc_fam_rel", "doc_purpose"];
+            v.extReqDocs = ["doc_tax", "doc_address", "doc_purpose"];
+        } else if (v.code === 'F-3') {
+            v.faq = "Q: 본국에서 발급받은 가족관계증명서는 그대로 제출해도 되나요?\nA: 반드시 자국 정부의 아포스티유(Apostille) 확인을 받거나, 자국 소재 한국대사관의 영사확인을 받아야 합니다.\nQ: F-3 비자로 아르바이트를 할 수 있나요?\nA: 원칙적으로 모든 취업 활동이 금지됩니다. 적발 시 주체류자의 비자 연장에도 악영향을 미칠 수 있습니다.";
+            v.newReqDocs = ["doc_id", "doc_fam_rel", "doc_mar_rel", "doc_inc_proof", "doc_tb"];
+            v.extReqDocs = ["doc_fam_rel", "doc_address"];
+        } else if (v.code === 'F-4') {
+            v.faq = "Q: F-4 비자로 식당 서빙이나 단순 건설 현장직(단순노무)을 할 수 있나요?\nA: 금지됩니다. F-4 비자는 단순노무행위를 엄격히 제한하고 적발 시 범칙금 부과 및 체류기간 연장이 불허됩니다.\nQ: 한국어를 전혀 못 해도 F-4 비자를 받을 수 있나요?\nA: 한국어 능력 입증(TOPIK, 사회통합프로그램 이수 등)이 원칙적으로 요구되며, 입증하지 못할 경우 체류기간이 1년으로 짧게 부여됩니다.";
+            v.newReqDocs = ["doc_f4_proof", "doc_crim", "doc_topik", "doc_kiip", "doc_tb"];
+            v.extReqDocs = ["doc_address", "doc_tax", "doc_purpose"];
+        } else if (v.code === 'F-5') {
+            v.faq = "Q: 영주권(F-5)을 받으면 한국 국적이 되는 건가요?\nA: 아닙니다. 영주권은 국적은 본국으로 유지하되 체류 기한의 제한을 받지 않는 비자일 뿐입니다. 선거권 등 일부 권리는 제한됩니다.\nQ: 범죄를 저지르면 영주권이 취소될 수 있나요?\nA: 네. 강력범죄나 마약범죄 등 중대한 출입국관리법 위반 사유가 발생하면 영주권이 취소되고 강제 퇴거될 수 있습니다.";
+            v.newReqDocs = ["doc_id", "doc_inc_proof", "doc_kiip", "doc_crim", "doc_tb", "doc_guarantee"];
+            v.extReqDocs = ["doc_address", "doc_photo"];
+        } else if (v.code === 'F-6') {
+            v.faq = "Q: 한국인 배우자가 소득 증빙을 못하면 비자가 안 나오나요?\nA: 원칙적으로 불허됩니다. 다만 부부의 자산, 부모의 소득 합산 등 보완 제도가 있으므로 세부 확인이 필요합니다.\nQ: 이혼하게 되면 비자는 어떻게 되나요?\nA: 원칙적으로 체류기간 연장이 불허됩니다. 단, 한국인 배우자의 사망, 실종, 가정폭력 등 본인의 귀책사유가 없음을 공적 서류(판결문 등)로 연장 가능합니다.";
+            v.newReqDocs = ["doc_basic", "doc_fam_rel_kr", "doc_mar_rel", "doc_invitation", "doc_guarantee", "doc_address", "doc_inc_proof", "doc_crim", "doc_health", "doc_topik", "doc_tb"];
+            v.extReqDocs = ["doc_mar_rel", "doc_fam_rel_kr", "doc_basic", "doc_address", "doc_job_report"];
+        } else if (v.code === 'G-1') {
+            v.newReqDocs = ["doc_plan", "doc_medical", "doc_purpose", "doc_address", "doc_tb"];
+            v.extReqDocs = ["doc_purpose", "doc_address"];
+        } else if (v.code === 'H-1') {
+            v.newReqDocs = ["doc_flight", "doc_bank_bal", "doc_health", "doc_plan"];
+            v.extReqDocs = ["doc_address"];
+        }
+        
+        if (!['faq', 'scn', 'nhis'].includes(v.cat)) {
+            v.newReq = "";
+            v.extReq = "";
+        }
+        
+        if (v.subCodes) {
+            v.subCodes.forEach(sub => {
+                if (!sub.addReqDocs) sub.addReqDocs = [];
+                const sc = sub.code;
+                
+                if (sc.startsWith('D-2')) {
+                    if (sc === 'D-2-6') sub.addReqDocs.push("doc_enroll", "doc_prof_conf", "doc_finance");
+                    else sub.addReqDocs.push("doc_enroll", "doc_degree", "doc_finance");
+                } else if (sc.startsWith('D-4')) {
+                    sub.addReqDocs.push("doc_enroll", "doc_plan", "doc_finance");
+                } else if (sc.startsWith('D-10')) {
+                    sub.addReqDocs.push("doc_plan", "doc_finance");
+                    if (sc === 'D-10-2') sub.addReqDocs.push("doc_specialty");
+                } else if (sc.startsWith('E-7')) {
+                    sub.addReqDocs.push("doc_emp_contract", "doc_biz_reg", "doc_career");
+                    if (sc === 'E-7-4') sub.addReqDocs.push("doc_score", "doc_topik", "doc_emp_recom");
+                } else if (sc.startsWith('F-6')) {
+                    sub.addReqDocs.push("doc_mar_rel", "doc_basic", "doc_fam_rel_kr", "doc_invitation", "doc_guarantee", "doc_inc_proof", "doc_crim", "doc_health");
+                } else if (sc.startsWith('F-2')) {
+                    sub.addReqDocs.push("doc_inc_proof", "doc_tax", "doc_address");
+                    if (sc === 'F-2-7' || sc === 'F-2-99') sub.addReqDocs.push("doc_score", "doc_degree");
+                } else if (sc.startsWith('F-5')) {
+                    sub.addReqDocs.push("doc_inc_proof", "doc_tax", "doc_crim", "doc_guarantee");
+                    if (sc === 'F-5-10' || sc === 'F-5-11' || sc === 'F-5-16') sub.addReqDocs.push("doc_degree");
+                } else if (sc.startsWith('E-9') || sc.startsWith('E-8')) {
+                    sub.addReqDocs.push("doc_eps", "doc_emp_contract", "doc_health");
+                }
+                
+                sub.addReqDocs = [...new Set(sub.addReqDocs)];
+            });
+        }
+    });
+
+    return arr;
+}
+
+async function loadVisaData() {
+    const parse = (raw) => {
+        const arr = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+        return injectLocalData(arr);
+    };
+
+    const applySuccess = (arr, label) => {
+        VISA_DATA = arr;
+        dataReady = true;
+        if(rcEl) rcEl.textContent = `데이터 로드 완료 (${VISA_DATA.length}개) - ${label}`;
+        setSearchEnabled(true);
+        initUI();
+        if(qEl) {
+            const updatePh = () => {
+                const sf = [...PREDEF_KEYWORDS].sort(() => 0.5 - Math.random());
+                qEl.placeholder = `${sf[0]}, ${sf[1]}, ${sf[2]} 등 검색`;
+            };
+            updatePh();
+            setInterval(updatePh, 2500);
+        }
+    };
+
+    const API_URL = `${API_BASE}/api/visas`;
+    try {
+        if (!API_BASE && (window.location.protocol === 'data:' || window.location.protocol === 'about:')) {
+             throw new Error("미리보기 환경에서는 로컬 API 호출이 제한됩니다.");
+        }
+        console.log(`[Moonshot] Primary API fetch 시도: ${API_URL}`);
+        const res = await fetch(API_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`API 응답 실패 (${res.status})`);
+        const arr = parse(await res.json());
+        console.log(`[Moonshot] ✅ API 로드 성공: ${arr.length}개`);
+        applySuccess(arr, 'API 연동');
+        return;
+    } catch (e) {
+        console.warn(`[Moonshot] ⚠ API 로드 실패, JSON 폴백 시도:`, e.message);
+    }
+
+    const fallbackUrl = './visa_data.json';
+    try {
+        if (window.location.protocol === 'data:' || window.location.protocol === 'about:') {
+            throw new Error("미리보기 환경에서는 상대 경로(./)를 해석할 수 없습니다.");
+        }
+        console.log(`[Moonshot] Fallback JSON fetch 시도: ${fallbackUrl}`);
+        const res = await fetch(fallbackUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`JSON 응답 실패 (${res.status})`);
+        const arr = parse(await res.json());
+        console.log(`[Moonshot] ✅ JSON 폴백 로드 성공: ${arr.length}개`);
+        applySuccess(arr, '정적 백업');
+    } catch (e) {
+        console.error(`[Moonshot] ❌ 외부 데이터 로드 실패 (내장 데이터로 자동 전환):`, e.message);
+        const offlineData = parse([]);
+        applySuccess(offlineData, '오프라인 내장 데이터');
     }
 }
 
