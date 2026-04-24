@@ -42,17 +42,16 @@ cached_public_job_data = "DATA MISSING"
 
 # /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
-    ("moonshotai/kimi-k2:free",       "openrouter"),  
-    ("google/gemma-3-27b-it:free",    "openrouter"),  
-    ("llama-3.3-70b-versatile",       "groq"),        
-    ("gemma2-9b-it",                  "groq"),        
+    ("google/gemma-4-26b-a4b-it:free", "openrouter"),  
+    ("moonshotai/kimi-k2:free",    "openrouter"),  
+    ("llama-3.3-70b-versatile",       "groq"),            
 ]
 
 # /api/jobcodekeywords 용 모델 폴백 체인
 KEYWORD_MODELS = [
-    ("moonshotai/kimi-k2:free",       "openrouter"),  
-    ("google/gemma-3-27b-it:free",    "openrouter"),  
-    ("llama-3.3-70b-versatile",       "groq"),        
+    ("llama-3.3-70b-versatile", "groq"),  
+    ("llama-3.1-8b-instant", "groq"),  
+    ("google/gemma-4-26b-a4b-it:free", "openrouter"),        
 ]
 
 def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> dict:
@@ -299,11 +298,18 @@ async def ask_ai(req: AskRequest):
     realtime_law_context = await fetch_realtime_law_data(req.question)
 
     # [RAG 컨텍스트 강제 주입 (Zero Creativity, Strict Fact-Based)]
-    system_prompt = f"""You are an elite, strict, and highly objective Korean immigration law assistant (2026 Manual Standard).
-Answer in the user's language ('{user_lang}'), but accurately translate and retain Korean legal terms.
-Always base your answer strictly on the 2026 Korean Immigration Act and the provided Public Data APIs.
-DO NOT hallucinate. Do not provide unwarranted sympathy. If a request is legally impossible, state it firmly.
-If exact answers are not found in the provided contexts, state "DATA MISSING" and refuse to guess.
+    system_prompt = f"""You are an elite, strict, and highly objective Korean immigration law assistant 2026 Manual Standard. 
+Answer in the user's language ({user_lang}), but accurately translate and retain Korean legal terms. 
+Always base your answer strictly on the 2026 Korean Immigration Act and the provided contexts below. 
+CRITICAL RULES:
+1. DO NOT hallucinate or guess. If exact answers are not found in the provided contexts, you MUST state "DATA MISSING" and refuse to answer.
+2. Do not provide unwarranted sympathy or conversational filler.
+3. If a request is legally impossible based on the context, state it firmly.
+
+[Provided Context]
+- RAG: {cached_public_visa_data}
+- RAG: {cached_public_job_data}
+- RAG: {realtime_law_context}"""
 
 [프론트엔드 제공 컨텍스트]:
 {req.context if req.context else "DATA MISSING"}
