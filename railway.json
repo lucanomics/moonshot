@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "uvicorn moonshot_backend_fastapi:app --host 0.0.0.0 --port $PORT",
+    "startCommand": "uvicorn "moonshot_backend_fastapi-7:app" --host 0.0.0.0 --port $PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
