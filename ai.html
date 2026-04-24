@@ -142,17 +142,17 @@
         // 설정 상수
         // ==========================================
         const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서 및 1345에 확인하시기 바랍니다.";
-        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
+        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === 'file:') ? "" : "https://web-production-14f9a.up.railway.app";
         const API_URL = `${API_BASE}/api/ask`;
 
         // 3층 방어선 설정
         const LIMITS = {
-            MAX_CHARS: 500,           // Layer 1: 입력 길이 cap
-            PER_MINUTE: 3,            // Layer 2-a: 분당 요청 수
-            PER_DAY: 30,              // Layer 2-b: 일일 요청 수
-            CACHE_TTL_MS: 24*60*60*1000, // Layer 3: 캐시 유효기간 (24시간)
-            CACHE_MAX_ENTRIES: 100,   // Layer 3: 캐시 최대 항목 수
-            DUP_WARN_THRESHOLD: 5     // 같은 질문 반복 경고 임계치
+            MAX_CHARS: 500,
+            PER_MINUTE: 3,
+            PER_DAY: 30,
+            CACHE_TTL_MS: 24*60*60*1000,
+            CACHE_MAX_ENTRIES: 100,
+            DUP_WARN_THRESHOLD: 5
         };
 
         const STORE_KEYS = {
@@ -162,6 +162,31 @@
         };
 
         let userConsent = null;
+        let VISA_DATA = [];
+
+        // ==========================================
+        // RAG 데이터 로드 로직 추가
+        // ==========================================
+        async function loadVisaData() {
+            try {
+                if (!API_BASE && (window.location.protocol === 'data:' || window.location.protocol === 'about:')) {
+                    throw new Error("미리보기 환경에서는 로컬 API 호출이 제한됩니다.");
+                }
+                const res = await fetch(`${API_BASE}/api/visas`);
+                if (res.ok) {
+                    const data = await res.json();
+                    VISA_DATA = data.data || data;
+                    return;
+                }
+                const fb = await fetch('./visa_data.json');
+                if (fb.ok) {
+                    const json = await fb.json();
+                    VISA_DATA = json.data || json;
+                }
+            } catch (e) {
+                console.error("비자 데이터 로드 실패", e);
+            }
+        }
 
         // ==========================================
         // 유틸리티
@@ -182,12 +207,10 @@
             return 'en';
         }
 
-        // 질문 정규화 (공백, 구두점 무시하고 동일 판정)
         function normalizeQuery(q) {
             return q.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,!?;:()"'\[\]{}]/g, '');
         }
 
-        // 간단한 해시 함수 (캐시 키용)
         function hashStr(str) {
             let h = 0;
             for (let i = 0; i < str.length; i++) {
@@ -197,7 +220,6 @@
             return 'h' + Math.abs(h).toString(36);
         }
 
-        // localStorage 안전 접근 (프라이빗 브라우징 대응)
         function safeGet(key, fallback) {
             try {
                 const v = localStorage.getItem(key);
@@ -215,7 +237,6 @@
         function getRequestHistory() {
             const now = Date.now();
             const history = safeGet(STORE_KEYS.TIMESTAMPS, []);
-            // 24시간 이전 기록 정리
             const cutoff = now - 24*60*60*1000;
             return history.filter(ts => ts > cutoff);
         }
@@ -225,7 +246,7 @@
             const history = getRequestHistory();
 
             const lastMinute = history.filter(ts => ts > now - 60*1000);
-            const lastDay = history; // 이미 24시간으로 필터된 상태
+            const lastDay = history;
 
             if (lastDay.length >= LIMITS.PER_DAY) {
                 const oldest = Math.min(...lastDay);
@@ -276,7 +297,6 @@
             const entry = cache[key];
             if (!entry) return null;
             if (Date.now() - entry.t > LIMITS.CACHE_TTL_MS) {
-                // 만료
                 delete cache[key];
                 safeSet(STORE_KEYS.CACHE, cache);
                 return null;
@@ -289,7 +309,6 @@
             const key = hashStr(normalizeQuery(query));
             cache[key] = { a: answer, t: Date.now() };
 
-            // 용량 제한: 오래된 항목부터 정리
             const keys = Object.keys(cache);
             if (keys.length > LIMITS.CACHE_MAX_ENTRIES) {
                 const sorted = keys.sort((a,b) => cache[a].t - cache[b].t);
@@ -350,7 +369,7 @@
         };
 
         // ==========================================
-        // 메인 전송 함수 (3층 방어선 적용)
+        // 메인 전송 함수 (RAG 도입 및 3층 방어선 적용)
         // ==========================================
         async function sendAi() {
             const inp = document.getElementById('aiQ');
@@ -369,7 +388,7 @@
                 return;
             }
 
-            // --- Layer 3: 캐시 조회 (Groq 비용 0원 경로) ---
+            // --- Layer 3: 캐시 조회 ---
             const cached = cacheLookup(q);
             if (cached) {
                 appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
@@ -391,7 +410,32 @@
                 return;
             }
 
-            // --- 모든 방어선 통과, API 호출 진행 ---
+            // --- Layer 4: RAG (Context Injection) 로직 추가 ---
+            let injectedContext = "";
+            if (VISA_DATA && VISA_DATA.length > 0) {
+                const kw = q.toLowerCase().split(/\s+/);
+                let bestVisa = null, maxScore = 0;
+                
+                VISA_DATA.forEach(v => {
+                    let score = 0;
+                    const textToSearch = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
+                    kw.forEach(k => {
+                        if (k.length > 1 && textToSearch.includes(k)) score++;
+                    });
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestVisa = v;
+                    }
+                });
+
+                if (bestVisa && maxScore > 0) {
+                    injectedContext = `[관련 법령 및 매뉴얼 지식]\n체류자격: ${bestVisa.code} (${bestVisa.name})\n신규요건: ${bestVisa.newReq||'없음'}\n연장요건: ${bestVisa.extReq||'없음'}\nFAQ: ${bestVisa.faq||'없음'}\n\n위 출입국 규정을 엄격히 적용하여 사실 위주로 객관적으로 답변하십시오.\n\n사용자 질문: `;
+                }
+            }
+
+            const finalQuestion = injectedContext ? (injectedContext + q) : q;
+
+            // --- API 호출 진행 ---
             appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
             inp.value = '';
             updateCharCounter();
@@ -406,7 +450,12 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q, consent: userConsent, context: "", lang: detectLang(q) })
+                    body: JSON.stringify({ 
+                        question: finalQuestion, 
+                        consent: userConsent, 
+                        context: "", 
+                        lang: detectLang(q) 
+                    })
                 });
 
                 if (!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
@@ -414,13 +463,15 @@
                 const data = await res.json();
                 const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
 
-                // 성공 시에만 카운터 증가 + 캐시 저장
                 recordRequest();
                 cacheStore(q, answer);
 
                 const loader = document.getElementById(lid);
                 if (loader) loader.remove();
-                appendMsg(`${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span>`);
+                
+                let formattedText = escapeHtml(answer).replace(/\n/g, '<br>');
+                formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                appendMsg(`${formattedText}<span class="msg-disc">${DISCLAIMER}</span>`);
                 setStatus('질문 대기 중');
             } catch (err) {
                 const loader = document.getElementById(lid);
@@ -439,6 +490,7 @@
         // 초기화
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
+            loadVisaData(); // 데이터 로드 호출
             const qEl = document.getElementById('aiQ');
             if (qEl) {
                 qEl.addEventListener('input', updateCharCounter);
@@ -452,10 +504,8 @@
             updateCharCounter();
             updateQuotaBadge();
 
-            // 이전 동의 상태 복원 (선택적: 하루 지나면 재동의)
             const prev = safeGet(STORE_KEYS.CONSENT, null);
             if (prev && prev.agreed && (Date.now() - prev.at) < 24*60*60*1000) {
-                // 자동 재동의 처리
                 handleConsent(true);
             }
         });
