@@ -3,25 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moonshot AI — 민원 안내 도우미</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%22100%22 fill=%22white%22>☾</text></svg>">
+    <title>Paradiso 39 AI — 민원 안내 도우미</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2246%22 fill=%22%231F6B5E%22/><g fill=%22%23C97A4A%22><circle cx=%2250%22 cy=%2250%22 r=%228%22/><ellipse cx=%2250%22 cy=%2228%22 rx=%227%22 ry=%2212%22/><ellipse cx=%2271%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(72 71 43)%22/><ellipse cx=%2263%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(144 63 68)%22/><ellipse cx=%2237%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-144 37 68)%22/><ellipse cx=%2229%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-72 29 43)%22/></g></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         
         :root {
-            --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Noto Sans KR', system-ui, sans-serif;
-            --ff-logo: 'Jua', sans-serif;
-            
-            --bg0: #0f172a; --bg1: #1e293b; --bg2: #334155;
-            --bd: #334155; 
-            --t1: #cbd5e1; --t2: #94a3b8; --t3: #64748b;
-            --ac: #6366f1; --cy: #38bdf8;
-            --warn: #f59e0b; --err: #ef4444; --ok: #10b981;
+            /* Paradiso 39 — Emerald + Coral (dark surface) */
+            --ff: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            --ff-logo: 'Bodoni Moda', 'Didot', Georgia, serif;
+            --ff-display: 'DM Sans', 'Pretendard Variable', sans-serif;
+
+            --color-primary: #0EA37B;
+            --color-accent:  #FF6B5B;
+            --color-surface: #F4EDDC;
+            --color-surface-dark: #0B2A24;
+
+            --bg0: #0B2A24; --bg1: #113B32; --bg2: #184B40;
+            --bd: #2D5A50;
+            --t1: #F3EEDF; --t2: #C7BFA8; --t3: #8C8572;
+            --ac: #34D4A8; --cy: #FF8B7A;
+            --warn: #FFB27A; --err: #FF8B7A; --ok: #34D4A8;
             --shD: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
         
@@ -31,7 +38,7 @@
         header { background: var(--bg1); padding: 1rem 1.5rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shD); z-index: 10; flex-shrink: 0; }
         .back-btn { background: none; border: none; color: var(--t2); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; text-decoration: none; font-family: var(--ff) !important; }
         .back-btn:hover { color: var(--t1); }
-        h1 { font-family: var(--ff-logo) !important; font-size: 1.5rem; font-weight: 400; background: linear-gradient(135deg, var(--ac), var(--cy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; }
+        h1 { font-family: var(--ff-logo) !important; font-size: 1.45rem; font-weight: 500; letter-spacing: -0.02em; color: var(--t1); margin: 0; display: flex; align-items: baseline; gap: 0.25em; font-optical-sizing: auto; } h1 em { font-style: italic; font-weight: 600; color: var(--color-accent); letter-spacing: -0.03em; } h1 small { font-family: var(--ff-display); font-style: normal; font-weight: 500; font-size: 0.7rem; color: var(--t2); letter-spacing: 0.08em; text-transform: uppercase; }
         .quota-badge { font-size: 0.72rem; color: var(--t3); padding: 0.25rem 0.6rem; background: var(--bg0); border: 1px solid var(--bd); border-radius: 999px; font-weight: 600; }
         .quota-badge.warn { color: var(--warn); border-color: var(--warn); }
         .quota-badge.err { color: var(--err); border-color: var(--err); }
@@ -72,16 +79,16 @@
 
     <header>
         <a href="index.html" class="back-btn">← 검색으로 돌아가기</a>
-        <h1>Moonshot AI</h1>
+        <h1>Paradiso <em>39</em> <small>AI</small></h1>
         <span class="quota-badge" id="quotaBadge" title="일일 질문 가능 횟수">-- / --</span>
     </header>
 
     <div class="chat-container">
         <div class="messages" id="aiMsgs">
             <div class="msg ai">
-                출입국 민원 안내 도우미 Moonshot AI입니다. 문장 형태로 질문해 주세요.<br>
+                출입국 민원 안내 도우미 Paradiso 39 AI입니다. 문장 형태로 질문해 주세요.<br>
                 예시: "베트남 사람인데 비자 없이 제주도에 여행 갈 수 있나요?"
-                <span class="msg-disc">⚠  Moonshot/Moonshot.ai의 검색 및 답변 결과는 사전 안내 목적이므로, 법적 근거로 활용될 수 없습니다. 최종 결정 전 반드시 관할 출입국관서의 확인을 거치시기 바랍니다.</span>
+                <span class="msg-disc">⚠  Paradiso 39의 검색 및 답변 결과는 사전 안내 목적이므로, 법적 근거로 활용될 수 없습니다. 최종 결정 전 반드시 관할 출입국관서의 확인을 거치시기 바랍니다.</span>
             </div>
         </div>
         
@@ -113,7 +120,7 @@
     <div class="consent-overlay" id="consentOverlay">
         <div class="consent-box">
             <h2>서비스 이용 전 안내</h2>
-            <p>Moonshot AI는 서비스 개선을 위해 <strong>익명화된 질문 카테고리</strong>를 수집합니다.<br>
+            <p>Paradiso 39 AI는 서비스 개선을 위해 <strong>익명화된 질문 카테고리</strong>를 수집합니다.<br>
             개인 식별 정보(질문 원문, IP 등)는 저장하지 않습니다.</p>
             <div class="usage-note">
                 📊 <strong>이용 제한 안내</strong><br>
@@ -135,17 +142,17 @@
         // 설정 상수
         // ==========================================
         const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서 및 1345에 확인하시기 바랍니다.";
-        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ? "" : "https://web-production-14f9a.up.railway.app";
-        const API_URL = `${API_BASE}/api/ask`;
+        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === 'file:') ? "" : "https://web-production-14f9a.up.railway.app";
+        const API_URL = `${API_BASE ? API_BASE : "https://web-production-14f9a.up.railway.app"}/api/ask`;
 
         // 3층 방어선 설정
         const LIMITS = {
-            MAX_CHARS: 500,           // Layer 1: 입력 길이 cap
-            PER_MINUTE: 3,            // Layer 2-a: 분당 요청 수
-            PER_DAY: 30,              // Layer 2-b: 일일 요청 수
-            CACHE_TTL_MS: 24*60*60*1000, // Layer 3: 캐시 유효기간 (24시간)
-            CACHE_MAX_ENTRIES: 100,   // Layer 3: 캐시 최대 항목 수
-            DUP_WARN_THRESHOLD: 5     // 같은 질문 반복 경고 임계치
+            MAX_CHARS: 500,
+            PER_MINUTE: 3,
+            PER_DAY: 30,
+            CACHE_TTL_MS: 24*60*60*1000,
+            CACHE_MAX_ENTRIES: 100,
+            DUP_WARN_THRESHOLD: 5
         };
 
         const STORE_KEYS = {
@@ -155,6 +162,46 @@
         };
 
         let userConsent = null;
+        let VISA_DATA = [];
+
+        // ==========================================
+        // RAG 데이터 로드 로직
+        // ==========================================
+        async function loadVisaData() {
+            try {
+                const isSandbox = ['data:', 'about:', 'blob:'].includes(window.location.protocol);
+                
+                // 1. 메인 API 시도
+                try {
+                    const targetUrl = API_BASE ? `${API_BASE}/api/visas` : "https://web-production-14f9a.up.railway.app/api/visas";
+                    const res = await fetch(targetUrl);
+                    if (res.ok) {
+                        const data = await res.json();
+                        VISA_DATA = data.data || data;
+                        return;
+                    }
+                } catch (err) {
+                    console.warn("메인 API 데이터 로드 실패:", err);
+                }
+
+                // 2. 샌드박스가 아닐 때만 로컬 JSON 폴백 시도
+                if (!isSandbox) {
+                    try {
+                        const fb = await fetch('./visa_data.json');
+                        if (fb.ok) {
+                            const json = await fb.json();
+                            VISA_DATA = json.data || json;
+                        }
+                    } catch (err) {
+                        console.warn("로컬 JSON 데이터 로드 실패:", err);
+                    }
+                } else {
+                    console.warn("미리보기(샌드박스) 환경에서는 상대 경로 파일(./visa_data.json)을 로드할 수 없습니다.");
+                }
+            } catch (e) {
+                console.error("비자 데이터 로드 중 예상치 못한 오류:", e);
+            }
+        }
 
         // ==========================================
         // 유틸리티
@@ -175,12 +222,10 @@
             return 'en';
         }
 
-        // 질문 정규화 (공백, 구두점 무시하고 동일 판정)
         function normalizeQuery(q) {
             return q.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,!?;:()"'\[\]{}]/g, '');
         }
 
-        // 간단한 해시 함수 (캐시 키용)
         function hashStr(str) {
             let h = 0;
             for (let i = 0; i < str.length; i++) {
@@ -190,7 +235,6 @@
             return 'h' + Math.abs(h).toString(36);
         }
 
-        // localStorage 안전 접근 (프라이빗 브라우징 대응)
         function safeGet(key, fallback) {
             try {
                 const v = localStorage.getItem(key);
@@ -208,7 +252,6 @@
         function getRequestHistory() {
             const now = Date.now();
             const history = safeGet(STORE_KEYS.TIMESTAMPS, []);
-            // 24시간 이전 기록 정리
             const cutoff = now - 24*60*60*1000;
             return history.filter(ts => ts > cutoff);
         }
@@ -218,7 +261,7 @@
             const history = getRequestHistory();
 
             const lastMinute = history.filter(ts => ts > now - 60*1000);
-            const lastDay = history; // 이미 24시간으로 필터된 상태
+            const lastDay = history;
 
             if (lastDay.length >= LIMITS.PER_DAY) {
                 const oldest = Math.min(...lastDay);
@@ -269,7 +312,6 @@
             const entry = cache[key];
             if (!entry) return null;
             if (Date.now() - entry.t > LIMITS.CACHE_TTL_MS) {
-                // 만료
                 delete cache[key];
                 safeSet(STORE_KEYS.CACHE, cache);
                 return null;
@@ -282,7 +324,6 @@
             const key = hashStr(normalizeQuery(query));
             cache[key] = { a: answer, t: Date.now() };
 
-            // 용량 제한: 오래된 항목부터 정리
             const keys = Object.keys(cache);
             if (keys.length > LIMITS.CACHE_MAX_ENTRIES) {
                 const sorted = keys.sort((a,b) => cache[a].t - cache[b].t);
@@ -343,7 +384,7 @@
         };
 
         // ==========================================
-        // 메인 전송 함수 (3층 방어선 적용)
+        // 메인 전송 함수 (RAG 도입 및 3층 방어선 적용)
         // ==========================================
         async function sendAi() {
             const inp = document.getElementById('aiQ');
@@ -362,7 +403,7 @@
                 return;
             }
 
-            // --- Layer 3: 캐시 조회 (Groq 비용 0원 경로) ---
+            // --- Layer 3: 캐시 조회 ---
             const cached = cacheLookup(q);
             if (cached) {
                 appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
@@ -384,7 +425,32 @@
                 return;
             }
 
-            // --- 모든 방어선 통과, API 호출 진행 ---
+            // --- Layer 4: RAG (Context Injection) 로직 추가 ---
+            let injectedContext = "";
+            if (VISA_DATA && VISA_DATA.length > 0) {
+                const kw = q.toLowerCase().split(/\s+/);
+                let bestVisa = null, maxScore = 0;
+                
+                VISA_DATA.forEach(v => {
+                    let score = 0;
+                    const textToSearch = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
+                    kw.forEach(k => {
+                        if (k.length > 1 && textToSearch.includes(k)) score++;
+                    });
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestVisa = v;
+                    }
+                });
+
+                if (bestVisa && maxScore > 0) {
+                    injectedContext = `[관련 법령 및 매뉴얼 지식]\n체류자격: ${bestVisa.code} (${bestVisa.name})\n신규요건: ${bestVisa.newReq||'없음'}\n연장요건: ${bestVisa.extReq||'없음'}\nFAQ: ${bestVisa.faq||'없음'}\n\n위 출입국 규정을 엄격히 적용하여 사실 위주로 객관적으로 답변하십시오.\n\n사용자 질문: `;
+                }
+            }
+
+            const finalQuestion = injectedContext ? (injectedContext + q) : q;
+
+            // --- API 호출 진행 ---
             appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
             inp.value = '';
             updateCharCounter();
@@ -399,7 +465,12 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: q, consent: userConsent, context: "", lang: detectLang(q) })
+                    body: JSON.stringify({ 
+                        question: finalQuestion, 
+                        consent: userConsent, 
+                        context: "", 
+                        lang: detectLang(q) 
+                    })
                 });
 
                 if (!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
@@ -407,13 +478,15 @@
                 const data = await res.json();
                 const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
 
-                // 성공 시에만 카운터 증가 + 캐시 저장
                 recordRequest();
                 cacheStore(q, answer);
 
                 const loader = document.getElementById(lid);
                 if (loader) loader.remove();
-                appendMsg(`${escapeHtml(answer).replace(/\n/g, '<br>')}<span class="msg-disc">${DISCLAIMER}</span>`);
+                
+                let formattedText = escapeHtml(answer).replace(/\n/g, '<br>');
+                formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                appendMsg(`${formattedText}<span class="msg-disc">${DISCLAIMER}</span>`);
                 setStatus('질문 대기 중');
             } catch (err) {
                 const loader = document.getElementById(lid);
@@ -432,6 +505,7 @@
         // 초기화
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
+            loadVisaData(); // 데이터 로드 호출
             const qEl = document.getElementById('aiQ');
             if (qEl) {
                 qEl.addEventListener('input', updateCharCounter);
@@ -445,10 +519,8 @@
             updateCharCounter();
             updateQuotaBadge();
 
-            // 이전 동의 상태 복원 (선택적: 하루 지나면 재동의)
             const prev = safeGet(STORE_KEYS.CONSENT, null);
             if (prev && prev.agreed && (Date.now() - prev.at) < 24*60*60*1000) {
-                // 자동 재동의 처리
                 handleConsent(true);
             }
         });
