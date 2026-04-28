@@ -1316,7 +1316,7 @@ function renderCityList(filter) {
 function toggleCityMenu(force) {
     const menu = document.getElementById('cityMenu');
     if (!menu) return;
-    const show = (force === true) ? true : (force === false ? false : menu.style.display === 'none');
+    const show = (force === true) ? true : (force === false ? false : getComputedStyle(menu).display === 'none');
     menu.style.display = show ? 'block' : 'none';
     if (show) {
         renderCityList('');
