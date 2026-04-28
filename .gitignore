@@ -3,3 +3,16 @@ __pycache__/
 *.pyc
 *.pyo
 logs.json
+
+# Python virtual environment
+.venv/
+
+# Local backups
+index_backup.html
+*.backup.html
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
