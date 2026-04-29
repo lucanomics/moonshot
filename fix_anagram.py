@@ -164,7 +164,7 @@ else:
     ok.append('⚠️   JS buildLines — not found')
 
 # ────────────────────────────────────────────────────────────────
-# 4. JS — animateDraw(): stroke-dashoffset 드로우
+# 4. JS — animateDraw(): 르세라핌 영상의 타격감과 날카로운 타이밍 적용
 # ────────────────────────────────────────────────────────────────
 OLD4 = """    function animateDraw(startDelay) {
         const base = startDelay || 80;
@@ -183,6 +183,38 @@ OLD4 = """    function animateDraw(startDelay) {
     }"""
 
 NEW4 = """    function animateDraw(startDelay) {
+        const base = (startDelay !== undefined) ? startDelay : 100;
+        // 리셋
+        lineEls.forEach(({ line, len }) => {
+            line.style.transition       = 'none';
+            line.style.opacity          = '0';
+            line.style.strokeDashoffset = len;
+            line.classList.remove('drawn');
+        });
+        // 영상 0:20 부근의 날카롭고 빠른 사선 베기 연출 이식
+        requestAnimationFrame(() => {
+            lineEls.forEach(({ line, len }, i) => {
+                setTimeout(() => {
+                    line.style.opacity    = '1';
+                    // 베지어 곡선(0.85, 0, 0.15, 1)을 사용해 정지 상태에서 순식간에 내리꽂히는 타격감 구현
+                    line.style.transition =
+                        `stroke-dashoffset 0.25s cubic-bezier(0.85, 0, 0.15, 1)`;
+                    line.style.strokeDashoffset = '0';
+                    line.classList.add('drawn');
+                }, base + i * 35); // 간격을 극도로 좁혀 다발적으로 꽂히는 속도감 부여
+            });
+        });
+        // 화살표 회전 속도 동기화
+        setTimeout(() => {
+            if (arrow) arrow.classList.toggle('rotated');
+        }, base + 4 * 35);
+    }"""
+
+if OLD4 in c:
+    c = c.replace(OLD4, NEW4); ok.append('✅  JS animateDraw')
+else:
+    # 이미 이전 버전의 NEW4가 적용되어 있을 수 있으므로 이전 NEW4도 체크
+    PREV_NEW4 = """    function animateDraw(startDelay) {
         const base = (startDelay !== undefined) ? startDelay : 120;
         // 리셋
         lineEls.forEach(({ line, len }) => {
@@ -208,11 +240,11 @@ NEW4 = """    function animateDraw(startDelay) {
             if (arrow) arrow.classList.toggle('rotated');
         }, base + 3 * 75);
     }"""
+    if PREV_NEW4 in c:
+        c = c.replace(PREV_NEW4, NEW4); ok.append('✅  JS animateDraw (Updated to sharp timing)')
+    else:
+        ok.append('⚠️   JS animateDraw — not found')
 
-if OLD4 in c:
-    c = c.replace(OLD4, NEW4); ok.append('✅  JS animateDraw')
-else:
-    ok.append('⚠️   JS animateDraw — not found')
 
 # ────────────────────────────────────────────────────────────────
 # 5. JS — highlight(): lineEls 구조 변경 반영 ({line,len} → line)
