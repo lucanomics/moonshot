@@ -2482,7 +2482,8 @@ function clearSearch(){ qEl.value=''; qEl.focus(); document.getElementById('xb')
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(qEl.value);}
 
 function updateNightLightClass() {
-  const hour = getHour();
+  const d = new Date();
+  const hour = d.getHours() + d.getMinutes() / 60;
   const isNight = hour >= 19 || hour < 6;
   const isLight = document.body.getAttribute("data-theme") === "light";
   if (isNight && isLight) {
