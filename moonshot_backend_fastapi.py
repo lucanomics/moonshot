@@ -39,7 +39,18 @@ PUBLIC_DATA_KEY = "1673ea6ebbafabcb7d1bc2a9bbab40ed1444fb61a84d85ea8d839ea09d76d
 cached_public_visa_data = "DATA MISSING"
 cached_public_job_data  = "DATA MISSING"
 
-# /api/ask 기본 폴백 체인
+# --- 매뉴얼 RAG (Supabase pgvector) ---
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_SERVICE_KEY = (
+    os.environ.get("SUPABASE_SERVICE_KEY", "")
+    or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+)
+HF_TOKEN = os.environ.get("HF_TOKEN", "")
+RAG_EMBED_MODEL = "BAAI/bge-m3"
+RAG_EMBED_URL = "https://router.huggingface.co/v1/embeddings"
+RAG_TOP_K = 4
+
+# /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
     ("google/gemma-4-26b-a4b-it:free", "openrouter"),
     ("moonshotai/kimi-k2:free",         "openrouter"),
@@ -157,6 +168,7 @@ class AskRequest(BaseModel):
     consent: bool
     context: Optional[str] = ""
     lang: Optional[str] = "ko"
+    visa_data: Optional[dict] = None
 
 class KeywordRequest(BaseModel):
     query: str
@@ -281,8 +293,116 @@ async def extract_jobcodekeywords(req: KeywordRequest):
 
     raise HTTPException(status_code=503, detail="AI 응답 지연 또는 파싱 실패. DATA MISSING.")
 
+DISCLAIMER_SUFFIX = (
+    "⚠ 본 답변은 2026년 4월 법무부 출입국 실무 매뉴얼 기준이며, "
+    "개인 상황에 따라 달라질 수 있습니다. 최종 확인은 반드시 ☎ 1345 또는 "
+    "관할 출입국·외국인관서에서 하십시오."
+)
+
+ANTI_HALLUCINATION_INSTRUCTION = (
+    "[답변 생성 지침]\n"
+    "- 위 [참고 자료]에 명시된 내용만 인용하십시오.\n"
+    "- [참고 자료]에 없는 내용을 질문받으면: \"해당 사항은 제공된 자료에 명시되어 있지 않습니다. ☎ 1345로 직접 문의하십시오.\"라고만 답하십시오.\n"
+    "- 수치(금액, 기간, 점수, 비율)가 포함된 답변은 반드시 출처 문장(예: \"매뉴얼 [신규 요건] 항목에 따르면\")을 함께 명시하십시오.\n"
+)
+
+
+async def _embed_query(text: str) -> Optional[list]:
+    """HuggingFace 라우터로 BAAI/bge-m3 쿼리 임베딩.
+    환경변수 미설정 또는 호출 실패 시 None 반환 (graceful degradation)."""
+    if not HF_TOKEN or not text.strip():
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            res = await client.post(
+                RAG_EMBED_URL,
+                headers={"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"},
+                json={"model": RAG_EMBED_MODEL, "input": text[:2000]},
+            )
+            res.raise_for_status()
+            return res.json()["data"][0]["embedding"]
+    except Exception as e:
+        logger.warning(f"RAG 임베딩 실패: {e}")
+        return None
+
+
+async def retrieve_manual_context(question: str, visa_code: Optional[str], top_k: int = RAG_TOP_K) -> str:
+    """Supabase pgvector RPC로 매뉴얼 청크 유사도 검색.
+    - SUPABASE_URL/KEY 미설정, 임베딩 실패, RPC 오류 시 빈 문자열 반환.
+    - visa_code 가 주어지면 해당 코드 청크만 우선 검색, 결과가 비면 전체 검색으로 fallback.
+    """
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return ""
+    embedding = await _embed_query(question)
+    if embedding is None:
+        return ""
+
+    rpc_url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/rpc/match_manual_chunks"
+    headers = {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    async def _call(filter_code: Optional[str]) -> list:
+        payload = {
+            "query_embedding": embedding,
+            "match_count": top_k,
+            "filter_visa_code": filter_code,
+        }
+        try:
+            async with httpx.AsyncClient(timeout=8.0) as client:
+                res = await client.post(rpc_url, headers=headers, json=payload)
+                res.raise_for_status()
+                return res.json() or []
+        except Exception as e:
+            logger.warning(f"RAG RPC 실패(filter={filter_code}): {e}")
+            return []
+
+    rows = await _call(visa_code) if visa_code else []
+    if not rows:
+        rows = await _call(None)
+    if not rows:
+        return ""
+
+    snippets = []
+    for i, row in enumerate(rows, 1):
+        src = row.get("source", "?")
+        page = row.get("page_num")
+        code = row.get("visa_code") or "공통"
+        head = f"[매뉴얼 발췌 {i} | {src} p.{page} | {code}]"
+        snippets.append(f"{head}\n{row.get('content', '')}")
+    return "\n\n".join(snippets)
+
+
+def _build_visa_block(visa_data: Optional[dict]) -> str:
+    if not visa_data:
+        return ""
+    v = visa_data
+    return (
+        "[참고 자료 — 2026년 4월 법무부 출입국 실무 매뉴얼]\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"체류자격 코드: {v.get('code') or '미상'}\n"
+        f"체류자격 명칭: {v.get('name') or '미상'}\n"
+        f"기본 체류기간: {v.get('period') or '미상'}\n"
+        f"카테고리: {v.get('cat') or '미상'}\n\n"
+        "[신규 발급 요건]\n"
+        f"{v.get('newReq') or '정보 없음'}\n\n"
+        "[체류기간 연장 요건]\n"
+        f"{v.get('extReq') or '정보 없음'}\n\n"
+        "[FAQ / 실무 주의사항]\n"
+        f"{v.get('faq') or '정보 없음'}\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    )
+
+
 @app.post("/api/ask")
 async def ask_ai(req: AskRequest):
+    if not req.consent:
+        raise HTTPException(status_code=400, detail="동의가 필요합니다.")
+    if not req.question.strip():
+        raise HTTPException(status_code=400, detail="질문을 입력해 주세요.")
+
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
     groq_key       = os.environ.get("GROQ_API_KEY", "")
 
@@ -298,31 +418,42 @@ async def ask_ai(req: AskRequest):
 
     realtime_law_context = await fetch_realtime_law_data(req.question)
 
-    system_prompt = f"""You are an elite, strict, and highly objective Korean immigration law assistant 2026 Manual Standard. 
-Answer in the user's language ({user_lang}), but accurately translate and retain Korean legal terms. 
-Always base your answer strictly on the 2026 Korean Immigration Act and the provided contexts below. 
-CRITICAL RULES:
-1. DO NOT hallucinate or guess. If exact answers are not found in the provided contexts, you MUST state "DATA MISSING" and refuse to answer.
-2. Do not provide unwarranted sympathy or conversational filler.
-3. If a request is legally impossible based on the context, state it firmly.
+    # [System Prompt — 절대 규칙 + 면책 고지 강제]
+    system_prompt = (
+        "당신은 대한민국 법무부 출입국·외국인정책본부의 2026년 4월 최신 실무 매뉴얼"
+        "(사증민원·체류민원)에 정통한 비자 상담 전문가입니다.\n\n"
+        "[절대 규칙 — 반드시 준수]\n"
+        "1. 반드시 아래 [참고 자료]에 명시된 내용만을 근거로 답변하십시오.\n"
+        "2. [참고 자료]에 없는 수치(금액, 기간, 점수, 비율), 요건, 서류명은 절대로 생성하지 마십시오.\n"
+        "3. 확인할 수 없는 사항은 반드시 \"매뉴얼에 명시되지 않은 사항입니다.\"라고 명확히 밝히십시오.\n"
+        "4. 추측, 유추, 일반 상식으로 빈칸을 채우지 마십시오.\n"
+        f"5. 답변은 사용자 언어({user_lang})로 작성하되, 한국 법률 용어는 정확히 한국어 원어를 함께 표기하고, 번호 목록 형식으로 명확하게 작성하십시오.\n"
+        f"6. 모든 답변 마지막에 반드시 다음 면책 고지를 그대로 추가하십시오:\n   \"{DISCLAIMER_SUFFIX}\"\n\n"
+        "[보조 컨텍스트 (RAG 캐시)]\n"
+        f"- 법무부 체류자격 코드 캐시: {cached_public_visa_data}\n"
+        f"- 통계청 산업/직업분류 캐시: {cached_public_job_data}\n"
+        f"- 국가법령정보공유서비스(출입국관리법) 실시간 조회: {realtime_law_context}\n"
+    )
 
-[Provided Context]
-- RAG: {cached_public_visa_data}
-- RAG: {cached_public_job_data}
-- RAG: {realtime_law_context}
+    visa_block = _build_visa_block(req.visa_data)
+    extra_context = req.context.strip() if req.context else ""
 
-[프론트엔드 제공 컨텍스트]:
-{req.context if req.context else "DATA MISSING"}
+    # [RAG] 매뉴얼 벡터 검색 — 환경변수 미설정/실패 시 빈 문자열로 graceful fallback
+    rag_visa_code = req.visa_data.get("code") if req.visa_data else None
+    rag_block = await retrieve_manual_context(req.question, rag_visa_code)
 
-[공공데이터(RAG) - 법무부 체류자격 코드 캐시]:
-{cached_public_visa_data}
-
-[공공데이터(RAG) - 통계청 산업/직업분류 캐시]:
-{cached_public_job_data}
-
-[국가법령정보공유서비스 - 출입국관리법 실시간 조회]:
-{realtime_law_context}
-"""
+    user_prompt_parts = []
+    if rag_block:
+        user_prompt_parts.append(
+            "[참고 자료 — 법무부 매뉴얼 벡터 검색 결과]\n" + rag_block
+        )
+    if visa_block:
+        user_prompt_parts.append(visa_block)
+    if extra_context:
+        user_prompt_parts.append(f"[프론트엔드 제공 컨텍스트]\n{extra_context}")
+    user_prompt_parts.append(f"[민원인 질문]\n{req.question}")
+    user_prompt_parts.append(ANTI_HALLUCINATION_INSTRUCTION)
+    user_prompt = "\n\n".join(user_prompt_parts)
 
     dynamic_models = select_models_by_lang(user_lang, req.question)
 
@@ -335,10 +466,10 @@ CRITICAL RULES:
             "model": model_name,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user",   "content": req.question},
+                {"role": "user",   "content": user_prompt},
             ],
             "max_tokens": 2048,
-            "temperature": 0.0,
+            "temperature": 0.1,
             "top_p": 0.9,
         }
 
@@ -346,7 +477,9 @@ CRITICAL RULES:
             async with httpx.AsyncClient(timeout=20.0) as client:
                 resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
-                answer = resp.json()["choices"][0]["message"]["content"]
+                data   = resp.json()
+                answer = data["choices"][0]["message"]["content"]
+
                 append_log(category, success=True)
                 return {
                     "answer":        answer,

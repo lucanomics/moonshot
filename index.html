@@ -1342,7 +1342,7 @@ function renderCityList(filter) {
 function toggleCityMenu(force) {
     const menu = document.getElementById('cityMenu');
     if (!menu) return;
-    const show = (force === true) ? true : (force === false ? false : menu.style.display === 'none');
+    const show = (force === true) ? true : (force === false ? false : getComputedStyle(menu).display === 'none');
     menu.style.display = show ? 'block' : 'none';
     if (show) {
         renderCityList('');
@@ -1412,7 +1412,7 @@ function openAiModal(visaCode) {
     if (['faq', 'scn', 'nhis'].includes(visa.cat)) {
         descEl.innerHTML = `현재 직면한 상황(사건 경위, 체류 상태, 국적 등)을 상세히 적어주시면, Paradiso 39 AI가 2026년 출입국관리법 및 매뉴얼 원문에 근거하여 <strong>자의적 해석 없이 철저한 법적 판단 및 구제 절차</strong>를 검증해 드립니다.`;
     } else {
-        descEl.innerHTML = `현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Paradiso 39 AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.`;
+        descEl.innerHTML = `현재 국적, 보유 체류자격, 직무, 거주지 등 상황을 상세히 입력하시면, Paradiso 39 AI가 <strong>2026년 4월 법무부 출입국 실무 매뉴얼(사증·체류민원 최신본)</strong>에 근거하여 분석합니다.<br><span style="color:var(--color-warning); font-weight:700;">⚠ AI 답변은 참고용입니다. 최종 판단은 반드시 ☎ 1345 또는 관할 출입국·외국인관서에서 확인하십시오.</span>`;
     }
     
     const jobCodeBtn = document.getElementById('btnJobCode');
@@ -1645,15 +1645,34 @@ async function submitAiAnalysis(actionType, btnEl) {
     const allBtns = document.querySelectorAll('.ai-action-btn'), resultBox = document.getElementById('aiResult'), spinner = btnEl.querySelector('.spinner');
     allBtns.forEach(b => b.disabled = true); if (spinner) spinner.style.display = 'block'; resultBox.style.display = 'none';
 
-    const baseContext = `[관련 법령 및 매뉴얼 지식 기반 활성화]\n다음은 대한민국 출입국 '${visa.code} (${visa.name})' 규정입니다:\n[신규 요건]: ${visa.newReq || '없음'}\n[연장 요건]: ${visa.extReq || '없음'}\n[FAQ/참고사항]: ${visa.faq || '없음'}\n\n민원인(사용자)의 현재 상황:\n"${userInput}"\n\n`;
-    let prompt = ''; const isSpecialCat = ['faq', 'scn', 'nhis'].includes(visa.cat);
-    if (actionType === 'analyze') prompt = baseContext + (isSpecialCat ? `철저한 법적 판단 및 구제 절차를 검증해 주십시오.` : `해당 체류자격을 발급, 연장 또는 변경할 가능성을 객관적으로 평가해 주십시오.`);
-    else if (actionType === 'doc_guide') prompt = baseContext + `해당 비자의 필수 서류들에 대한 '개념 풀이' 및 발급처를 안내해 주십시오.`;
+    const isSpecialCat = ['faq', 'scn', 'nhis'].includes(visa.cat);
+    let actionDirective = '';
+    if (actionType === 'analyze') actionDirective = isSpecialCat ? `[요청 작업] 철저한 법적 판단 및 구제 절차를 검증해 주십시오.` : `[요청 작업] 해당 체류자격을 발급, 연장 또는 변경할 가능성을 객관적으로 평가해 주십시오.`;
+    else if (actionType === 'doc_guide') actionDirective = `[요청 작업] 해당 비자의 필수 서류들에 대한 '개념 풀이' 및 발급처를 안내해 주십시오.`;
 
     if (currentAiController) currentAiController.abort();
     currentAiController = new AbortController();
     try {
-        const response = await fetch(`${API_BASE}/api/ask`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: prompt, consent: true, context: "", lang: "ko" }), signal: currentAiController.signal });
+        const response = await fetch(`${API_BASE}/api/ask`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                question: userInput,
+                consent: true,
+                context: actionDirective,
+                lang: "ko",
+                visa_data: {
+                    code: visa.code,
+                    name: visa.name,
+                    cat: visa.cat,
+                    period: visa.period || '',
+                    newReq: visa.newReq || '',
+                    extReq: visa.extReq || '',
+                    faq: visa.faq || ''
+                }
+            }),
+            signal: currentAiController.signal
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         let formattedText = escapeHtml(result.answer || "결과 생성 불가").replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -1881,7 +1900,8 @@ function initUI(){
         {l:'동반(F-3) 소득요건',q:'F-3 소득요건'},
         {l:'결핵 제출 대상',q:'TB-1'},
         {l:'난민신청 절차',q:'RF-1'},
-        {l:'오버스테이',q:'SCN-6'}
+        {l:'오버스테이',q:'SCN-6'},
+        {l:'D-10 구직',q:'D-10'}
     ];
     const lc=document.getElementById('landingHints');
     if(lc) {
