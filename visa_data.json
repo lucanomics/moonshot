@@ -873,6 +873,22 @@
         "note": ""
       },
       {
+        "code": "D-4-2K",
+        "name": "한국어연수(K-연수생)",
+        "addReq": "법무부 지정 한국어연수기관 등록 필수. 주당 수업시간 기준 충족 필요.",
+        "addReqDocs": [
+          "doc_app_form",
+          "doc_passport_org",
+          "doc_passport_copy",
+          "doc_photo",
+          "doc_id",
+          "doc_fee_new",
+          "doc_enroll",
+          "doc_attend"
+        ],
+        "note": "수료 후 연장 시 출석률 80% 이상 필요."
+      },
+      {
         "code": "D-4-3",
         "name": "초중고생연수",
         "addReq": "초중고 재학증명.",
@@ -909,6 +925,38 @@
         "note": "인가 확인 필수."
       }
     ]
+  },
+  {
+    "code": "D-4-2K",
+    "name": "한국어연수(K-연수생)",
+    "cat": "study",
+    "aliases": [
+      "K-연수생",
+      "한국어연수",
+      "D-4-2K"
+    ],
+    "period": "6개월, 연장가능",
+    "newReq": "법무부 지정 한국어연수기관 등록 필수. 주당 수업시간 기준 충족 필요.",
+    "newReqDocs": [
+      "doc_app_form",
+      "doc_passport_org",
+      "doc_passport_copy",
+      "doc_photo",
+      "doc_id",
+      "doc_fee_new",
+      "doc_enroll",
+      "doc_attend"
+    ],
+    "extReq": "수료 후 연장 시 출석률 80% 이상 필요.",
+    "extReqDocs": [
+      "doc_app_form",
+      "doc_passport_org",
+      "doc_passport_copy",
+      "doc_id",
+      "doc_fee_ext",
+      "doc_attend"
+    ],
+    "faq": ""
   },
   {
     "code": "D-7",
