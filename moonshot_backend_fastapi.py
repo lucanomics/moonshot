@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("MoonshotBackend")
 
@@ -70,6 +72,15 @@ def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> d
             "url": GROQ_API_URL,
             "headers": {
                 "Authorization": f"Bearer {groq_key}",
+                "Content-Type": "application/json",
+            },
+        }
+    elif provider == "deepseek":
+        deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "")
+        return {
+            "url": DEEPSEEK_API_URL,
+            "headers": {
+                "Authorization": f"Bearer {deepseek_key}",
                 "Content-Type": "application/json",
             },
         }
@@ -190,6 +201,32 @@ def classify_category(question: str) -> str:
     if any(w in q for w in ["건강보험", "건보", "보험료"]): return "nhis"
     if any(w in q for w in ["영주권", "국적", "f-5", "귀화"]): return "permanent"
     return "general"
+
+def select_models_by_lang(lang: str, question: str) -> list:
+    complex_kw = ["동시에","변경 후","갱신하면서","예외","처벌","취소","강제퇴거",
+                  "이의신청","행정심판","이중","불법","퇴거","조건","가능한가"]
+    is_complex = any(kw in question for kw in complex_kw) or len(question) > 80
+
+    if lang == "zh":
+        return [
+            ("deepseek-chat", "deepseek"),
+            ("google/gemma-4-26b-a4b-it:free", "openrouter"),
+            ("llama-3.3-70b-versatile", "groq"),
+        ]
+    elif lang in ("ko", "ja") and is_complex:
+        return [
+            ("deepseek-chat", "deepseek"),
+            ("moonshotai/kimi-k2:free", "openrouter"),
+            ("llama-3.3-70b-versatile", "groq"),
+        ]
+    elif lang in ("ko", "ja"):
+        return [
+            ("google/gemma-4-26b-a4b-it:free", "openrouter"),
+            ("moonshotai/kimi-k2:free", "openrouter"),
+            ("llama-3.3-70b-versatile", "groq"),
+        ]
+    else:
+        return ASK_MODELS
 
 def append_log(category: str, success: bool):
     try:
@@ -324,9 +361,12 @@ CRITICAL RULES:
 {realtime_law_context}
 """
 
-    for model_name, provider in ASK_MODELS:
+    dynamic_models = select_models_by_lang(user_lang, req.question)
+    deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    for model_name, provider in dynamic_models:
         if provider == "openrouter" and not openrouter_key: continue
         if provider == "groq" and not groq_key: continue
+        if provider == "deepseek" and not deepseek_key: continue
 
         config = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
@@ -348,7 +388,12 @@ CRITICAL RULES:
                 answer = data["choices"][0]["message"]["content"]
                 
                 append_log(category, success=True)
-                return {"answer": answer}
+                return {
+                    "answer": answer,
+                    "model": model_name,
+                    "provider": provider,
+                    "lang_detected": user_lang,
+                }
 
         except Exception as e:
             logger.error(f"[{provider}/{model_name}] 호출 실패: {e}")
