@@ -426,47 +426,20 @@ body.searched .about-me { display: none !important; }
     display: flex; justify-content: center;
     position: relative; z-index: 2;
 }
-.anagram-row .al {
-    font-family: var(--ff-display);
-    font-size: clamp(1.3rem, 2.8vw, 1.8rem);
-    font-weight: 900;
-    letter-spacing: 0.18em;
-    width: 1.75em; text-align: center;
-    padding: 0.2em 0;
-    cursor: default;
-    color: #ffffff;
-    transition: color 0.2s, text-shadow 0.2s;
-}
-.anagram-row .al.lit {
-    color: #0099ff;
-    text-shadow: 0 0 12px rgba(0,153,255,0.6);
-}
-
-.anagram-svg {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    overflow: visible; z-index: 1;
-    pointer-events: none;
-}
-.ag-line {
-    fill: none;
-    stroke: #0099ff;
-    stroke-width: 2.2;
-    opacity: 0;
-    stroke-linecap: round;
-}
-.ag-line.drawn   { opacity: 0.55; }
-.ag-line.active  { opacity: 1; stroke-width: 3.2; }
-
-.anagram-arrow-center {
-    text-align: center; font-size: 1.2rem;
-    color: #444; line-height: 1;
-    z-index: 3; position: relative;
-    transition: transform 0.8s ease-in-out, color 0.3s;
-    display: block; margin: 0.25rem 0;
-}
-.anagram-arrow-center.rotated { transform: rotate(180deg); color: #0099ff; }
-
+.anagram-row .al { font-family: var(--ff-display); font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 800; letter-spacing: 0.14em; width: 1.9em; text-align: center; padding: 0.25em 0; cursor: default; color: #fff; transition: color 0.25s, transform 0.25s, text-shadow 0.25s; }
+.anagram-row.top-row .al { color: #34D4A8; }
+.anagram-row.bot-row .al { color: #FF8B7A; }
+[data-theme="dark"] .anagram-row.top-row .al { color: #34D4A8; }
+[data-theme="dark"] .anagram-row.bot-row .al { color: #FF8B7A; }
+.anagram-row .al.lit { transform: translateY(-2px); }
+.anagram-row.top-row .al.lit { color: #7FFFD4; text-shadow: 0 0 16px rgba(52,212,168,0.85); }
+.anagram-row.bot-row .al.lit { color: #FFB3A7; text-shadow: 0 0 16px rgba(255,107,91,0.85); }
+.anagram-arrow-center { text-align: center; font-size: 1.3rem; color: var(--t3); line-height: 1; z-index: 3; position: relative; transition: transform 0.8s ease-in-out; display: block; margin: 0.2rem 0; }
+.anagram-arrow-center.rotated { transform: rotate(180deg); }
+.anagram-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 1; pointer-events: none; }
+.ag-line { fill: none; stroke: rgba(255,255,255,0.45); stroke-width: 1.6; opacity: 0; stroke-linecap: round; transition: opacity 0.2s ease, stroke-width 0.2s ease, stroke 0.2s ease; }
+.ag-line.drawn { opacity: 1; }
+.ag-line.active { opacity: 1 !important; stroke-width: 2.6; stroke: rgba(255,255,255,0.9); }
 .brand-anagram-caption {
     font-size: 0.72rem; color: #555;
     letter-spacing: 0.08em; text-transform: uppercase;
@@ -3119,48 +3092,55 @@ function showVisaDocForAction(visaCode) {
     const WOBBLE = [0, -3, 4, -2, 5, -4, 3, -1];
 
     function buildLines() {
-        svg.innerHTML = '';
-        lineEls = [];
+        svg.innerHTML = ''; lineEls = [];
         const sRect = stage.getBoundingClientRect();
         svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
+
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        defs.innerHTML = `<marker id="ag-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,6.5 L6,3.5 z" fill="rgba(255,255,255,0.55)"/></marker>`;
+        svg.appendChild(defs);
 
         MAP.forEach((bIdx, tIdx) => {
             const tR = topEls[tIdx].getBoundingClientRect();
             const bR = botEls[bIdx].getBoundingClientRect();
-            const x1 = tR.left + tR.width / 2 - sRect.left;
-            const y1 = tR.bottom - sRect.top;
-            const x2 = bR.left + bR.width / 2 - sRect.left + WOBBLE[tIdx];
-            const y2 = bR.top - sRect.top;
-
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-            line.setAttribute('class', 'ag-line');
-            svg.appendChild(line);
-            lineEls.push(line);
+            const x1 = tR.left + tR.width/2 - sRect.left, y1 = tR.bottom - sRect.top + 1;
+            const x2 = bR.left + bR.width/2 - sRect.left, y2 = bR.top - sRect.top - 1;
+            const len = Math.hypot(x2-x1, y2-y1);
+            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+            line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+            line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+            line.setAttribute('class','ag-line');
+            line.setAttribute('marker-end', 'url(#ag-arr)');
+            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
+            svg.appendChild(line); lineEls.push(line);
         });
-
-        animateDraw();
+        drawAll();
     }
-
-    function animateDraw(startDelay) {
-        const base = startDelay || 80;
-        // 선을 하나씩 빠르게 순차 등장 (LE SSERAFIM 영상 느낌)
-        lineEls.forEach(ln => { ln.classList.remove('drawn'); ln.style.opacity = 0; });
-        lineEls.forEach((ln, i) => {
-            setTimeout(() => {
-                ln.style.transition = 'opacity 0.18s ease';
-                ln.classList.add('drawn');
-            }, base + i * 60);
+    function drawAll(delay) {
+        const base = delay === undefined ? 100 : delay;
+        lineEls.forEach(ln => { 
+            ln.style.transition = 'none';
+            ln.style.opacity = '0';
+            ln.style.strokeDashoffset = ln.style.strokeDasharray;
+            ln.classList.remove('drawn'); 
         });
-        // 화살표 회전 (선 등장 중간 타이밍)
+        requestAnimationFrame(() => {
+            lineEls.forEach((ln, i) => {
+                setTimeout(() => {
+                    ln.style.opacity = '1';
+                    ln.style.transition = `stroke-dashoffset 0.25s cubic-bezier(0.85, 0, 0.15, 1)`;
+                    ln.style.strokeDashoffset = '0';
+                    ln.classList.add('drawn');
+                }, base + i * 35);
+            });
+        });
         setTimeout(() => {
             if (arrow) arrow.classList.toggle('rotated');
-        }, base + 3 * 60);
+        }, base + 4 * 35);
     }
-
     function highlight(tIdx, bIdx, on) {
-        lineEls.forEach((l, i) => l.classList.toggle('active', on && i === tIdx));
+        lineEls.forEach(({ line }, i) =>
+            line.classList.toggle('active', on && i === tIdx));
         topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
         botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
     }
