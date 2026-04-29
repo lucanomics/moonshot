@@ -35,10 +35,10 @@ GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
 SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
 SITE_TITLE = "Moonshot Immigration AI"
 
-# --- 공공데이터 API 인증키 및 RAG 캐시 변수 ---
-PUBLIC_DATA_KEY = "1673ea6ebbafabcb7d1bc2a9bbab40ed1444fb61a84d85ea8d839ea09d76d031"
+# ✅ 환경변수로 교체 (보안)
+PUBLIC_DATA_KEY = os.environ.get("LAW_API_KEY", "")
 cached_public_visa_data = "DATA MISSING"
-cached_public_job_data = "DATA MISSING"
+cached_public_job_data  = "DATA MISSING"
 
 # --- 매뉴얼 RAG (Supabase pgvector) ---
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
@@ -46,9 +46,9 @@ SUPABASE_SERVICE_KEY = (
     os.environ.get("SUPABASE_SERVICE_KEY", "")
     or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 )
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
-RAG_EMBED_MODEL = "BAAI/bge-m3"
-RAG_EMBED_URL = "https://router.huggingface.co/v1/embeddings"
+# ✅ RAG 임베딩 → OpenRouter (text-embedding-3-small)
+RAG_EMBED_MODEL = "openai/text-embedding-3-small"
+RAG_EMBED_URL   = "https://openrouter.ai/api/v1/embeddings"
 RAG_TOP_K = 4
 
 # /api/ask 용 모델 폴백 체인
@@ -58,11 +58,11 @@ ASK_MODELS = [
     ("llama-3.3-70b-versatile",       "groq"),            
 ]
 
-# /api/jobcodekeywords 용 모델 폴백 체인
+# /api/jobcodekeywords 폴백 체인
 KEYWORD_MODELS = [
-    ("llama-3.3-70b-versatile", "groq"),  
-    ("llama-3.1-8b-instant", "groq"),  
-    ("google/gemma-4-26b-a4b-it:free", "openrouter"),        
+    ("llama-3.3-70b-versatile",         "groq"),
+    ("llama-3.1-8b-instant",            "groq"),
+    ("google/gemma-4-26b-a4b-it:free", "openrouter"),
 ]
 
 def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> dict:
@@ -88,20 +88,12 @@ def _get_provider_config(provider: str, openrouter_key: str, groq_key: str) -> d
         raise ValueError(f"알 수 없는 provider: {provider}")
 
 async def init_public_data_cache():
-    """서버 구동 시 공공데이터 API 2종(체류자격, 산업직업분류)을 호출하여 메모리에 캐싱"""
     global cached_public_visa_data, cached_public_job_data
     logger.info("공공데이터 API(법무부, 국가데이터처) 초기 캐싱을 시작한다.")
-    
-    # Base URL & Parameters
     odcloud_base = "https://api.odcloud.kr/api"
-    params = {
-        "serviceKey": PUBLIC_DATA_KEY,
-        "perPage": 50,
-        "returnType": "JSON"
-    }
-    
+    params = {"serviceKey": PUBLIC_DATA_KEY, "perPage": 50, "returnType": "JSON"}
+
     async with httpx.AsyncClient(timeout=15.0) as client:
-        # 1. 법무부_체류자격 코드정보 (Namespace: 15103561/v1)
         try:
             res_visa = await client.get(f"{odcloud_base}/15103561/v1/uddi:15103561", params=params)
             if res_visa.status_code == 200:
@@ -112,7 +104,6 @@ async def init_public_data_cache():
         except Exception as e:
             logger.error(f"체류자격 공공데이터 패치 실패: {e}")
 
-        # 2. 국가데이터처_산업직업분류 (Namespace: 15117819/v1)
         try:
             res_job = await client.get(f"{odcloud_base}/15117819/v1/uddi:15117819", params=params)
             if res_job.status_code == 200:
@@ -124,8 +115,6 @@ async def init_public_data_cache():
             logger.error(f"산업직업분류 공공데이터 패치 실패: {e}")
 
 async def fetch_realtime_law_data(query: str) -> str:
-    """국가법령정보공유서비스 실시간 연동 (출입국관리법 한정)"""
-    # 불필요한 API 호출 방지 (키워드 트리거)
     triggers = ["법", "벌금", "불법", "퇴거", "위반", "체류", "연장", "사증", "비자", "출입국"]
     if not any(t in query for t in triggers):
         return "DATA MISSING"
@@ -136,26 +125,20 @@ async def fetch_realtime_law_data(query: str) -> str:
         "target": "law",
         "type": "XML",
         "query": "출입국관리법",
-        "display": 3
+        "display": 3,
     }
-    
+
     try:
         async with httpx.AsyncClient(timeout=8.0) as client:
             res = await client.get(url, params=params)
             if res.status_code != 200:
                 return "DATA MISSING"
-            
-            # XML 파싱
             root = ET.fromstring(res.text)
             extracted_laws = []
             for item in root.findall(".//law"):
                 title = item.findtext("법령명", default="")
-                # 실제 조문 내용은 상세조회 API가 필요하나, 목록/요약이라도 추출
                 extracted_laws.append(f"[{title}] 출입국관리법령 검색 됨 (엄격 적용 요망)")
-            
-            if extracted_laws:
-                return " | ".join(extracted_laws)
-            return "DATA MISSING"
+            return " | ".join(extracted_laws) if extracted_laws else "DATA MISSING"
     except Exception as e:
         logger.error(f"국가법령정보 실시간 조회 실패: {e}")
         return "DATA MISSING"
@@ -163,9 +146,7 @@ async def fetch_realtime_law_data(query: str) -> str:
 @app.on_event("startup")
 async def startup_event():
     global db_pool
-    # 공공데이터 RAG 캐싱 실행
     await init_public_data_cache()
-    
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
         logger.warning("DATABASE_URL 미설정 — DB 기능 비활성화, JSON 폴백 모드로 실행")
@@ -203,6 +184,32 @@ def classify_category(question: str) -> str:
     if any(w in q for w in ["영주권", "국적", "f-5", "귀화"]): return "permanent"
     return "general"
 
+def select_models_by_lang(lang: str, question: str) -> list:
+    complex_kw = ["동시에", "변경 후", "갱신하면서", "예외", "처벌", "취소", "강제퇴거",
+                  "이의신청", "행정심판", "이중", "불법", "퇴거", "조건", "가능한가"]
+    is_complex = any(kw in question for kw in complex_kw) or len(question) > 80
+
+    if lang == "zh":
+        return [
+            ("moonshotai/kimi-k2:free",         "openrouter"),
+            ("google/gemma-4-26b-a4b-it:free", "openrouter"),
+            ("llama-3.3-70b-versatile",         "groq"),
+        ]
+    elif lang in ("ko", "ja") and is_complex:
+        return [
+            ("moonshotai/kimi-k2:free",         "openrouter"),
+            ("google/gemma-4-26b-a4b-it:free", "openrouter"),
+            ("llama-3.3-70b-versatile",         "groq"),
+        ]
+    elif lang in ("ko", "ja"):
+        return [
+            ("google/gemma-4-26b-a4b-it:free", "openrouter"),
+            ("moonshotai/kimi-k2:free",         "openrouter"),
+            ("llama-3.3-70b-versatile",         "groq"),
+        ]
+    else:
+        return ASK_MODELS
+
 def append_log(category: str, success: bool):
     try:
         logs = []
@@ -224,8 +231,7 @@ async def get_visas():
             rows = await conn.fetch("SELECT data FROM visas_json LIMIT 1")
             if rows:
                 return JSONResponse(content=json.loads(rows[0]["data"]))
-            else:
-                return JSONResponse(status_code=200, content={"data": []})
+            return JSONResponse(status_code=200, content={"data": []})
     except Exception as e:
         logger.error(f"/api/visas DB 쿼리 오류: {e}")
         raise HTTPException(status_code=500, detail="데이터베이스 쿼리 중 오류가 발생했습니다.")
@@ -252,7 +258,7 @@ async def extract_jobcodekeywords(req: KeywordRequest):
         if provider == "openrouter" and not openrouter_key: continue
         if provider == "groq" and not groq_key: continue
 
-        config = _get_provider_config(provider, openrouter_key, groq_key)
+        config  = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
             "model": model,
             "messages": [
@@ -260,9 +266,8 @@ async def extract_jobcodekeywords(req: KeywordRequest):
                 {"role": "user",   "content": req.query},
             ],
             "max_tokens": 300,
-            "temperature": 0.0, # Zero Creativity
+            "temperature": 0.0,
         }
-        
         if "gemma" not in model:
             payload["response_format"] = {"type": "json_object"}
 
@@ -270,21 +275,15 @@ async def extract_jobcodekeywords(req: KeywordRequest):
             async with httpx.AsyncClient(timeout=15.0) as client:
                 resp = await client.post(config["url"], headers=config["headers"], json=payload)
                 resp.raise_for_status()
-                data   = resp.json()
-                answer = data["choices"][0]["message"]["content"]
-
+                answer = resp.json()["choices"][0]["message"]["content"]
                 json_match = re.search(r"\{.*\}", answer, flags=re.DOTALL)
                 if not json_match:
                     raise ValueError("JSON 파싱 실패")
-
                 parsed = json.loads(json_match.group(0))
-                
-                result = {
+                return {
                     "job_keywords":      parsed.get("jobkeywords")      or parsed.get("job_keywords",      []),
                     "industry_keywords": parsed.get("industrykeywords") or parsed.get("industry_keywords", []),
                 }
-                return result
-
         except Exception as e:
             logger.error(f"[{provider}/{model}] 추출 실패: {e}")
             continue
@@ -306,15 +305,21 @@ ANTI_HALLUCINATION_INSTRUCTION = (
 
 
 async def _embed_query(text: str) -> Optional[list]:
-    """HuggingFace 라우터로 BAAI/bge-m3 쿼리 임베딩.
+    """OpenRouter로 text-embedding-3-small 쿼리 임베딩.
     환경변수 미설정 또는 호출 실패 시 None 반환 (graceful degradation)."""
-    if not HF_TOKEN or not text.strip():
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    if not openrouter_key or not text.strip():
         return None
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             res = await client.post(
                 RAG_EMBED_URL,
-                headers={"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"},
+                headers={
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": SITE_URL,
+                    "X-Title": SITE_TITLE,
+                },
                 json={"model": RAG_EMBED_MODEL, "input": text[:2000]},
             )
             res.raise_for_status()
@@ -414,10 +419,8 @@ async def ask_ai(req: AskRequest):
     except Exception:
         user_lang = "ko"
 
-    # [국가법령정보 실시간 호출]
     realtime_law_context = await fetch_realtime_law_data(req.question)
 
-    # [System Prompt — 절대 규칙 + 면책 고지 강제]
     system_prompt = (
         "당신은 대한민국 법무부 출입국·외국인정책본부의 2026년 4월 최신 실무 매뉴얼"
         "(사증민원·체류민원)에 정통한 비자 상담 전문가입니다.\n\n"
@@ -437,7 +440,6 @@ async def ask_ai(req: AskRequest):
     visa_block = _build_visa_block(req.visa_data)
     extra_context = req.context.strip() if req.context else ""
 
-    # [RAG] 매뉴얼 벡터 검색 — 환경변수 미설정/실패 시 빈 문자열로 graceful fallback
     rag_visa_code = req.visa_data.get("code") if req.visa_data else None
     rag_block = await retrieve_manual_context(req.question, rag_visa_code)
 
@@ -454,11 +456,13 @@ async def ask_ai(req: AskRequest):
     user_prompt_parts.append(ANTI_HALLUCINATION_INSTRUCTION)
     user_prompt = "\n\n".join(user_prompt_parts)
 
-    for model_name, provider in ASK_MODELS:
+    dynamic_models = select_models_by_lang(user_lang, req.question)
+
+    for model_name, provider in dynamic_models:
         if provider == "openrouter" and not openrouter_key: continue
         if provider == "groq" and not groq_key: continue
 
-        config = _get_provider_config(provider, openrouter_key, groq_key)
+        config  = _get_provider_config(provider, openrouter_key, groq_key)
         payload = {
             "model": model_name,
             "messages": [
@@ -478,8 +482,12 @@ async def ask_ai(req: AskRequest):
                 answer = data["choices"][0]["message"]["content"]
 
                 append_log(category, success=True)
-                return {"answer": answer}
-
+                return {
+                    "answer":        answer,
+                    "model":         model_name,
+                    "provider":      provider,
+                    "lang_detected": user_lang,
+                }
         except Exception as e:
             logger.error(f"[{provider}/{model_name}] 호출 실패: {e}")
             continue
