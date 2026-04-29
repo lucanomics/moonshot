@@ -53,9 +53,9 @@ RAG_TOP_K = 4
 
 # /api/ask 용 모델 폴백 체인
 ASK_MODELS = [
-    ("google/gemma-4-26b-a4b-it:free", "openrouter"),
     ("moonshotai/kimi-k2:free",         "openrouter"),
-    ("llama-3.3-70b-versatile",         "groq"),
+    ("google/gemma-4-26b-a4b-it:free", "openrouter"),  
+    ("llama-3.3-70b-versatile",       "groq"),            
 ]
 
 # /api/jobcodekeywords 폴백 체인
