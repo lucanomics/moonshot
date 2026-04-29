@@ -493,5 +493,20 @@
     "name": "부가가치세 과세표준증명",
     "desc": "사업체의 매출 및 부가가치세 신고 내역을 확인하는 서류.",
     "issuer": "국세청 또는 세무서"
+  },
+  "doc_internship_plan": {
+    "name": "인턴십 계획서 (본사 작성, 출입국관리소 제출용)",
+    "desc": "한국 본사가 작성한 공식 인턴십 계획서",
+    "issuer": "한국 기업 본사"
+  },
+  "doc_emp_certificate": {
+    "name": "재직증명서",
+    "desc": "현재 재직 사실을 확인하는 서류",
+    "issuer": "회사 또는 기관"
+  },
+  "doc_cvi": {
+    "name": "사증발급인정서 (Certificate of Visa Issuance)",
+    "desc": "출입국관리소에서 발급하는 사증발급인정서",
+    "issuer": "출입국·외국인청"
   }
 }

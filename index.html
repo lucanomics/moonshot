@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paradiso 39 — 대한민국 39가지 체류자격을 한 번에</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2246%22 fill=%22%231F6B5E%22/><g fill=%22%23C97A4A%22><circle cx=%2250%22 cy=%2250%22 r=%228%22/><ellipse cx=%2250%22 cy=%2228%22 rx=%227%22 ry=%2212%22/><ellipse cx=%2271%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(72 71 43)%22/><ellipse cx=%2263%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(144 63 68)%22/><ellipse cx=%2237%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-144 37 68)%22/><ellipse cx=%2229%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-72 29 43)%22/></g></svg>">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2274%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%2272%22 font-weight=%22700%22 fill=%22%230EA37B%22 text-anchor=%22middle%22>P</text><circle cx=%2278%22 cy=%2228%22 r=%226%22 fill=%22%23FF6B5B%22/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 180 180%22><rect width=%22180%22 height=%22180%22 fill=%22%230f172a%22/><text x=%2290%22 y=%22130%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%22130%22 font-weight=%22700%22 fill=%22%230EA37B%22 text-anchor=%22middle%22>P</text><circle cx=%22138%22 cy=%2244%22 r=%2210%22 fill=%22%23FF6B5B%22/><text x=%2290%22 y=%22162%22 font-family=%22Helvetica,sans-serif%22 font-size=%2222%22 font-weight=%22700%22 fill=%22%23FF6B5B%22 text-anchor=%22middle%22 letter-spacing=%222%22>39</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;1,6..96,400;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -104,6 +106,15 @@ body { background: transparent !important; color: var(--t1); line-height: 1.65; 
 #starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.6s ease, opacity 2s ease; }
 .hero-container::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--bg0) 10%, transparent), color-mix(in srgb, var(--bg0) 65%, transparent) 75%); pointer-events: none; z-index: -1; transition: opacity 0.6s; }
 body.searched .hero-container::before { opacity: 0; }
+
+/* 야간 라이트모드에서 베이지 배경 거의 투명하게 + 블러 */
+body.night-light-mode .hero-container::before {
+  opacity: 0.08 !important;
+}
+body.night-light-mode .hero-container {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
 .logo-sub { font-family: var(--ff-display, var(--ff)); }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); z-index: 50; }
@@ -391,9 +402,30 @@ body.searched .brand-hero, body.searched .brand-feature, body.searched .about-me
 /* ═══════════════════════════════════════════════════════════════
    About Me 포트폴리오 섹션 (Figma 디자인 번역)
    ═══════════════════════════════════════════════════════════════ */
-.about-me { display: flex !important; flex-direction: column; gap: 5rem; padding: 8rem 2rem; max-width: 922px; margin: 0 auto; background: #ffffff; }
+.about-me { display: flex !important; flex-direction: column; gap: 5rem; padding: 7rem 3rem; max-width: 1160px; margin: 0 auto; background: #ffffff; }
 body.searched .about-me { display: none !important; }
 .about-title { font-family: var(--ff-display); font-size: clamp(2.5rem, 6vw, 3.5rem); font-weight: 800; color: var(--t1); letter-spacing: -0.04em; margin: 0; }
+
+/* About — Brand etymology card */
+.about-brand { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 3rem; align-items: center; padding: 2.5rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent-soft) 35%, var(--bg0)), var(--bg0)); border: 1px solid var(--bd2); box-shadow: var(--sh1); }
+.brand-anagram { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding: 1.4rem 1rem; background: rgba(255,255,255,0.55); border-radius: 16px; border: 1px solid var(--bd2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+[data-theme="dark"] .brand-anagram { background: rgba(255,255,255,0.06); }
+.brand-anagram-word { font-family: var(--ff-display); font-size: clamp(1.1rem, 2.2vw, 1.4rem); font-weight: 800; letter-spacing: 0.18em; color: var(--color-primary-ink); }
+.brand-anagram-word.alt { color: var(--color-accent); }
+[data-theme="dark"] .brand-anagram-word { color: #5ee9c1; }
+[data-theme="dark"] .brand-anagram-word.alt { color: #ffaa9a; }
+.brand-anagram-arrow { font-size: 1.5rem; color: var(--t3); line-height: 1; }
+.brand-anagram-caption { font-size: 0.78rem; color: var(--t3); margin-top: 0.4rem; letter-spacing: 0.04em; }
+.brand-meaning { display: flex; flex-direction: column; gap: 1rem; }
+.brand-h3 { font-size: 1.4rem; font-weight: 800; color: var(--t1); margin: 0 0 0.2rem; letter-spacing: -0.02em; word-break: keep-all; }
+.brand-h3-en { font-size: 0.95rem; font-weight: 600; color: var(--t3); letter-spacing: 0.01em; }
+.brand-points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.brand-points li { font-size: 0.95rem; color: var(--t2); line-height: 1.65; word-break: keep-all; padding-left: 1rem; position: relative; }
+.brand-points li::before { content: "·"; position: absolute; left: 0.2rem; color: var(--color-accent); font-weight: 800; }
+.brand-points strong { color: var(--t1); font-weight: 800; }
+.brand-vision { font-size: 1rem; font-weight: 700; color: var(--color-primary-ink); margin: 0.4rem 0 0; line-height: 1.5; word-break: keep-all; padding: 0.7rem 0.9rem; background: color-mix(in srgb, var(--color-primary-soft) 30%, transparent); border-radius: 10px; border-left: 3px solid var(--color-primary); }
+[data-theme="dark"] .brand-vision { color: #c8f5e3; }
+.brand-disclaimer { font-size: 0.8rem; color: var(--t3); margin: 0; line-height: 1.55; word-break: keep-all; }
 
 .about-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
 .intro-img-placeholder { background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary-soft) 40%, var(--bg1)), var(--bg2)); border-radius: 24px; aspect-ratio: 4/3; width: 100%; box-shadow: var(--sh1); display: flex; align-items: center; justify-content: center; font-size: 4rem; opacity: 0.8; }
@@ -464,6 +496,7 @@ body.searched .about-me { display: none !important; }
     .stat-num { font-size: 2.4rem; }
     .section-divider:first-of-type { margin-top: 5rem; }
     .brand-feature { gap: 3rem; padding: 5rem 2rem; }
+    .about-me { padding: 5rem 2rem; gap: 4rem; }
     .about-intro { gap: 2.5rem; }
     .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
     .feature-checklist { aspect-ratio: 16/10; }
@@ -590,6 +623,40 @@ body.searched .scroll-cue { display: none; }
 }
 .section-divider:first-of-type { margin-top: 6rem; }
 body.searched .section-divider { display: none; }
+
+/* ── Visa Manual Section Styles ─────────────────────── */
+.visa-manual-section { max-width: 1160px; margin: 4rem auto; padding: 2rem 1.5rem; }
+.visa-manual-title { font-size: 2rem; font-weight: 800; color: var(--t1); margin-bottom: 1rem; text-align: center; }
+.visa-manual-subtitle { font-size: 1rem; color: var(--t3); margin-bottom: 2rem; text-align: center; }
+.visa-track-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.visa-track-card { background: var(--bg1); border: 2px solid var(--bd); border-radius: 16px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.visa-track-card:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-4px); box-shadow: var(--shD); }
+.visa-track-icon { font-size: 3rem; }
+.visa-track-title { font-size: 1.3rem; font-weight: 800; color: var(--t1); }
+.visa-track-desc { font-size: 0.9rem; color: var(--t3); line-height: 1.6; }
+.visa-dynamic-content { margin-top: 2rem; }
+.visa-step-container { background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; padding: 2rem; }
+.visa-track-btn { background: var(--ac); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--ff); font-size: 0.85rem; }
+.visa-track-btn:hover { background: var(--ac2); transform: translateY(-1px); box-shadow: var(--sh2); }
+.visa-track-btn-secondary { background: var(--bg2); color: var(--t1); border: 1px solid var(--bd); }
+.visa-track-btn-secondary:hover { background: var(--bg3); border-color: var(--ac); }
+
+/* 체류민원 매뉴얼 동적 콘텐츠 스타일 */
+.visa-results-grid { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 1rem; }
+.visa-result-card { background: var(--bg0); border: 1px solid var(--bd2); border-radius: 12px; padding: 1rem; transition: transform 0.2s, box-shadow 0.2s; }
+.visa-result-card:hover { transform: translateY(-2px); box-shadow: var(--sh2); }
+.visa-result-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+.visa-result-desc { font-size: 0.85rem; color: var(--t2); margin-bottom: 0.8rem; line-height: 1.5; }
+.visa-result-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.visa-purpose-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.visa-purpose-card { background: var(--bg0); border: 1px solid var(--bd); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-family: var(--ff); font-weight: 600; color: var(--t1); }
+.visa-purpose-card:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-2px); box-shadow: var(--shD); }
+.visa-purpose-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+.visa-purpose-hint { font-size: 0.75rem; color: var(--t3); font-weight: 500; }
+.visa-step-header { margin-bottom: 1.5rem; }
+.visa-step-header h3 { font-size: 1.2rem; font-weight: 800; color: var(--t1); margin-bottom: 0.3rem; }
+.visa-step-header p { font-size: 0.9rem; color: var(--t3); }
+.visa-search-box { background: var(--bg2); border-radius: 12px; padding: 1.2rem; border: 1px solid var(--bd); }
     </style>
 </head>
 <body class="landing" data-theme="light">
@@ -801,6 +868,25 @@ body.searched .section-divider { display: none; }
     <section id="aboutMe" class="about-me" aria-labelledby="aboutMeTitle">
         <h2 id="aboutMeTitle" class="about-title" data-reveal="fade-up">프로젝트 소개</h2>
 
+        <div class="about-brand" data-reveal="fade-up">
+            <div class="brand-anagram" aria-hidden="true">
+                <div class="brand-anagram-word">P A R A D I S O</div>
+                <div class="brand-anagram-arrow" title="anagram">⇅</div>
+                <div class="brand-anagram-word alt">D I A S P O R A</div>
+                <div class="brand-anagram-caption">동일한 8개 글자 · same 8 letters</div>
+            </div>
+            <div class="brand-meaning">
+                <h3 class="brand-h3">이름에 담긴 두 의미 <span class="brand-h3-en" lang="en">— A Name with Two Meanings</span></h3>
+                <ul class="brand-points">
+                    <li><strong>Paradiso</strong> — 이탈리아어 "낙원(Paradise)". 한국에서의 체류가 모두에게 낙원처럼 머무를 만한 곳이기를 바랍니다.</li>
+                    <li><strong>Diaspora 애너그램</strong> — Paradiso와 Diaspora는 동일한 8개 글자로 구성됩니다. 고국을 떠난 이주민을 위한 플랫폼이라는 정체성을 담았습니다.</li>
+                    <li><strong>39</strong> — 출입국관리법령상 대한민국 체류자격 39종을 의미합니다.</li>
+                </ul>
+                <p class="brand-vision">300만 체류 외국인 시대를 위한 공식 인프라로의 도약.</p>
+                <p class="brand-disclaimer">2026년 출입국·외국인정책본부 실무 매뉴얼 기반. 최종 판단은 관할 출입국·외국인관서 및 1345 외국인종합안내센터에 귀속됩니다.</p>
+            </div>
+        </div>
+
         <div class="about-intro" data-reveal="fade-left">
             <div class="intro-img-placeholder" aria-hidden="true">🚀</div>
             <div class="intro-text">
@@ -887,6 +973,29 @@ body.searched .section-divider { display: none; }
                 <p>지금 바로 AI 맞춤 분석을 통해 당신에게 가장 적합한 체류 자격과 취업 가능 여부를 팩트체크하세요.</p>
             </div>
         </div>
+    </section>
+
+    <div class="section-divider" aria-hidden="true"></div>
+
+    <!-- Visa Manual Section -->
+    <section id="visaManualSection" class="visa-manual-section" aria-labelledby="visaManualTitle">
+        <h2 id="visaManualTitle" class="visa-manual-title" data-reveal="fade-up">사증·체류 매뉴얼</h2>
+        <p class="visa-manual-subtitle" data-reveal="fade-up">입국 전 사증 발급부터 입국 후 체류 연장까지, 단계별 안내</p>
+
+        <div class="visa-track-selector" data-reveal="fade-up">
+            <div class="visa-track-card" onclick="startPreEntryTrack()" tabindex="0" role="button" aria-label="입국 전 사증 발급 트랙">
+                <div class="visa-track-icon">✈️</div>
+                <h3 class="visa-track-title">입국 전</h3>
+                <p class="visa-track-desc">해외에서 주한공관을 통한 사증(비자) 신규 발급 절차</p>
+            </div>
+            <div class="visa-track-card" onclick="startInKoreaTrack()" tabindex="0" role="button" aria-label="입국 후 체류 관리 트랙">
+                <div class="visa-track-icon">🏛</div>
+                <h3 class="visa-track-title">입국 후</h3>
+                <p class="visa-track-desc">외국인등록, 체류기간 연장, 자격 변경 등 국내 체류 민원</p>
+            </div>
+        </div>
+
+        <div id="visaManualDynamic" class="visa-dynamic-content" aria-live="polite"></div>
     </section>
 
     <div class="qf" id="qf" aria-label="자주 찾는 검색어 모음"></div>
@@ -1413,6 +1522,7 @@ function updateHourFromCity() {
     const hour = getTzHour(SELECTED_CITY.tz);
     document.body.setAttribute('data-hour', hour.toFixed(3));
     const timeEl = document.getElementById('cityBtnTime');
+    updateNightLightClass();
     if (timeEl) timeEl.textContent = formatTzTime(SELECTED_CITY.tz);
 }
 function renderCityList(filter) {
@@ -1980,9 +2090,21 @@ function handleInput(){
 function clearSearch(){ qEl.value=''; qEl.focus(); document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active'); if(document.body.classList.contains('searched') && dataReady) renderResults(''); }
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(qEl.value);}
 
+function updateNightLightClass() {
+  const hour = getHour();
+  const isNight = hour >= 19 || hour < 6;
+  const isLight = document.body.getAttribute("data-theme") === "light";
+  if (isNight && isLight) {
+    document.body.classList.add("night-light-mode");
+  } else {
+    document.body.classList.remove("night-light-mode");
+  }
+}
+
 function toggleTheme(){
     const newTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.body.setAttribute('data-theme', newTheme);
+    updateNightLightClass();
     const textEl = document.querySelector('.theme-btn-text');
     if(textEl) textEl.textContent = newTheme === 'dark' ? '라이트 모드' : '다크 모드';
 }
@@ -2004,6 +2126,7 @@ function initUI(){
         {l:'난민신청 절차',q:'RF-1'},
         {l:'오버스테이',q:'SCN-6'},
         {l:'D-10 구직',q:'D-10'}
+        {l:'K-Trainee(D-4-2K)',q:'D-4-2K'},
     ];
     const lc=document.getElementById('landingHints');
     if(lc) {
@@ -2248,6 +2371,261 @@ function resetReveal() {
         observer.observe(parent);
     });
 })();
+
+// ── Visa Manual Section Functions ──────────────────────────────────────────
+
+// 입국 전 트랙: 목적 선택 UI
+function startPreEntryTrack() {
+  const dynamicEl = document.getElementById('visaManualDynamic');
+  if (!dynamicEl) return;
+
+  dynamicEl.innerHTML = `
+    <div class="visa-step-container">
+      <div class="visa-step-header">
+        <h3>입국 전 — 주한공관 사증(비자) 신청</h3>
+        <p>한국에 오시는 목적을 선택하세요. 맞춤형 체류자격을 추천해 드립니다.</p>
+      </div>
+      <div class="visa-purpose-grid">
+        <div class="visa-purpose-card" onclick="showVisaRecommendations('study')">
+          <div class="visa-purpose-icon">📚</div>
+          <div>유학·연수</div>
+          <div class="visa-purpose-hint">대학, 어학연수, 전문교육</div>
+        </div>
+        <div class="visa-purpose-card" onclick="showVisaRecommendations('work')">
+          <div class="visa-purpose-icon">💼</div>
+          <div>취업·사업</div>
+          <div class="visa-purpose-hint">전문직, 일반 취업, 투자</div>
+        </div>
+        <div class="visa-purpose-card" onclick="showVisaRecommendations('family')">
+          <div class="visa-purpose-icon">👨‍👩‍👧‍👦</div>
+          <div>가족·결혼</div>
+          <div class="visa-purpose-hint">동반, 결혼이민, 영주</div>
+        </div>
+        <div class="visa-purpose-card" onclick="showVisaRecommendations('visit')">
+          <div class="visa-purpose-icon">✈️</div>
+          <div>방문·관광</div>
+          <div class="visa-purpose-hint">단기 방문, 친지 방문</div>
+        </div>
+      </div>
+    </div>`;
+
+  dynamicEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// 입국 후 트랙: 민원 유형 선택 UI
+function startInKoreaTrack() {
+  const dynamicEl = document.getElementById('visaManualDynamic');
+  if (!dynamicEl) return;
+
+  dynamicEl.innerHTML = `
+    <div class="visa-step-container">
+      <div class="visa-step-header">
+        <h3>입국 후 — 국내 체류 민원 절차</h3>
+        <p>필요하신 절차를 선택하세요.</p>
+      </div>
+      <div class="visa-purpose-grid">
+        <div class="visa-purpose-card" onclick="selectInKoreaAction('register')">
+          <div class="visa-purpose-icon">📝</div>
+          <div>외국인등록</div>
+          <div class="visa-purpose-hint">입국 후 90일 이내</div>
+        </div>
+        <div class="visa-purpose-card" onclick="selectInKoreaAction('extend')">
+          <div class="visa-purpose-icon">⏳</div>
+          <div>체류기간 연장</div>
+          <div class="visa-purpose-hint">만료일 전 신청</div>
+        </div>
+        <div class="visa-purpose-card" onclick="selectInKoreaAction('change')">
+          <div class="visa-purpose-icon">🔄</div>
+          <div>체류자격 변경</div>
+          <div class="visa-purpose-hint">다른 자격으로 전환</div>
+        </div>
+        <div class="visa-purpose-card" onclick="selectInKoreaAction('workplace')">
+          <div class="visa-purpose-icon">🏢</div>
+          <div>근무처 변경·추가</div>
+          <div class="visa-purpose-hint">취업 자격 소지자</div>
+        </div>
+      </div>
+    </div>`;
+
+  dynamicEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── 카테고리 매핑 ──────────────────────────────────────────────────────────
+const PURPOSE_TO_CAT = {
+  study:  ['study'],
+  work:   ['work', 'invest'],
+  family: ['family'],
+  visit:  ['short', 'other', 'diplo']
+};
+const ACTION_CAT_LABELS = {
+  study:  '📚 유학·연수',
+  work:   '💼 취업·전문직 / 투자·경영',
+  family: '👨‍👩‍👧‍👦 가족·이민',
+  visit:  '✈️ 단기 체류 / 기타'
+};
+const DOC_MODAL_ACTION_MAP = { register: 'new', extend: 'ext' };
+let _currentInKoreaAction = 'extend';
+
+// ── 입국 전 트랙: 목적별 체류자격 추천 ────────────────────────────────────
+function showVisaRecommendations(purpose) {
+  const dynamicEl = document.getElementById('visaManualDynamic');
+  if (!dynamicEl || !dataReady) return;
+
+  const targetCats  = PURPOSE_TO_CAT[purpose] || [];
+  const SKIP_CATS   = ['faq', 'scn', 'nhis'];
+  const matchedVisas = VISA_DATA.filter(v => targetCats.includes(v.cat) && !SKIP_CATS.includes(v.cat));
+
+  if (!matchedVisas.length) {
+    dynamicEl.innerHTML = `
+      <div class="visa-step-container">
+        <div class="visa-step-header">
+          <h3>해당 목적에 맞는 체류자격이 없습니다.</h3>
+          <p>검색창을 이용해 보세요.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const label = ACTION_CAT_LABELS[purpose] || '추천';
+  const cardsHtml = matchedVisas.map(v => `
+    <div class="visa-result-card">
+      <div class="visa-result-header">
+        <span class="bc">${escapeHtml(v.code)}</span>
+        <span class="vt">${escapeHtml(v.name)}</span>
+        ${v.period ? `<span class="bp">${escapeHtml(v.period)}</span>` : ''}
+      </div>
+      <p class="visa-result-desc">${escapeHtml((v.newReq || '상세 정보를 확인하세요.').substring(0, 100))}...</p>
+      <div class="visa-result-actions">
+        <button class="visa-track-btn" onclick="openDocModal('${escapeHtml(v.code)}', 'new')">📝 신규 발급 서류</button>
+        <button class="visa-track-btn visa-track-btn-secondary" onclick="openAiModal('${escapeHtml(v.code)}')">✨ AI 분석</button>
+      </div>
+    </div>`).join('');
+
+  dynamicEl.innerHTML = `
+    <div class="visa-step-container">
+      <div class="visa-step-header">
+        <h3>${label} 체류자격 (${matchedVisas.length}건)</h3>
+        <p>본인의 상황과 가장 일치하는 체류자격을 선택하세요.</p>
+        <button class="cb" style="margin-top:0.8rem;" onclick="startPreEntryTrack()">← 목적 다시 선택</button>
+      </div>
+      <div class="visa-results-grid">${cardsHtml}</div>
+    </div>`;
+
+  dynamicEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── 입국 후 트랙: 민원 유형별 안내 ────────────────────────────────────────
+function selectInKoreaAction(actionType) {
+  const dynamicEl = document.getElementById('visaManualDynamic');
+  if (!dynamicEl || !dataReady) return;
+  _currentInKoreaAction = actionType;
+
+  const CONFIG = {
+    register: {
+      title: '📝 외국인등록',
+      desc:   '입국 후 90일 이내에 체류지 관할 출입국·외국인청에서 외국인등록을 해야 합니다.',
+      extra:  `<div class="jur-section">
+                 <div class="jur-label">공통 필요 서류</div>
+                 <ul class="jur-list">
+                   <li>통합신청서</li><li>여권 원본 및 사본</li>
+                   <li>사진 1매 (3.5×4.5cm)</li><li>체류지 입증서류</li><li>수수료</li>
+                 </ul>
+               </div>`
+    },
+    extend: {
+      title: '⏳ 체류기간 연장',
+      desc:   '체류기간 만료일 전까지 연장 신청을 완료해야 합니다.',
+      extra:  `<div class="subcode-warning" style="margin-top:0.8rem;">
+                 ⚠️ <strong>주의:</strong> 만료 당일·이후 신청 시 불법체류로 간주될 수 있습니다.
+               </div>`
+    },
+    change: {
+      title: '🔄 체류자격 변경',
+      desc:   '현재 체류자격에서 다른 체류자격으로 변경하려면 사전 허가가 필요합니다.',
+      extra:  `<div class="subcode-warning" style="margin-top:0.8rem;">
+                 ⚠️ <strong>주의:</strong> 모든 자격 변경이 허용되지는 않습니다. (예: C-3 → D-2 불가)
+               </div>`
+    },
+    workplace: {
+      title: '🏢 근무처 변경·추가',
+      desc:   '취업 자격 소지자가 근무처를 변경할 경우 15일 이내에 신고해야 합니다.',
+      extra:  `<div class="jur-section">
+                 <div class="jur-label">근무처 변경 신고 서류</div>
+                 <ul class="jur-list">
+                   <li>통합신청서</li><li>여권 및 외국인등록증</li>
+                   <li>사업자등록증 사본</li><li>근로계약서</li>
+                   <li>특례고용가능확인서 (H-2 해당자)</li>
+                 </ul>
+               </div>`
+    }
+  };
+
+  const { title, desc, extra } = CONFIG[actionType] || { title: actionType, desc: '', extra: '' };
+
+  dynamicEl.innerHTML = `
+    <div class="visa-step-container">
+      <div class="visa-step-header">
+        <button class="cb" style="margin-bottom:0.8rem;" onclick="startInKoreaTrack()">← 절차 다시 선택</button>
+        <h3>${title}</h3>
+        <p>${desc}</p>
+      </div>
+      ${extra}
+      <div class="visa-search-box" style="margin-top:1.5rem;">
+        <h4 style="font-size:1rem; font-weight:700; color:var(--t1); margin-bottom:0.5rem;">🔍 본인의 체류자격 검색</h4>
+        <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1rem;">현재 체류자격 코드 또는 이름을 입력하세요.</p>
+        <div style="display:flex; gap:0.5rem;">
+          <input type="search" id="inKoreaVisaSearch" class="jc-search-input"
+            style="flex:1; min-width:200px; margin-bottom:0;" placeholder="예: F-6, E-9, D-2"
+            onkeyup="filterInKoreaVisaList(this.value)">
+          <button class="visa-track-btn" style="width:auto;" onclick="searchInKoreaVisa()">검색</button>
+        </div>
+        <div id="inKoreaVisaList" class="visa-results-grid" style="margin-top:1rem;"></div>
+      </div>
+    </div>`;
+
+  dynamicEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── 보조 함수들 ────────────────────────────────────────────────────────────
+function getCurrentInKoreaAction() { return _currentInKoreaAction; }
+
+function filterInKoreaVisaList(query) {
+  const listEl = document.getElementById('inKoreaVisaList');
+  if (!listEl) return;
+  if (!query || !query.trim()) { listEl.innerHTML = ''; return; }
+
+  const q      = query.toLowerCase().trim();
+  const SKIP   = ['faq', 'scn', 'nhis'];
+  const matched = VISA_DATA
+    .filter(v => !SKIP.includes(v.cat) && (v.code.toLowerCase().includes(q) || v.name.toLowerCase().includes(q)))
+    .slice(0, 10);
+
+  listEl.innerHTML = matched.map(v => `
+    <div class="visa-result-card" style="cursor:pointer;" onclick="showVisaDocForAction('${escapeHtml(v.code)}')">
+      <div class="visa-result-header">
+        <span class="bc">${escapeHtml(v.code)}</span>
+        <span class="vt">${escapeHtml(v.name)}</span>
+        ${v.period ? `<span class="bp">${escapeHtml(v.period)}</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function searchInKoreaVisa() {
+  const input = document.getElementById('inKoreaVisaSearch');
+  if (input) filterInKoreaVisaList(input.value);
+}
+
+function showVisaDocForAction(visaCode) {
+  const actionType = _currentInKoreaAction;
+  const docMode    = DOC_MODAL_ACTION_MAP[actionType];
+  if (docMode) {
+    openDocModal(visaCode, docMode);
+  } else {
+    // change / workplace: 서류 모달 직접 지원 없음 → AI 분석으로 안내
+    showToast('자격변경·근무처변경은 AI 분석을 통해 맞춤 서류를 확인하세요.', 'warning');
+    openAiModal(visaCode);
+  }
+}
 </script>
 </body>
 </html>
