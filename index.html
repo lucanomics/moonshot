@@ -3082,7 +3082,7 @@ function showVisaDocForAction(visaCode) {
         svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
 
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `<marker id="ag-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,6.5 L6,3.5 z" fill="rgba(255,255,255,0.55)"/></marker>`;
+        defs.innerHTML = `<marker id="ag-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,6.5 L6,3.5 z" fill="rgba(128,128,128,0.45)"/></marker>`;
         svg.appendChild(defs);
 
         MAP.forEach((bIdx, tIdx) => {
