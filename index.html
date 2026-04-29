@@ -421,6 +421,40 @@ body.searched .about-me { display: none !important; }
 .footer-hero-img::before { content: ""; position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg, transparent 0deg 15deg, color-mix(in srgb, var(--bg0) 20%, transparent) 15deg 30deg); opacity: 0.3; }
 .about-footer h3 { font-size: 1.8rem; font-weight: 800; color: var(--t1); margin: 0; letter-spacing: -0.03em; }
 .about-footer p { font-size: 1.05rem; color: var(--t2); line-height: 1.7; margin: 0; }
+
+/* ── Hero stat cards: icons + visa code chips (additive) ── */
+.stat-card { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; text-align: center; }
+.stat-icon { font-size: 1.4rem; line-height: 1; width: 2.4rem; height: 2.4rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: color-mix(in srgb, var(--color-accent-soft) 55%, #fff); margin-bottom: 0.1rem; }
+.stat-codes { display: flex; flex-wrap: wrap; gap: 0.3rem; justify-content: center; margin-top: 0.5rem; }
+.stat-code-chip { display: inline-block; padding: 0.16rem 0.5rem; border-radius: 999px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 0.7rem; font-weight: 700; color: #555; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+[data-theme="dark"] .stat-code-chip { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); color: #e5e7eb; }
+
+/* ── Hobby cards: icon + title + description ── */
+.hobby-card { aspect-ratio: auto; min-height: 220px; align-items: stretch; }
+.hobby-inner { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 0.6rem; width: 100%; }
+.hobby-icon { width: 2.4rem; height: 2.4rem; border-radius: 12px; background: rgba(255,255,255,0.85); display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.hobby-title { font-size: 1.15rem; font-weight: 800; color: var(--color-primary-ink); letter-spacing: -0.01em; text-shadow: 0 1px 2px rgba(255,255,255,0.5); margin-top: auto; }
+.hobby-desc { font-size: 0.85rem; line-height: 1.55; color: var(--color-primary-ink); opacity: 0.85; word-break: keep-all; text-shadow: 0 1px 2px rgba(255,255,255,0.4); }
+[data-theme="dark"] .hobby-2 { background: linear-gradient(120deg, var(--color-primary-soft), var(--color-accent-soft)); }
+[data-theme="dark"] .hobby-3 { background: linear-gradient(to top right, var(--color-primary-soft), var(--color-accent-soft)); }
+
+/* ── Experience rows: timeline dot + description ── */
+.exp-heading { font-size: 1.4rem; font-weight: 800; color: var(--t1); margin: 0 0 1rem; letter-spacing: -0.02em; }
+.exp-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.2rem; }
+.exp-dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent-soft) 60%, transparent); }
+.exp-text { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.exp-detail { font-size: 0.88rem; color: var(--t3); line-height: 1.5; word-break: keep-all; }
+.exp-row .exp-company { font-size: 1.15rem; word-break: keep-all; }
+.exp-row .exp-year { font-size: 0.95rem; color: var(--t2); padding: 0.3rem 0.7rem; background: color-mix(in srgb, var(--bg1) 60%, transparent); border-radius: 999px; border: 1px solid var(--bd2); white-space: nowrap; }
+
+/* ── Footer hero block: structured inner content ── */
+.footer-hero-img { height: auto; min-height: 320px; align-items: stretch; padding: 2.5rem 2rem; }
+.footer-hero-inner { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; gap: 1.6rem; width: 100%; max-width: 720px; margin: 0 auto; text-align: center; color: #fff; }
+.footer-hero-eyebrow { font-family: var(--ff-display); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.78); }
+.footer-hero-title { font-family: var(--ff-display); font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 900; line-height: 1.18; letter-spacing: -0.02em; color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,0.35); }
+.footer-hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+.footer-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.95rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; color: #fff; background: color-mix(in srgb, #fff 14%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.22); white-space: nowrap; }
+
 /* ── Tablet Breakpoint (1024px) ────────────────────────── */
 @media (max-width: 1024px) {
     .brand-hero { padding: 5rem 1.5rem 0; padding-bottom: 5rem; }
@@ -459,9 +493,17 @@ body.searched .about-me { display: none !important; }
     .about-me { padding: 4rem 1rem 6rem; gap: 4rem; }
     .about-intro { grid-template-columns: 1fr; gap: 2rem; }
     .hobbies-grid { grid-template-columns: 1fr; gap: 1rem; }
-    .hobby-card { aspect-ratio: 2/1; }
-    .footer-hero-img { height: 240px; }
-    .exp-company { font-size: 1.2rem; }
+    .hobby-card { aspect-ratio: auto; min-height: auto; padding: 1.4rem; }
+    .footer-hero-img { min-height: auto; height: auto; padding: 2rem 1.4rem; }
+    .footer-hero-title { font-size: 1.45rem; }
+    .footer-chip { font-size: 0.78rem; padding: 0.42rem 0.8rem; }
+    .exp-row { grid-template-columns: auto 1fr; row-gap: 0.4rem; padding: 1.2rem 0; }
+    .exp-row .exp-year { grid-column: 2; justify-self: start; font-size: 0.85rem; }
+    .exp-row .exp-company { font-size: 1.05rem; }
+    .exp-detail { font-size: 0.82rem; }
+    .stat-codes { gap: 0.25rem; }
+    .stat-code-chip { font-size: 0.66rem; padding: 0.14rem 0.42rem; }
+    .stat-icon { width: 2rem; height: 2rem; font-size: 1.15rem; }
 }
 
 @media (max-width: 640px) {
@@ -670,20 +712,46 @@ body.searched .section-divider { display: none; }
         
         <div class="brand-hero-stats" aria-label="비자 카테고리 통계" data-stagger>
             <div class="stat-card">
+                <div class="stat-icon" aria-hidden="true">💼</div>
                 <div class="stat-num" id="stat-work" data-count="14">0</div>
                 <div class="stat-label">취업·전문직<br><span lang="en">Employment</span></div>
+                <div class="stat-codes" aria-hidden="true">
+                    <span class="stat-code-chip">D-7</span>
+                    <span class="stat-code-chip">D-8</span>
+                    <span class="stat-code-chip">E-7</span>
+                    <span class="stat-code-chip">E-9</span>
+                </div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon" aria-hidden="true">🎓</div>
                 <div class="stat-num" id="stat-study" data-count="8">0</div>
                 <div class="stat-label">유학·연수<br><span lang="en">Study</span></div>
+                <div class="stat-codes" aria-hidden="true">
+                    <span class="stat-code-chip">D-2</span>
+                    <span class="stat-code-chip">D-4</span>
+                    <span class="stat-code-chip">D-10</span>
+                </div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon" aria-hidden="true">🏠</div>
                 <div class="stat-num" id="stat-residence" data-count="7">0</div>
                 <div class="stat-label">거주·결혼<br><span lang="en">Residence</span></div>
+                <div class="stat-codes" aria-hidden="true">
+                    <span class="stat-code-chip">F-2</span>
+                    <span class="stat-code-chip">F-4</span>
+                    <span class="stat-code-chip">F-5</span>
+                    <span class="stat-code-chip">F-6</span>
+                </div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon" aria-hidden="true">✈️</div>
                 <div class="stat-num" id="stat-visit" data-count="10">0</div>
                 <div class="stat-label">방문·기타<br><span lang="en">Visit & Other</span></div>
+                <div class="stat-codes" aria-hidden="true">
+                    <span class="stat-code-chip">B-2</span>
+                    <span class="stat-code-chip">C-3</span>
+                    <span class="stat-code-chip">H-2</span>
+                </div>
             </div>
         </div>
     </section>
@@ -750,35 +818,69 @@ body.searched .section-divider { display: none; }
             </p>
             <div class="hobbies-grid">
                 <div class="hobby-card hobby-1" aria-label="정확성과 신뢰성">
-                    <span style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary-ink); text-shadow: 0 2px 4px rgba(255,255,255,0.6); position: relative; z-index: 2;">Data Integrity</span>
+                    <div class="hobby-inner">
+                        <div class="hobby-icon" aria-hidden="true">📑</div>
+                        <div class="hobby-title">Data Integrity</div>
+                        <div class="hobby-desc">법무부 출입국·외국인정책본부 실무 매뉴얼과 시행규칙을 1차 출처로 삼습니다.</div>
+                    </div>
                 </div>
                 <div class="hobby-card hobby-2" aria-label="사용자 중심 UX">
-                    <span style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary-ink); text-shadow: 0 2px 4px rgba(255,255,255,0.6); position: relative; z-index: 2;">User Centric</span>
+                    <div class="hobby-inner">
+                        <div class="hobby-icon" aria-hidden="true">🧭</div>
+                        <div class="hobby-title">User Centric</div>
+                        <div class="hobby-desc">39개 자격을 4개 카테고리로 묶어 한 화면에서 비교·검색합니다.</div>
+                    </div>
                 </div>
                 <div class="hobby-card hobby-3" aria-label="AI 기반 분석">
-                    <span style="font-size: 1.2rem; font-weight: 800; color: var(--color-primary-ink); text-shadow: 0 2px 4px rgba(255,255,255,0.6); position: relative; z-index: 2;">AI Powered</span>
+                    <div class="hobby-inner">
+                        <div class="hobby-icon" aria-hidden="true">✨</div>
+                        <div class="hobby-title">AI Powered</div>
+                        <div class="hobby-desc">국적·체류자격·직무 정보로 본인 상황에 맞는 절차를 즉시 제시합니다.</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="about-experience" data-reveal="fade-left">
+            <h3 class="exp-heading">로드맵</h3>
             <div class="exp-row">
-                <span class="exp-company">정식 서비스 런칭 및 다국어 지원 확대</span>
+                <span class="exp-dot" aria-hidden="true"></span>
+                <div class="exp-text">
+                    <span class="exp-company">정식 서비스 런칭 및 다국어 지원 확대</span>
+                    <span class="exp-detail">영어·중국어·베트남어 UI 동시 제공, 1345 핫라인 연동 강화</span>
+                </div>
                 <span class="exp-year">2026 Q3</span>
             </div>
             <div class="exp-row">
-                <span class="exp-company">AI 맞춤형 비자 진단 고도화</span>
+                <span class="exp-dot" aria-hidden="true"></span>
+                <div class="exp-text">
+                    <span class="exp-company">AI 맞춤형 비자 진단 고도화</span>
+                    <span class="exp-detail">RAG 기반 매뉴얼 검색·국적별 케이스 매칭으로 정밀도 향상</span>
+                </div>
                 <span class="exp-year">2026 Q1</span>
             </div>
             <div class="exp-row">
-                <span class="exp-company">공공데이터 활용 공모전 출품 및 베타 테스트</span>
+                <span class="exp-dot" aria-hidden="true"></span>
+                <div class="exp-text">
+                    <span class="exp-company">공공데이터 활용 공모전 출품 및 베타 테스트</span>
+                    <span class="exp-detail">39개 자격 통합 검색 MVP 공개·실사용자 피드백 수집</span>
+                </div>
                 <span class="exp-year">2025 Q4</span>
             </div>
         </div>
 
         <div class="about-footer" data-reveal="fade-right">
             <div class="footer-hero-img" aria-hidden="true">
-                <div style="font-size: 2.5rem; font-weight: 900; color: #fff; text-shadow: 0 4px 12px rgba(0,0,0,0.4); margin-bottom: 2rem;">Paradiso 39</div>
+                <div class="footer-hero-inner">
+                    <div class="footer-hero-eyebrow">Paradiso 39</div>
+                    <div class="footer-hero-title">대한민국 39가지<br>체류자격, 한 곳에서.</div>
+                    <div class="footer-hero-chips">
+                        <span class="footer-chip">📑 매뉴얼 기반</span>
+                        <span class="footer-chip">🤖 AI 분석</span>
+                        <span class="footer-chip">🏛 관할관서 조회</span>
+                        <span class="footer-chip">💼 직종·업종 코드</span>
+                    </div>
+                </div>
             </div>
             <div>
                 <h3>한국에서의 새로운 시작, 흔들림 없이.</h3>
