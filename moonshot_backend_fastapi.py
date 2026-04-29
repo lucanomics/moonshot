@@ -35,7 +35,8 @@ GROQ_API_URL       = "https://api.groq.com/openai/v1/chat/completions"
 SITE_URL   = os.environ.get("SITE_URL", "https://web-production-14f9a.up.railway.app")
 SITE_TITLE = "Moonshot Immigration AI"
 
-PUBLIC_DATA_KEY = "1673ea6ebbafabcb7d1bc2a9bbab40ed1444fb61a84d85ea8d839ea09d76d031"
+# ✅ 환경변수로 교체 (보안)
+PUBLIC_DATA_KEY = os.environ.get("LAW_API_KEY", "")
 cached_public_visa_data = "DATA MISSING"
 cached_public_job_data  = "DATA MISSING"
 
@@ -45,9 +46,9 @@ SUPABASE_SERVICE_KEY = (
     os.environ.get("SUPABASE_SERVICE_KEY", "")
     or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 )
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
-RAG_EMBED_MODEL = "BAAI/bge-m3"
-RAG_EMBED_URL = "https://router.huggingface.co/v1/embeddings"
+# ✅ RAG 임베딩 → OpenRouter (text-embedding-3-small)
+RAG_EMBED_MODEL = "openai/text-embedding-3-small"
+RAG_EMBED_URL   = "https://openrouter.ai/api/v1/embeddings"
 RAG_TOP_K = 4
 
 # /api/ask 용 모델 폴백 체인
@@ -188,28 +189,24 @@ def select_models_by_lang(lang: str, question: str) -> list:
                   "이의신청", "행정심판", "이중", "불법", "퇴거", "조건", "가능한가"]
     is_complex = any(kw in question for kw in complex_kw) or len(question) > 80
 
-    # 중국어: Kimi가 가장 적합
     if lang == "zh":
         return [
             ("moonshotai/kimi-k2:free",         "openrouter"),
             ("google/gemma-4-26b-a4b-it:free", "openrouter"),
             ("llama-3.3-70b-versatile",         "groq"),
         ]
-    # 한국어/일본어 복잡 질문: 고성능 모델 우선
     elif lang in ("ko", "ja") and is_complex:
         return [
             ("moonshotai/kimi-k2:free",         "openrouter"),
             ("google/gemma-4-26b-a4b-it:free", "openrouter"),
             ("llama-3.3-70b-versatile",         "groq"),
         ]
-    # 한국어/일본어 단순 질문
     elif lang in ("ko", "ja"):
         return [
             ("google/gemma-4-26b-a4b-it:free", "openrouter"),
             ("moonshotai/kimi-k2:free",         "openrouter"),
             ("llama-3.3-70b-versatile",         "groq"),
         ]
-    # 기타 언어
     else:
         return ASK_MODELS
 
@@ -308,15 +305,21 @@ ANTI_HALLUCINATION_INSTRUCTION = (
 
 
 async def _embed_query(text: str) -> Optional[list]:
-    """HuggingFace 라우터로 BAAI/bge-m3 쿼리 임베딩.
+    """OpenRouter로 text-embedding-3-small 쿼리 임베딩.
     환경변수 미설정 또는 호출 실패 시 None 반환 (graceful degradation)."""
-    if not HF_TOKEN or not text.strip():
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    if not openrouter_key or not text.strip():
         return None
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             res = await client.post(
                 RAG_EMBED_URL,
-                headers={"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"},
+                headers={
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": SITE_URL,
+                    "X-Title": SITE_TITLE,
+                },
                 json={"model": RAG_EMBED_MODEL, "input": text[:2000]},
             )
             res.raise_for_status()
@@ -418,7 +421,6 @@ async def ask_ai(req: AskRequest):
 
     realtime_law_context = await fetch_realtime_law_data(req.question)
 
-    # [System Prompt — 절대 규칙 + 면책 고지 강제]
     system_prompt = (
         "당신은 대한민국 법무부 출입국·외국인정책본부의 2026년 4월 최신 실무 매뉴얼"
         "(사증민원·체류민원)에 정통한 비자 상담 전문가입니다.\n\n"
@@ -438,7 +440,6 @@ async def ask_ai(req: AskRequest):
     visa_block = _build_visa_block(req.visa_data)
     extra_context = req.context.strip() if req.context else ""
 
-    # [RAG] 매뉴얼 벡터 검색 — 환경변수 미설정/실패 시 빈 문자열로 graceful fallback
     rag_visa_code = req.visa_data.get("code") if req.visa_data else None
     rag_block = await retrieve_manual_context(req.question, rag_visa_code)
 
