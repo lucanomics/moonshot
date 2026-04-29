@@ -902,7 +902,7 @@ body.searched .section-divider { display: none; }
         <h2 id="aboutMeTitle" class="about-title" data-reveal="fade-up">프로젝트 소개</h2>
 
         <div class="about-brand" data-reveal="fade-up">
-            <div class="brand-anagram" aria-label="DIASPORA is an anagram of PARADISO">
+            <div class="brand-anagram" aria-hidden="true">
                 <div class="anagram-stage" id="anagramStage">
                     <div class="anagram-row top-row" id="agTop">
                         <span class="al" data-i="0">D</span>
@@ -927,8 +927,6 @@ body.searched .section-divider { display: none; }
                         <span class="al" data-i="7">O</span>
                     </div>
                 </div>
-                <div class="brand-anagram-caption">same 8 letters · 동일한 8개 글자</div>
-            </div>
                 <div class="brand-anagram-caption">동일한 8개 글자 · same 8 letters</div>
             </div>
             <div class="brand-meaning">
@@ -3070,7 +3068,7 @@ function showVisaDocForAction(visaCode) {
   }
 }
 
-// ── LE SSERAFIM style Anagram Lines ──────────────────────────────
+// ── Anagram × Lines (DIASPORA ↔ PARADISO) ──────────────────────
 (function initAnagramLines() {
     const stage = document.getElementById('anagramStage');
     const svg   = document.getElementById('anagramSvg');
@@ -3078,19 +3076,10 @@ function showVisaDocForAction(visaCode) {
     const agBot = document.getElementById('agBot');
     const arrow = document.getElementById('anagramArrow');
     if (!stage || !svg || !agTop || !agBot) return;
-
-    // DIASPORA[i] → PARADISO[j]
-    // D(0)→D(4), I(1)→I(5), A(2)→A(1), S(3)→S(6),
-    // P(4)→P(0), O(5)→O(7), R(6)→R(2), A(7)→A(3)
     const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
-
     const topEls = Array.from(agTop.querySelectorAll('.al'));
     const botEls = Array.from(agBot.querySelectorAll('.al'));
     let lineEls = [];
-
-    // 각 선에 살짝 다른 각도 오프셋을 줘서 LE SSERAFIM 느낌 (불규칙 겹침)
-    const WOBBLE = [0, -3, 4, -2, 5, -4, 3, -1];
-
     function buildLines() {
         svg.innerHTML = ''; lineEls = [];
         const sRect = stage.getBoundingClientRect();
@@ -3135,6 +3124,7 @@ function showVisaDocForAction(visaCode) {
             });
         });
         setTimeout(() => {
+            lineEls.forEach((ln,i) => setTimeout(() => ln.classList.add('drawn'), i*55));
             if (arrow) arrow.classList.toggle('rotated');
         }, base + 4 * 35);
     }
@@ -3144,23 +3134,19 @@ function showVisaDocForAction(visaCode) {
         topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
         botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
     }
-
-    topEls.forEach((el, tIdx) => {
+    topEls.forEach((el,tIdx) => {
         el.addEventListener('mouseenter', () => highlight(tIdx, MAP[tIdx], true));
         el.addEventListener('mouseleave', () => highlight(tIdx, MAP[tIdx], false));
     });
-    botEls.forEach((el, bIdx) => {
+    botEls.forEach((el,bIdx) => {
         const tIdx = MAP.indexOf(bIdx);
         el.addEventListener('mouseenter', () => highlight(tIdx, bIdx, true));
         el.addEventListener('mouseleave', () => highlight(tIdx, bIdx, false));
     });
-
     if (document.readyState === 'complete') buildLines();
     else window.addEventListener('load', buildLines);
     window.addEventListener('resize', buildLines);
-
-    // 5초마다 선 다시 그리기
-    setInterval(() => animateDraw(0), 5000);
+    setInterval(() => drawAll(0), 6000);
 })();
 
 </script>

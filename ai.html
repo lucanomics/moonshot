@@ -318,9 +318,10 @@
             return safeGet(STORE_KEYS.CACHE, {});
         }
 
-        function cacheLookup(query) {
+        function cacheLookup(query, visaCode) {
             const cache = getCache();
-            const key = hashStr(normalizeQuery(query));
+            const composite = (visaCode || '_general') + ':' + normalizeQuery(query);
+            const key = hashStr(composite);
             const entry = cache[key];
             if (!entry) return null;
             if (Date.now() - entry.t > LIMITS.CACHE_TTL_MS) {
@@ -331,9 +332,10 @@
             return entry.a;
         }
 
-        function cacheStore(query, answer) {
+        function cacheStore(query, answer, visaCode) {
             const cache = getCache();
-            const key = hashStr(normalizeQuery(query));
+            const composite = (visaCode || '_general') + ':' + normalizeQuery(query);
+            const key = hashStr(composite);
             cache[key] = { a: answer, t: Date.now() };
 
             const keys = Object.keys(cache);
@@ -430,8 +432,19 @@
                 return;
             }
 
-            // --- Layer 3: 캐시 조회 ---
-            const cached = cacheLookup(q);
+            // --- Layer 3: 캐시 조회 (비자 코드 포함 복합 키) ---
+            const cacheVisaCode = (VISA_DATA && VISA_DATA.length > 0) ? (() => {
+                const kw0 = q.toLowerCase().split(/\s+/);
+                let bv = null, ms = 0;
+                VISA_DATA.forEach(v => {
+                    let s = 0;
+                    const t = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
+                    kw0.forEach(k => { if (k.length > 1 && t.includes(k)) s++; });
+                    if (s > ms) { ms = s; bv = v; }
+                });
+                return (bv && ms > 0) ? bv.code : '_general';
+            })() : '_general';
+            const cached = cacheLookup(q, cacheVisaCode);
             if (cached) {
                 appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
                 inp.value = '';
@@ -452,12 +465,17 @@
                 return;
             }
 
-            // --- Layer 4: RAG (Context Injection) 로직 추가 ---
-            let injectedContext = "";
+            // --- Layer 4: 비자 매칭 (question은 원본 유지, context/visa_data 분리 전송) ---
+            // Codex P1: question에 지침 블록을 prepend하면 백엔드 detect(req.question)이 오염되어
+            // 비한국어 사용자 질문도 ko로 판정되는 regression이 발생함.
+            // index.html v25 방식을 따라 question=원본, context=지침, visa_data=구조화 데이터로 분리.
+            let matchedVisaData = null;
+            let contextDirective = "";
+
             if (VISA_DATA && VISA_DATA.length > 0) {
                 const kw = q.toLowerCase().split(/\s+/);
                 let bestVisa = null, maxScore = 0;
-                
+
                 VISA_DATA.forEach(v => {
                     let score = 0;
                     const textToSearch = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
@@ -471,11 +489,26 @@
                 });
 
                 if (bestVisa && maxScore > 0) {
-                    injectedContext = `[관련 법령 및 매뉴얼 지식]\n체류자격: ${bestVisa.code} (${bestVisa.name})\n신규요건: ${bestVisa.newReq||'없음'}\n연장요건: ${bestVisa.extReq||'없음'}\nFAQ: ${bestVisa.faq||'없음'}\n\n위 출입국 규정을 엄격히 적용하여 사실 위주로 객관적으로 답변하십시오.\n\n사용자 질문: `;
+                    matchedVisaData = {
+                        code: bestVisa.code,
+                        name: bestVisa.name,
+                        cat: bestVisa.cat || '',
+                        period: bestVisa.period || '',
+                        newReq: bestVisa.newReq || '',
+                        extReq: bestVisa.extReq || '',
+                        faq: bestVisa.faq || ''
+                    };
+                    contextDirective = `[요청 작업] 위 비자 데이터에 근거하여 사용자 질문에 사실 위주로 답변하십시오. 데이터에 없는 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
+                } else {
+                    // 매칭 없음: 일반 지침만 전달
+                    contextDirective = `[요청 작업] 대한민국 출입국 관련 질문입니다. 확인되지 않은 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
                 }
+            } else {
+                contextDirective = `[요청 작업] 대한민국 출입국 관련 질문입니다. 확인되지 않은 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
             }
 
-            const finalQuestion = injectedContext ? (injectedContext + q) : q;
+            // 캐시 키용 비자 코드
+            const matchedVisaCode = matchedVisaData ? matchedVisaData.code : '_general';
 
             // --- API 호출 진행 ---
             appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
@@ -493,10 +526,11 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        question: finalQuestion, 
-                        consent: userConsent, 
-                        context: "", 
-                        lang: detectLang(q) 
+                        question: q,
+                        consent: userConsent,
+                        context: contextDirective,
+                        lang: detectLang(q),
+                        visa_data: matchedVisaData
                     })
                 });
 
@@ -505,8 +539,22 @@
                 const data = await res.json();
                 const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
 
+                // --- 비한국어 문자 후처리 필터 ---
+                const hasNonKorean = /[\u3040-\u30FF\u31F0-\u31FF\uFF65-\uFF9F]/.test(answer);
+                if (hasNonKorean) {
+                    const loader2 = document.getElementById(lid);
+                    if (loader2) loader2.remove();
+                    appendMsg('<b>⚠️ 답변 생성 중 오류가 발생했습니다. 다시 시도하거나 1345로 문의하세요.</b>', 'sys-err');
+                    setStatus('답변 오류 — 다시 시도 가능');
+                    btn.disabled = false;
+                    inp.disabled = false;
+                    btn.textContent = '전송';
+                    inp.focus();
+                    return;
+                }
+
                 recordRequest();
-                cacheStore(q, answer);
+                cacheStore(q, answer, matchedVisaCode);
 
                 const loader = document.getElementById(lid);
                 if (loader) loader.remove();
