@@ -408,25 +408,69 @@ body.searched .about-me { display: none !important; }
 
 /* About — Brand etymology card */
 .about-brand { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 3rem; align-items: center; padding: 2.5rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent-soft) 35%, var(--bg0)), var(--bg0)); border: 1px solid var(--bd2); box-shadow: var(--sh1); }
-.brand-anagram { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1.6rem 1rem; background: rgba(255,255,255,0.55); border-radius: 16px; border: 1px solid var(--bd2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-[data-theme="dark"] .brand-anagram { background: rgba(255,255,255,0.06); }
-.anagram-stage { position: relative; width: 100%; display: flex; flex-direction: column; gap: 0; user-select: none; }
-.anagram-row { display: flex; justify-content: center; position: relative; z-index: 2; }
-.anagram-row .al { font-family: var(--ff-display); font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 800; letter-spacing: 0.14em; width: 1.9em; text-align: center; padding: 0.25em 0; cursor: default; transition: color 0.25s, transform 0.25s; }
-.anagram-row.top-row .al { color: var(--color-accent); }
-.anagram-row.bot-row .al { color: var(--color-primary-ink); }
-[data-theme="dark"] .anagram-row.top-row .al { color: #ffaa9a; }
-[data-theme="dark"] .anagram-row.bot-row .al { color: #5ee9c1; }
-.anagram-row .al.lit { transform: translateY(-2px); }
-.anagram-row.top-row .al.lit { color: var(--color-accent-deep, #E0513E); }
-.anagram-row.bot-row .al.lit { color: var(--color-primary, #0EA37B); }
-.anagram-arrow-center { text-align: center; font-size: 1.3rem; color: var(--t3); line-height: 1; z-index: 3; position: relative; transition: transform 0.8s ease-in-out; display: block; margin: 0.2rem 0; }
-.anagram-arrow-center.rotated { transform: rotate(180deg); }
-.anagram-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 1; pointer-events: none; }
-.ag-line { fill: none; stroke: var(--color-accent, #FF6B5B); stroke-width: 1.4; opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.55s ease, opacity 0.35s ease, stroke-width 0.25s ease; }
-.ag-line.drawn { stroke-dashoffset: 0; opacity: 0.38; }
-.ag-line.active { opacity: 0.85; stroke-width: 2.4; }
-.brand-anagram-caption { font-size: 0.75rem; color: var(--t3); letter-spacing: 0.06em; }
+/* ── LE SSERAFIM style Anagram ─────────────────────── */
+.brand-anagram {
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    padding: 2rem 1.2rem;
+    background: #0a0a0a;
+    border-radius: 16px; border: 1px solid #222;
+}
+[data-theme="light"] .brand-anagram { background: #111; }
+
+.anagram-stage {
+    position: relative; width: 100%;
+    display: flex; flex-direction: column;
+    gap: 0; user-select: none;
+}
+.anagram-row {
+    display: flex; justify-content: center;
+    position: relative; z-index: 2;
+}
+.anagram-row .al {
+    font-family: var(--ff-display);
+    font-size: clamp(1.3rem, 2.8vw, 1.8rem);
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    width: 1.75em; text-align: center;
+    padding: 0.2em 0;
+    cursor: default;
+    color: #ffffff;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+.anagram-row .al.lit {
+    color: #0099ff;
+    text-shadow: 0 0 12px rgba(0,153,255,0.6);
+}
+
+.anagram-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    overflow: visible; z-index: 1;
+    pointer-events: none;
+}
+.ag-line {
+    fill: none;
+    stroke: #0099ff;
+    stroke-width: 2.2;
+    opacity: 0;
+    stroke-linecap: round;
+}
+.ag-line.drawn   { opacity: 0.55; }
+.ag-line.active  { opacity: 1; stroke-width: 3.2; }
+
+.anagram-arrow-center {
+    text-align: center; font-size: 1.2rem;
+    color: #444; line-height: 1;
+    z-index: 3; position: relative;
+    transition: transform 0.8s ease-in-out, color 0.3s;
+    display: block; margin: 0.25rem 0;
+}
+.anagram-arrow-center.rotated { transform: rotate(180deg); color: #0099ff; }
+
+.brand-anagram-caption {
+    font-size: 0.72rem; color: #555;
+    letter-spacing: 0.08em; text-transform: uppercase;
+}
 .brand-meaning { display: flex; flex-direction: column; gap: 1rem; }
 .brand-h3 { font-size: 1.4rem; font-weight: 800; color: var(--t1); margin: 0 0 0.2rem; letter-spacing: -0.02em; word-break: keep-all; }
 .brand-h3-en { font-size: 0.95rem; font-weight: 600; color: var(--t3); letter-spacing: 0.01em; }
@@ -885,7 +929,7 @@ body.searched .section-divider { display: none; }
         <h2 id="aboutMeTitle" class="about-title" data-reveal="fade-up">프로젝트 소개</h2>
 
         <div class="about-brand" data-reveal="fade-up">
-            <div class="brand-anagram" aria-hidden="true">
+            <div class="brand-anagram" aria-label="DIASPORA is an anagram of PARADISO">
                 <div class="anagram-stage" id="anagramStage">
                     <div class="anagram-row top-row" id="agTop">
                         <span class="al" data-i="0">D</span>
@@ -910,6 +954,8 @@ body.searched .section-divider { display: none; }
                         <span class="al" data-i="7">O</span>
                     </div>
                 </div>
+                <div class="brand-anagram-caption">same 8 letters · 동일한 8개 글자</div>
+            </div>
                 <div class="brand-anagram-caption">동일한 8개 글자 · same 8 letters</div>
             </div>
             <div class="brand-meaning">
@@ -3051,7 +3097,7 @@ function showVisaDocForAction(visaCode) {
   }
 }
 
-// ── Anagram × Lines (DIASPORA ↔ PARADISO) ──────────────────────
+// ── LE SSERAFIM style Anagram Lines ──────────────────────────────
 (function initAnagramLines() {
     const stage = document.getElementById('anagramStage');
     const svg   = document.getElementById('anagramSvg');
@@ -3059,55 +3105,82 @@ function showVisaDocForAction(visaCode) {
     const agBot = document.getElementById('agBot');
     const arrow = document.getElementById('anagramArrow');
     if (!stage || !svg || !agTop || !agBot) return;
+
+    // DIASPORA[i] → PARADISO[j]
+    // D(0)→D(4), I(1)→I(5), A(2)→A(1), S(3)→S(6),
+    // P(4)→P(0), O(5)→O(7), R(6)→R(2), A(7)→A(3)
     const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
+
     const topEls = Array.from(agTop.querySelectorAll('.al'));
     const botEls = Array.from(agBot.querySelectorAll('.al'));
     let lineEls = [];
+
+    // 각 선에 살짝 다른 각도 오프셋을 줘서 LE SSERAFIM 느낌 (불규칙 겹침)
+    const WOBBLE = [0, -3, 4, -2, 5, -4, 3, -1];
+
     function buildLines() {
-        svg.innerHTML = ''; lineEls = [];
+        svg.innerHTML = '';
+        lineEls = [];
         const sRect = stage.getBoundingClientRect();
         svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
+
         MAP.forEach((bIdx, tIdx) => {
             const tR = topEls[tIdx].getBoundingClientRect();
             const bR = botEls[bIdx].getBoundingClientRect();
-            const x1 = tR.left + tR.width/2 - sRect.left, y1 = tR.bottom - sRect.top;
-            const x2 = bR.left + bR.width/2 - sRect.left, y2 = bR.top - sRect.top;
-            const len = Math.hypot(x2-x1, y2-y1);
-            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-            line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-            line.setAttribute('class','ag-line');
-            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
-            svg.appendChild(line); lineEls.push(line);
+            const x1 = tR.left + tR.width / 2 - sRect.left;
+            const y1 = tR.bottom - sRect.top;
+            const x2 = bR.left + bR.width / 2 - sRect.left + WOBBLE[tIdx];
+            const y2 = bR.top - sRect.top;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('class', 'ag-line');
+            svg.appendChild(line);
+            lineEls.push(line);
         });
-        drawAll();
+
+        animateDraw();
     }
-    function drawAll(delay) {
-        const d = delay === undefined ? 120 : delay;
-        lineEls.forEach(ln => { ln.classList.remove('drawn'); ln.style.strokeDashoffset = ln.style.strokeDasharray; });
+
+    function animateDraw(startDelay) {
+        const base = startDelay || 80;
+        // 선을 하나씩 빠르게 순차 등장 (LE SSERAFIM 영상 느낌)
+        lineEls.forEach(ln => { ln.classList.remove('drawn'); ln.style.opacity = 0; });
+        lineEls.forEach((ln, i) => {
+            setTimeout(() => {
+                ln.style.transition = 'opacity 0.18s ease';
+                ln.classList.add('drawn');
+            }, base + i * 60);
+        });
+        // 화살표 회전 (선 등장 중간 타이밍)
         setTimeout(() => {
-            lineEls.forEach((ln,i) => setTimeout(() => ln.classList.add('drawn'), i*55));
             if (arrow) arrow.classList.toggle('rotated');
-        }, d);
+        }, base + 3 * 60);
     }
+
     function highlight(tIdx, bIdx, on) {
-        lineEls.forEach(l => l.classList.toggle('active', on && l === lineEls[tIdx]));
-        topEls.forEach((l,i) => l.classList.toggle('lit', on && i === tIdx));
-        botEls.forEach((l,i) => l.classList.toggle('lit', on && i === bIdx));
+        lineEls.forEach((l, i) => l.classList.toggle('active', on && i === tIdx));
+        topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
+        botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
     }
-    topEls.forEach((el,tIdx) => {
+
+    topEls.forEach((el, tIdx) => {
         el.addEventListener('mouseenter', () => highlight(tIdx, MAP[tIdx], true));
         el.addEventListener('mouseleave', () => highlight(tIdx, MAP[tIdx], false));
     });
-    botEls.forEach((el,bIdx) => {
+    botEls.forEach((el, bIdx) => {
         const tIdx = MAP.indexOf(bIdx);
         el.addEventListener('mouseenter', () => highlight(tIdx, bIdx, true));
         el.addEventListener('mouseleave', () => highlight(tIdx, bIdx, false));
     });
+
     if (document.readyState === 'complete') buildLines();
     else window.addEventListener('load', buildLines);
     window.addEventListener('resize', buildLines);
-    setInterval(() => drawAll(0), 6000);
+
+    // 5초마다 선 다시 그리기
+    setInterval(() => animateDraw(0), 5000);
 })();
 
 </script>
