@@ -51,3 +51,37 @@
 - 인지 부하 관리: 라벨 없는 칩 나열은 혼란을 유발하므로, 제목/마이크로카피/항목 축소가 필수입니다.
 - 접근성/모바일 가독성: 짧은 라벨, 제한된 초기 개수, 명확한 포커스/터치 타겟이 실제 사용성 개선에 직접적입니다.
 - 과도한 재디자인 없이 텍스트/구조 중심의 최소 수정으로도 즉시 품질 개선이 가능합니다.
+
+### Direct-search CTA position stability bug
+
+1. **Root cause**
+- 현재 `index.html`에서 `#searchToggleBtn`은 `.hero-actions`에 있고, 두 경로 버튼은 별도 `.qa-main`에 분리되어 있습니다.
+- 클릭 시 `toggle-search` 동작으로 `body.searched` 상태가 적용되면, `body.searched .hero-actions, body.searched .qa-main` 은닉 규칙과 `#searchForm` 표시 규칙이 동시에 작동하면서 헤더 내부 레이아웃 재배치(reflow)가 발생합니다.
+- 결과적으로 사용자는 CTA가 “같은 의미 위치”에 고정된 것이 아니라, 상호작용 후 다른 버튼군 대비 상대적 계층이 바뀐 것처럼 인지합니다.
+
+2. **Chosen stable placement rule**
+- **고정 규칙: direct-search CTA를 항상 두 메인 경로 버튼(입국 전/입국 후) 위에 배치하고, 클릭 후에도 동일한 계층 위치에 유지**합니다.
+- 클릭은 “검색 입력 영역 표시”만 수행하고, CTA 자신의 의미적 위치(경로 버튼 대비 위/아래)는 변경하지 않습니다.
+
+3. **Exact file(s) and selector(s) involved**
+- 파일: `index.html`
+- 관련 선택자/요소:
+  - `#searchToggleBtn`
+  - `.hero-actions`
+  - `.qa-main`
+  - `.visa-manual-section.in-hero .visa-track-selector`
+  - `#searchForm`
+  - `body.searched .hero-actions`, `body.searched .qa-main`, `body.searched #searchForm`
+
+4. **Minimal patch strategy**
+- `.hero-actions`와 `.qa-main`을 다시 섞거나 동적으로 재삽입하지 않고, 현재 DOM 구조를 유지합니다.
+- `body.searched` 전환 시에도 CTA 레일의 공간을 예측 가능하게 유지하도록 다음 최소 원칙을 적용합니다.
+  - CTA와 경로 버튼을 하나의 고정된 수직 흐름으로 취급(상단 CTA, 하단 경로 버튼).
+  - 검색 폼(`#searchForm`)은 같은 레일 내에서 “아래로 펼침”되도록 하고, 기존 액션 블록의 상대 순서를 바꾸지 않음.
+  - 필요 시 CTA는 숨기되(`display:none`) 숨기기 전/후에 경로 버튼의 상대 계층이 바뀌지 않도록 고정된 블록 순서를 유지.
+- 애니메이션 기반 위치 이동은 배제하고, 단순 `display`/`visibility`/고정 간격 토큰으로 결정론적 레이아웃만 사용합니다.
+
+5. **Why the fix improves usability**
+- 사용자가 클릭 전후 동일한 액션 맵을 유지하므로 “버튼이 도망간다”는 인지적 불안정이 사라집니다.
+- 상호작용 결과가 “콘텐츠 확장”으로만 해석되어 학습 비용이 줄고, 첫 방문자의 과업 시작 속도가 개선됩니다.
+- 모바일에서도 레이아웃 점프가 줄어 오탭/재탐색이 감소하고, 검색 진입 동선이 예측 가능해집니다.
