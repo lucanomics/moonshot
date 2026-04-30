@@ -266,6 +266,7 @@ body.searched .results-area .qf { opacity: 1; transform: translateY(0); pointer-
 .badge-req { display: inline-block; background: #e0f2fe; color: #0284c7; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: 0.02em; }
 [data-theme="dark"] .badge-req { background: #082f49; color: #7dd3fc; }
 mark.h { background: color-mix(in srgb, var(--ac) 22%, transparent); color: var(--ac); padding: 0.08em 0.3em; border-radius: 4px; font-weight: 700; }
+
 .es { text-align: center; padding: 4.5rem 1rem; }
 .es-t { font-weight: 800; font-size: 1.05rem; color: var(--t2); margin-bottom: 0.35rem; }
 .es-d { font-size: 0.88rem; color: var(--t3); line-height: 1.6; }
@@ -411,15 +412,11 @@ body.searched .about-me { display: none !important; }
 .brand-anagram { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2.5rem 1.2rem; background: transparent; border-radius: 16px; border: none; }
 .anagram-stage { position: relative; width: 100%; display: flex; flex-direction: column; gap: 4.5rem; user-select: none; }
 .anagram-row { display: flex; justify-content: center; position: relative; z-index: 2; white-space: nowrap; flex-wrap: nowrap; }
-.anagram-row .al { font-family: var(--ff-display); font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 800; letter-spacing: 0.14em; width: 1.9em; text-align: center; padding: 0.25em 0; cursor: default; transition: color 0.25s, transform 0.25s, text-shadow 0.25s; }
-.anagram-row.top-row .al { color: var(--color-primary-ink); }
-.anagram-row.bot-row .al { color: var(--color-accent-deep); }
-.anagram-row.top-row .al.lit { color: var(--ac) !important; transform: translateY(-2px); text-shadow: 0 0 12px rgba(14,163,123,0.3); }
-.anagram-row.bot-row .al.lit { color: var(--color-accent) !important; transform: translateY(-2px); text-shadow: 0 0 12px rgba(255,107,91,0.3); }
-[data-theme="dark"] .anagram-row.top-row .al { color: #34D4A8; }
-[data-theme="dark"] .anagram-row.bot-row .al { color: #FF8B7A; }
-[data-theme="dark"] .anagram-row.top-row .al.lit { color: #7FFFD4 !important; text-shadow: 0 0 16px rgba(52,212,168,0.85); }
-[data-theme="dark"] .anagram-row.bot-row .al.lit { color: #FFB3A7 !important; text-shadow: 0 0 16px rgba(255,107,91,0.85); }
+.anagram-row .al { font-family: var(--ff-display); font-size: clamp(1.05rem, 2vw, 1.35rem); font-weight: 800; letter-spacing: 0.14em; width: 1.9em; text-align: center; padding: 0.25em 0; cursor: default; color: var(--t1); transition: color 0.25s, transform 0.25s, text-shadow 0.25s; }
+.anagram-row.top-row .al { color: var(--ac); }
+.anagram-row.bot-row .al { color: var(--color-primary-ink); }
+[data-theme="dark"] .anagram-row.bot-row .al { color: var(--color-primary-soft); }
+.anagram-row .al.lit { transform: translateY(-2px); color: var(--ac) !important; text-shadow: 0 0 16px rgba(255,107,91,0.6); }
 .anagram-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 1; pointer-events: none; }
 .ag-line { fill: none; stroke: var(--t3); stroke-width: 1.8; stroke-linecap: round; opacity: 0; transition: opacity 0.2s; }
 [data-theme="dark"] .ag-line { stroke: rgba(255,255,255,0.45); }
@@ -1026,6 +1023,80 @@ body.searched #searchForm { display: block !important; }
             <div>
                 <h3>한국에서의 새로운 시작, 흔들림 없이.</h3>
                 <p>지금 바로 AI 맞춤 분석을 통해 당신에게 가장 적합한 체류 자격과 취업 가능 여부를 팩트체크하세요.</p>
+            </div>
+        </div>
+
+        <div class="about-intro" data-reveal="fade-left">
+            <div class="intro-img-placeholder">🚀</div>
+            <div class="intro-text">
+                <h3>Paradiso 39의 시작</h3>
+                <p>
+                    대한민국에는 39가지의 체류자격이 존재하지만, 법령과 매뉴얼은 파편화되어 있어 진입 장벽이 높습니다. Paradiso 39는 출입국·외국인정책본부 실무 매뉴얼을 기반으로, 가장 정확한 비자 정보와 관할 관서를 단일 플랫폼에서 직관적으로 제공하기 위해 기획되었습니다. 향후 체류 외국인 300만 시대를 대비하는 공식 인프라로 도약하고자 합니다.
+                </p>
+            </div>
+        </div>
+
+        <div class="about-hobbies" data-reveal="fade-right">
+            <h3>핵심 가치 및 비전</h3>
+            <p>단순한 정보 나열을 넘어, 사용자 맞춤형 분석과 정확한 매칭을 통해 실질적인 행정 처리 시간을 단축하고 정보의 비대칭성을 해소합니다.</p>
+            <div class="hobbies-grid" data-stagger data-stagger-delay="100">
+                <div class="hobby-card hobby-1">
+                    <div class="hobby-icon">📑</div>
+                    <div class="hobby-title">Data Integrity</div>
+                    <div class="hobby-desc">법무부 출입국·외국인정책본부 실무 매뉴얼과 시행규칙을 1차 출처로 삼습니다.</div>
+                </div>
+                <div class="hobby-card hobby-2">
+                    <div class="hobby-icon">🧭</div>
+                    <div class="hobby-title">User Centric</div>
+                    <div class="hobby-desc">39개 자격을 4개 카테고리로 묶어 한 화면에서 비교·검색합니다.</div>
+                </div>
+                <div class="hobby-card hobby-3">
+                    <div class="hobby-icon">✨</div>
+                    <div class="hobby-title">AI Powered</div>
+                    <div class="hobby-desc">국적·체류자격·직무 정보로 본인 상황에 맞는 절차를 즉시 제시합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-experience" data-reveal="fade-left">
+            <h3 class="exp-heading">로드맵</h3>
+            <div class="exp-row">
+                <span class="exp-dot"></span>
+                <div class="exp-text">
+                    <span class="exp-company">정식 서비스 런칭 및 다국어 지원 확대</span>
+                    <span class="exp-detail">영어·중국어·베트남어 UI 동시 제공, 1345 핫라인 연동 강화</span>
+                </div>
+                <span class="exp-year">2026 Q3</span>
+            </div>
+            <div class="exp-row">
+                <span class="exp-dot"></span>
+                <div class="exp-text">
+                    <span class="exp-company">AI 맞춤형 비자 진단 고도화</span>
+                    <span class="exp-detail">RAG 기반 매뉴얼 검색·국적별 케이스 매칭으로 정밀도 향상</span>
+                </div>
+                <span class="exp-year">2026 Q1</span>
+            </div>
+            <div class="exp-row">
+                <span class="exp-dot"></span>
+                <div class="exp-text">
+                    <span class="exp-company">공공데이터 활용 공모전 출품 및 베타 테스트</span>
+                    <span class="exp-detail">39개 자격 통합 검색 MVP 공개·실사용자 피드백 수집</span>
+                </div>
+                <span class="exp-year">2025 Q4</span>
+            </div>
+        </div>
+
+        <div class="about-footer" data-reveal="fade-right">
+            <div class="footer-hero-img">
+                <div class="footer-hero-inner">
+                    <div class="footer-hero-title">대한민국 39가지<br>체류자격, 한 곳에서.</div>
+                    <div class="footer-hero-chips">
+                        <span class="footer-chip">📑 매뉴얼 기반</span>
+                        <span class="footer-chip">🤖 AI 분석</span>
+                        <span class="footer-chip">🏛 관할관서 조회</span>
+                        <span class="footer-chip">💼 직종·업종 코드</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -2503,6 +2574,7 @@ function renderResults(query){
     const topCats=[...new Set(filtered.slice(0,3).map(v=>({short:'단기',study:'유학/연수',work:'취업',invest:'투자',family:'가족/이민',other:'기타',diplo:'외교',nhis:'건강보험',faq:'안내',scn:'시나리오'}[v.cat]||v.cat)))];
     document.getElementById('rh').textContent=`관련도 정렬 · ${modeStr} · ${topCats.join(', ')}`;
 }
+document.addEventListener('DOMContentLoaded', initScrollReveal);
 
 let dt;
 function handleInput(){
