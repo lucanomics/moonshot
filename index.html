@@ -94,12 +94,15 @@ body { background: transparent !important; color: var(--t1); line-height: 1.65; 
 .toast-warning { border-left: 3px solid var(--color-warning); }
 .toast-success { border-left: 3px solid var(--color-success); }
 
-/* QA Main & Buttons */
-.qa-main { display: flex; gap: 0.8rem; justify-content: center; margin-top: 0.8rem; transition: opacity 0.4s; flex-wrap: wrap; }
-body.searched .qa-main { display: none; }
+/* Hero Actions Panel */
+.hero-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; width: 100%; max-width: 680px; margin-top: 1.2rem; }
+body.searched .hero-actions { display: none; }
 body.searched .visa-manual-section.in-hero { display: none; }
-.qa-btn { background: var(--bg1); border: 1px solid var(--bd); padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 800; font-size: 0.95rem; color: var(--t2); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; box-shadow: var(--sh1); font-family: var(--ff) !important; }
-.qa-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
+.hero-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; background: color-mix(in srgb, var(--bg1) 80%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--bd); padding: 1rem 0.6rem; border-radius: 14px; font-family: var(--ff) !important; font-weight: 700; font-size: 0.82rem; color: var(--t2); cursor: pointer; transition: all 0.22s cubic-bezier(0.4,0,0.2,1); box-shadow: var(--sh1); text-align: center; line-height: 1.35; }
+.hero-action-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
+.hero-action-btn:active { transform: translateY(-1px); box-shadow: var(--sh2); }
+.hero-action-icon { font-size: 1.5rem; line-height: 1; }
+.hero-action-label { font-size: 0.78rem; letter-spacing: -0.01em; word-break: keep-all; }
 .jc-ai-search-row { display: flex; justify-content: flex-end; margin-bottom: 0.8rem; }
 .jur-label-accent { font-size: 0.9rem; color: var(--ac); }
 .jur-sub-margin { margin-bottom: 1rem; }
@@ -519,6 +522,9 @@ body.searched .about-me { display: none !important; }
 
 @media (max-width: 768px) {
     body:not(.searched) .hero-container { min-height: auto; padding: 3rem 1rem 1.5rem; }
+    .hero-actions { grid-template-columns: 1fr 1fr; }
+    .hero-action-btn.search-toggle-btn { grid-column: 1 / -1; flex-direction: row; padding: 0.8rem 1rem; }
+    .hero-action-btn.search-toggle-btn .hero-action-icon { font-size: 1.2rem; }
     .theme-btn-text { display: none; }
     #cityBtnLabel { display: none; }
     .brand-hero { padding: 4rem 1rem 2rem; gap: 3rem; }
@@ -554,9 +560,7 @@ body.searched .about-me { display: none !important; }
     .stat-icon { width: 2rem; height: 2rem; font-size: 1.15rem; }
 
     /* Visa Manual Section Mobile */
-    .visa-manual-section { padding: 2rem 1rem; }
-    .visa-manual-title { font-size: 1.5rem; }
-    .visa-track-card { padding: 1.4rem; }
+    .visa-track-card { padding: 1rem 0.6rem; }
 }
 
 @media (max-width: 640px) {
@@ -564,6 +568,11 @@ body.searched .about-me { display: none !important; }
     body.searched .logo-brand { font-size: 1.2rem; }
     body.searched #q { font-size: 0.88rem; }
     body.searched .header-inner { padding: 0.5rem 0.8rem; }
+    .hero-actions { grid-template-columns: 1fr; gap: 0.5rem; }
+    .hero-action-btn { flex-direction: row; padding: 0.75rem 1rem; gap: 0.6rem; }
+    .hero-action-btn.search-toggle-btn { grid-column: auto; }
+    .hero-action-icon { font-size: 1.2rem; }
+    .hero-action-label { font-size: 0.82rem; text-align: left; }
     .ctrls { display: none; }
     .ai-fab { bottom: 1rem; right: 1rem; padding: 0.65rem 0.95rem; font-size: 0.78rem; }
     .su { margin: 0; border-radius: 0; box-shadow: none; border-left: 0; border-right: 0; }
@@ -645,16 +654,14 @@ body.searched .scroll-cue { display: none; }
 body.searched .section-divider { display: none; }
 
 /* ── Visa Manual Section Styles ─────────────────────── */
-.visa-manual-section { max-width: 1160px; margin: 4rem auto; padding: 2rem 1.5rem; }
-.visa-manual-title { font-size: 2rem; font-weight: 800; color: var(--t1); margin-bottom: 1rem; text-align: center; }
-.visa-manual-subtitle { font-size: 1rem; color: var(--t3); margin-bottom: 2rem; text-align: center; }
-.visa-track-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-.visa-track-card { background: var(--bg1); border: 2px solid var(--bd); border-radius: 16px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-.visa-track-card:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-4px); box-shadow: var(--shD); }
-.visa-track-icon { font-size: 3rem; }
-.visa-track-title { font-size: 1.3rem; font-weight: 800; color: var(--t1); }
-.visa-track-desc { font-size: 0.9rem; color: var(--t3); line-height: 1.6; }
-.visa-dynamic-content { margin-top: 2rem; }
+.visa-manual-section { max-width: 1160px; margin: 0 auto; padding: 0; }
+.visa-track-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+.visa-track-card { background: color-mix(in srgb, var(--bg1) 80%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--bd); border-radius: 14px; padding: 1.2rem 0.8rem; text-align: center; cursor: pointer; transition: all 0.22s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; box-shadow: var(--sh1); }
+.visa-track-card:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
+.visa-track-icon { font-size: 1.8rem; line-height: 1; }
+.visa-track-title { font-size: 1rem; font-weight: 800; color: var(--t1); }
+.visa-track-desc { font-size: 0.78rem; color: var(--t3); line-height: 1.45; word-break: keep-all; }
+.visa-dynamic-content { margin-top: 1rem; }
 .visa-step-container { background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; padding: 2rem; }
 .visa-track-btn { background: var(--ac); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--ff); font-size: 0.85rem; }
 .visa-track-btn:hover { background: var(--ac2); transform: translateY(-1px); box-shadow: var(--sh2); }
@@ -696,12 +703,13 @@ body::before {
 }
 
 /* Visa Manual in Hero */
-.visa-manual-section.in-hero { width: 100%; margin: 0; padding: 0; display: block; border: none; background: transparent; }
+.visa-manual-section.in-hero { width: 100%; max-width: 680px; margin: 0; padding: 0; display: block; border: none; background: transparent; }
+.visa-manual-section.in-hero .visa-track-selector { margin-top: 0.6rem; }
 body.searched .visa-manual-section.in-hero { display: none !important; }
 
-/* Search Toggle Button */
-.search-toggle-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; padding: 0.8rem 1.4rem; font-size: 0.95rem; font-weight: 600; color: var(--t1); cursor: pointer; transition: all 0.2s; margin: 1rem auto; }
-.search-toggle-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); }
+/* Search Toggle (inherits .hero-action-btn, accent border for primary action) */
+.hero-action-btn.search-toggle-btn { border: 1.5px dashed var(--ac); color: var(--ac); font-weight: 800; }
+.hero-action-btn.search-toggle-btn:hover { background: color-mix(in srgb, var(--ac) 12%, var(--bg1)); border-style: solid; }
 body.searched .search-toggle-btn { display: none !important; }
 body.searched #searchForm { display: block !important; }
     </style>
@@ -769,18 +777,22 @@ body.searched #searchForm { display: block !important; }
         </div>
 
 
-        <button type="button" id="searchToggleBtn" class="search-toggle-btn">
-            🔍 비자 코드 및 키워드 직접 검색하기
-        </button>
-
-        <div class="qa-main" id="qaMain">
-            <button class="qa-btn" data-action="open-jobcode-modal">💼 취업신고용 업종/직종 코드 찾기</button>
-            <button class="qa-btn" data-action="open-jurisdiction-modal">🏛 관할 출입국관서 조회</button>
+        <div class="hero-actions" id="heroActions">
+            <button type="button" id="searchToggleBtn" class="hero-action-btn search-toggle-btn" data-action="toggle-search">
+                <span class="hero-action-icon">🔍</span>
+                <span class="hero-action-label">비자 코드 및 키워드 직접 검색</span>
+            </button>
+            <button class="hero-action-btn" data-action="open-jobcode-modal">
+                <span class="hero-action-icon">💼</span>
+                <span class="hero-action-label">취업신고용 업종/직종 코드</span>
+            </button>
+            <button class="hero-action-btn" data-action="open-jurisdiction-modal">
+                <span class="hero-action-icon">🏛</span>
+                <span class="hero-action-label">관할 출입국관서 조회</span>
+            </button>
         </div>
 
-        <section id="visaManualSection" class="visa-manual-section in-hero" aria-labelledby="visaManualTitle">
-            <h2 id="visaManualTitle" class="visa-manual-title" data-reveal="fade-up">사증·체류 매뉴얼</h2>
-            <p class="visa-manual-subtitle" data-reveal="fade-up">입국 전 사증 발급부터 입국 후 체류 연장까지, 단계별 안내</p>
+        <section id="visaManualSection" class="visa-manual-section in-hero">
             <div class="visa-track-selector" data-reveal="fade-up">
                 <div class="visa-track-card" onclick="startPreEntryTrack()" tabindex="0" role="button" aria-label="입국 전 사증 발급 트랙">
                     <div class="visa-track-icon">✈️</div>
@@ -2637,16 +2649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadVisaData();
     if(qEl) qEl.addEventListener('input', handleInput);
 
-    const searchToggleBtn = document.getElementById('searchToggleBtn');
     const searchForm = document.getElementById('searchForm');
-    if (searchToggleBtn && searchForm) {
-        searchToggleBtn.addEventListener('click', () => {
-            searchForm.style.display = 'block';
-            searchToggleBtn.style.display = 'none';
-            if (qEl) qEl.focus();
-        });
-    }
-
     searchForm?.addEventListener('submit', (e) => {
         e.preventDefault(); executeSearch();
     });
@@ -2686,6 +2689,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 'quick-filter': () => { document.getElementById('q').value = actionBtn.dataset.query; document.getElementById('xb').classList.add('v'); renderResults(actionBtn.dataset.query); },
                 'set-search-mode': () => setSearchMode(actionBtn.dataset.mode),
                 'toggle-accordions': () => toggleAccordions(actionBtn.dataset.fold === 'true'),
+                'toggle-search': () => {
+                    const sf = document.getElementById('searchForm');
+                    const stb = document.getElementById('searchToggleBtn');
+                    if (sf) sf.style.display = 'block';
+                    if (stb) stb.style.display = 'none';
+                    if (qEl) qEl.focus();
+                },
                 'open-jobcode-modal': () => openJobCodeModal(),
                 'open-jurisdiction-modal': () => openJurisdictionModal(),
                 'search-jobcode-ai': () => searchJobcodeWithAI(),
