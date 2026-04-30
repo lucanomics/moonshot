@@ -112,7 +112,9 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 .toast-success { border-left: 3px solid var(--color-success); }
 
 /* Hero Actions Panel */
-.hero-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-5); }
+.hero-actions { display: grid; grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-5); }
+.qa-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-2); }
+.qa-main .hero-action-btn { min-width: 0; }
 body.searched .hero-actions { display: none; }
 body.searched .visa-manual-section.in-hero { display: none; }
 .hero-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-2); background: color-mix(in srgb, var(--bg1) 80%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--bd); min-height: var(--btn-h-xl); padding: var(--sp-3) var(--sp-3); border-radius: var(--btn-r-lg); font-family: var(--ff) !important; font-weight: var(--btn-fw); font-size: 0.82rem; color: var(--t2); cursor: pointer; transition: var(--btn-tr); box-shadow: var(--sh1); text-align: center; line-height: 1.35; }
@@ -540,6 +542,8 @@ body.searched .about-me { display: none !important; }
 @media (max-width: 768px) {
     body:not(.searched) .hero-container { min-height: auto; padding: var(--sp-6) var(--sp-4) var(--sp-5); }
     .hero-actions { display: grid; grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 100%; min-width: 0; }
+    .qa-main { grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 100%; min-width: 0; }
+    .qa-main .hero-action-btn { width: 100%; }
     .hero-action-btn { flex-direction: row; min-height: var(--btn-h-lg); padding: var(--sp-3) var(--sp-4); gap: var(--sp-3); width: 100%; min-width: 0; box-sizing: border-box; }
     .hero-action-btn.search-toggle-btn { grid-column: auto; width: 100%; }
     .hero-action-btn .hero-action-icon { font-size: 1.2rem; flex-shrink: 0; }
@@ -776,7 +780,7 @@ body::before {
 
 /* Visa Manual in Hero */
 .visa-manual-section.in-hero { width: 100%; max-width: 680px; margin: 0; padding: 0; display: block; border: none; background: transparent; }
-.visa-manual-section.in-hero .visa-track-selector { margin-top: 0.6rem; }
+.visa-manual-section.in-hero .visa-track-selector { margin-top: 0; }
 body.searched .visa-manual-section.in-hero { display: none !important; }
 
 /* Search Toggle (inherits .hero-action-btn, accent border for primary action) */
@@ -854,9 +858,12 @@ body.searched #searchForm { display: block !important; }
                 <span class="hero-action-icon">🔍</span>
                 <span class="hero-action-label">비자 코드 및 키워드 직접 검색</span>
             </button>
+        </div>
+
+        <div class="qa-main" id="qaMain" aria-label="자주 사용하는 행정 도구">
             <button class="hero-action-btn" data-action="open-jobcode-modal">
                 <span class="hero-action-icon">💼</span>
-                <span class="hero-action-label">취업신고용 업종/직종 코드</span>
+                <span class="hero-action-label">취업신고용 업종/직종 코드 찾기</span>
             </button>
             <button class="hero-action-btn" data-action="open-jurisdiction-modal">
                 <span class="hero-action-icon">🏛</span>
