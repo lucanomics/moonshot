@@ -44,28 +44,22 @@
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
-button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 html { font-size: var(--fs); scroll-behavior: smooth; }
 body, input, button, textarea, select { font-family: var(--ff) !important; }
 body { background: transparent !important; color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: color 0.3s; }
 
-/* Top Controls */
+/* Canvas & Ambient Background */
+#starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.6s ease; }
+body::before { content: ""; position: fixed; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--color-primary-soft) 0%, transparent 60%); top: -20%; left: -20%; opacity: 0.12; pointer-events: none; z-index: -2; animation: ambientFloat 22s infinite alternate ease-in-out; }
+body::after { content: ""; position: fixed; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--color-accent-soft) 0%, transparent 60%); bottom: -20%; right: -15%; opacity: 0.1; pointer-events: none; z-index: -2; animation: ambientFloat2 26s infinite alternate ease-in-out; }
+@keyframes ambientFloat { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(8%, 12%) scale(1.05); } }
+@keyframes ambientFloat2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-10%, -15%) scale(0.95); } }
+
+/* Header & Controls */
 .top-ctrls { position: fixed; top: 1.2rem; right: 1.2rem; z-index: 100; display: flex; gap: 0.5rem; align-items: center; }
 .theme-btn { background: var(--bg2); border: 1px solid var(--bd); color: var(--t1); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.2s; }
-
-/* Toast */
-.toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--color-surface-dark); color: var(--color-surface); padding: 0.9rem 1.4rem; border-radius: var(--radius-md); box-shadow: var(--shD); opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 2000; font-size: 0.88rem; pointer-events: none; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast-warning { border-left: 3px solid var(--color-warning); }
-
-/* Canvas & Layouts */
-#starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.6s ease, opacity 2s ease; }
-.hero-container::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--bg0) 10%, transparent), color-mix(in srgb, var(--bg0) 65%, transparent) 75%); pointer-events: none; z-index: -1; transition: opacity 0.6s; }
-body.searched .hero-container::before { opacity: 0; }
-body.night-light-mode .hero-container::before { opacity: 0.08 !important; }
-body.night-light-mode .hero-container { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); box-shadow: var(--sh1); z-index: 50; }
 .header-inner { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 680px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
@@ -138,10 +132,79 @@ body.searched #q { padding: 0.7rem 0.7rem 0.7rem 2.6rem; font-size: 0.9rem; }
 .xb { background: 0; border: 0; color: var(--t3); cursor: pointer; padding: 0.5rem; font-size: 1.1rem; display: none; transition: color 0.2s; }
 .xb.v { display: block; }
 .sbar-go { background: 0; border: 0; cursor: pointer; color: var(--t3); padding: 0 1rem 0 0.4rem; display: flex; align-items: center; transition: color 0.2s; }
+.sbar-go:hover { color: var(--ac); }
+.sbar-go svg { width: 20px; height: 20px; }
 
-/* ═══════════════════════════════════════════════════════════════
-   Restored Sections: Brand Hero Stats & Features (100% Data)
-   ═══════════════════════════════════════════════════════════════ */
+.auto-list { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--bg1); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--shD); max-height: 280px; overflow-y: auto; z-index: 999; display: none; opacity: 0; transform: translateY(-8px); transition: all 0.2s ease; }
+.auto-list.active { display: block; opacity: 1; transform: translateY(0); }
+.auto-item { padding: 0.7rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--t1); border-bottom: 1px solid var(--bd2); }
+.auto-item:hover { background: var(--bg2); }
+
+.smeta { display: flex; justify-content: space-between; margin-top: 0.4rem; font-size: 0.72rem; color: var(--t3); padding: 0 0.5rem; opacity: 0; height: 0; overflow: hidden; transition: opacity 0.3s ease; }
+body.searched .smeta { opacity: 1; height: auto; overflow: visible; }
+.ctrls { display: flex; align-items: center; gap: 0.35rem; opacity: 0; pointer-events: none; max-width: 0; overflow: hidden; transition: all 0.4s ease; flex-shrink: 0; }
+body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overflow: visible; }
+.cb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.28rem 0.65rem; font-size: 0.72rem; color: var(--t2); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.15s ease; }
+.cb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
+.cb.on { background: var(--ac); color: #fff; border-color: var(--ac); }
+
+/* Results Area */
+.results-area { max-width: 1160px; margin: 0 auto; padding: 0 1rem; min-height: 100vh; }
+.results-area .rlist, .results-area .qf { opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s; }
+body.searched .results-area .rlist, body.searched .results-area .qf { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.qf { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 1rem 0 0.8rem; }
+.qb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.22rem 0.65rem; font-size: 0.7rem; color: var(--t3); cursor: pointer; font-weight: 500; transition: all 0.15s ease; }
+.qb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
+
+/* Modals CSS (RESTORED) */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-box { background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shD); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.modal-overlay.active .modal-box { transform: scale(1); }
+.modal-header { padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--bd2); display: flex; justify-content: space-between; align-items: center; color: var(--t1); }
+.modal-title { margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.4; }
+.modal-close { background: none; border: none; color: var(--t3); cursor: pointer; font-size: 1.4rem; transition: color 0.2s; padding: 0.2rem; }
+.modal-close:hover { color: var(--t1); }
+.modal-body { padding: 1.4rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+.ai-textarea { width: 100%; min-height: 100px; padding: 0.8rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 0.9rem; resize: vertical; transition: border-color 0.2s; }
+.ai-textarea:focus { border-color: var(--ac); outline: none; }
+.ai-action-btn { background: var(--bg2); color: var(--ac); border: 1px solid var(--ac); padding: 0.8rem; border-radius: 8px; font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+.ai-action-btn:hover { background: var(--acL); }
+.ai-action-btn.primary { background: var(--ac); color: white; border-color: var(--ac); }
+.ai-action-btn.primary:hover { opacity: 0.9; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: currentColor; animation: spin 1s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Result List Cards */
+.rlist { display: flex; flex-direction: column; gap: 0.85rem; padding-bottom: 5rem; padding-top: 0.5rem; min-height: 60vh; }
+.vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: transform 0.28s, box-shadow 0.28s, border-color 0.28s; animation: cIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 40ms); overflow: hidden; }
+[data-theme="dark"] .vc { box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.vc:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: color-mix(in srgb, var(--ac) 25%, var(--bd2)); }
+@keyframes cIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.vc-h { display: flex; align-items: center; gap: 0.7rem; padding: 1.1rem 1.35rem; cursor: pointer; user-select: none; border-radius: 16px 16px 0 0; transition: background 0.2s; flex-wrap: wrap; }
+.vc-h:hover { background: color-mix(in srgb, var(--ac) 4%, transparent); }
+.bc { font-family: var(--ff-display); font-weight: 700; font-size: 0.92rem; color: var(--ac); background: var(--acL); padding: 5px 11px; border-radius: 8px; letter-spacing: 0.01em; }
+.vt { font-weight: 600; font-size: 1.02rem; color: var(--t1); line-height: 1.3; }
+.bp { font-size: 0.7rem; padding: 3px 9px; border-radius: 999px; font-weight: 600; }
+.tgl { margin-left: auto; color: var(--t3); font-size: 0.75rem; transition: transform 0.3s; padding: 0.4rem; border-radius: 50%; }
+.vc.open .tgl { transform: rotate(180deg); background: color-mix(in srgb, var(--ac) 10%, transparent); color: var(--ac); }
+.vc-cw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.4,0,0.2,1); }
+.vc.open .vc-cw { grid-template-rows: 1fr; }
+.vc-c { overflow: hidden; }
+.vs { padding: 1.2rem 1.35rem; border-top: 1px solid var(--bd3); }
+.tl { display: inline-flex; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 0.65rem; background: var(--acL); color: var(--ac2); }
+.ct { font-size: 0.92rem; color: var(--t2); line-height: 1.75; white-space: pre-line; word-break: keep-all; }
+mark.h { background: color-mix(in srgb, var(--ac) 22%, transparent); color: var(--ac); padding: 0.08em 0.3em; border-radius: 4px; font-weight: 700; }
+.es { text-align: center; padding: 4.5rem 1rem; }
+.es-t { font-weight: 800; font-size: 1.05rem; color: var(--t2); margin-bottom: 0.35rem; }
+.es-d { font-size: 0.88rem; color: var(--t3); line-height: 1.6; }
+
+/* Buttons & Elements inside Result */
+.doc-buttons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin: 1rem 1rem; }
+.doc-trigger-btn { background: var(--bg1); border: 1px solid var(--bd); padding: 1.2rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; color: var(--t2); display: flex; flex-direction: column; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); box-shadow: var(--sh1); font-family: var(--ff) !important; }
+.doc-trigger-btn:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); color: var(--ac); }
+
+/* Brand Hero & Sections */
 .brand-hero, .brand-feature, .about-me { display: block; transition: opacity 0.4s; }
 body.searched .brand-hero, body.searched .brand-feature, body.searched .about-me { display: none; }
 
@@ -499,15 +562,56 @@ body.searched .ft { opacity: 1; }
     <div class="rlist" id="rlist"></div>
 </main>
 
-<footer class="ft">
-    <span class="ft-logo">Paradiso 39</span> v38 · ※ 본 서비스는 베타 테스트 중이며, 제공되는 정보는 법적 효력을 갖지 않습니다.
-</footer>
+<!-- RESTORED: MODALS 100% -->
+<div class="modal-overlay" id="aiModalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 class="modal-title">✨ <span id="aiModalTitleText">AI 분석</span></h2>
+            <button type="button" class="modal-close" data-action="close-ai-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1rem;">현재 직면한 상황(국적, 체류상태 등)을 상세히 적어주시면, AI가 법령 및 매뉴얼 원문에 근거하여 철저한 법적 판단 및 절차를 검증합니다.</p>
+            <textarea id="aiInput" class="ai-textarea" placeholder="상황을 상세히 입력하세요..."></textarea>
+            <button type="button" class="ai-action-btn primary" data-type="analyze">
+                <span>✨ 종합 상황 분석 요청</span>
+                <div class="spinner"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="docModalOverlay">
+    <div class="modal-box" style="max-width: 640px;">
+        <div class="modal-header">
+            <h2 id="docModalTitle" class="modal-title">구비서류 확인</h2>
+            <button type="button" class="modal-close" data-action="close-doc-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="docModalDesc" class="text-desc" style="display:none;"></div>
+            <div id="docModalChecklist"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="faqModalOverlay">
+    <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 id="faqModalTitle" class="modal-title">💡 자주 묻는 질문 (FAQ)</h2>
+            <button type="button" class="modal-close" data-action="close-faq-modal">✕</button>
+        </div>
+        <div class="modal-body" id="faqModalBody"></div>
+    </div>
+</div>
 
 <script>
 // --- UI Helpers ---
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
-// --- Star Canvas Effect ---
+// Modal Engine
+function openModal(id) { const m = document.getElementById(id); if (m) m.classList.add('active'); }
+function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('active'); }
+
+// Canvas Effect
 (async function initParadisoHorizon() {
     const canvas = document.getElementById('starCanvas');
     if (!canvas) return;
@@ -582,35 +686,16 @@ function escapeHtml(s) { const d = document.createElement('div'); d.textContent 
         const t = reduced ? 0 : ts * 0.0004;
         const px = (mouseX - 0.5) * 20, py = (mouseY - 0.5) * 10;
         const horizonY = h * 0.62 + py * 0.3;
-
-        const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
-        sky.addColorStop(0, c.skyTop); sky.addColorStop(0.6, c.skyMid); sky.addColorStop(1, c.skyBot);
-        ctx.fillStyle = sky; ctx.fillRect(0, 0, w, horizonY);
-
-        const sunYOffset = h * (c.sunY || 0.08);
-        const sunX = w * 0.5 + px * 0.6, sunY = horizonY - sunYOffset + Math.sin(t * 0.6) * 2;
-        const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, h * 0.55);
-        glow.addColorStop(0, c.sunA); glow.addColorStop(1, c.sunB);
-        ctx.fillStyle = glow; ctx.fillRect(0, 0, w, horizonY + 40);
-
-        ctx.beginPath(); ctx.arc(sunX, sunY, h * 0.08, 0, Math.PI * 2);
-        ctx.fillStyle = c.sunDisc; ctx.fill();
-
-        mountainPath(horizonY + 4, 80, 0.0018, 0 - px * 0.4, t * 0.3); ctx.fillStyle = c.mtn1; ctx.globalAlpha = 0.85; ctx.fill();
-        mountainPath(horizonY + 28, 55, 0.0030, 320 - px * 0.8, t * 0.5); ctx.fillStyle = c.mtn2; ctx.globalAlpha = 0.92; ctx.fill();
-        mountainPath(horizonY + 48, 36, 0.0045, 600 - px * 1.4, t * 0.7); ctx.fillStyle = c.mtn3; ctx.globalAlpha = 1; ctx.fill();
-
-        ctx.fillStyle = c.skyBot; ctx.fillRect(0, horizonY + 44, w, h - horizonY - 44);
-
-        for (let i = 0; i < 4; i++) {
-            ctx.beginPath(); ctx.moveTo(0, h);
-            for (let x = 0; x <= w + 4; x += 4) {
-                ctx.lineTo(x, horizonY + 60 + i * (h * 0.08) + Math.sin(x * (0.012 - i * 0.0018) + t * (1 + i * 0.4) + i * 1.3) * (3 + i * 2));
-            }
-            ctx.lineTo(w, h); ctx.closePath();
-            ctx.fillStyle = i % 2 === 0 ? c.wave : c.waveHi; ctx.globalAlpha = 0.75 - i * 0.1; ctx.fill();
-        }
-        ctx.globalAlpha = 1;
+        
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#0A1628'; ctx.fillRect(0, 0, w, horizonY);
+        ctx.fillStyle = '#102235'; ctx.fillRect(0, horizonY, w, h - horizonY);
+        
+        ctx.beginPath(); ctx.moveTo(0, h);
+        for (let x = 0; x <= w + 6; x += 6) { ctx.lineTo(x, horizonY + 28 - Math.sin((x + 320 - px * 0.8) * 0.0030) * 27.5); }
+        ctx.lineTo(w, h); ctx.closePath();
+        ctx.fillStyle = '#05101A'; ctx.fill();
+        
         requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
@@ -748,6 +833,132 @@ function resetToLanding() {
     setInterval(drawAll, 3200);
 })();
 
+// ==========================================
+// FULL SEARCH ENGINE RESTORATION (100%)
+// ==========================================
+let VISA_DATA = [];
+let dataReady = false;
+let currentSearchMode = 'and';
+const qEl = document.getElementById('q');
+const rcEl = document.getElementById('rc');
+const searchForm = document.getElementById('searchForm');
+const searchToggleBtn = document.getElementById('searchToggleBtn');
+const rlist = document.getElementById('rlist');
+
+searchToggleBtn?.addEventListener('click', function() {
+    searchForm.style.display = 'flex'; this.style.display = 'none'; qEl.focus();
+});
+
+function resetToLanding() {
+    document.body.classList.remove('searched');
+    qEl.value = '';
+    document.getElementById('xb').classList.remove('v');
+    document.getElementById('auto-list').classList.remove('active');
+    rlist.innerHTML = '';
+    if(searchForm) searchForm.style.display = 'none';
+    if(searchToggleBtn) searchToggleBtn.style.display = 'flex';
+    rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function calculateScore(item,keywords){
+    if(!keywords || !keywords.length) return 1;
+    let score=0; const cL=(item.code||'').toLowerCase(), nL=(item.name||'').toLowerCase();
+    const aliasL=(item.aliases||[]).map(x=>String(x).toLowerCase());
+    const content=`${item.newReq||''} ${item.extReq||''} ${item.faq||''} ${item.period||''}`.toLowerCase();
+    let isAnd=true;
+    for(const kw of keywords){
+        let m=false;
+        if(cL===kw||nL===kw){score+=220; m=true;} else if(cL.includes(kw)||nL.includes(kw)){score+=120; m=true;}
+        aliasL.forEach(a=>{ if(a===kw){score+=180; m=true;} else if(a.includes(kw)||kw.includes(a)){score+=90; m=true;} });
+        if(item.subCodes){
+            for(const s of item.subCodes){
+                const sCode=(s.code||'').toLowerCase(), sName=(s.name||'').toLowerCase();
+                if(sCode===kw||sName===kw){score+=90; m=true;} else if(sCode.includes(kw)||sName.includes(kw)){score+=60; m=true;}
+                const sc=`${s.addReq||''} ${s.note||''}`.toLowerCase();
+                const n=(sc.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
+                if(n>0){score+=n*16; m=true;}
+            }
+        }
+        const cn=(content.match(new RegExp(escapeRegExp(kw),'g'))||[]).length;
+        if(cn>0){score+=cn*12; m=true;}
+        if(!m) isAnd=false;
+    }
+    return currentSearchMode==='and' ? (isAnd?score:0) : score;
+}
+
+const ALIAS_MAP = {"제주무사증":"B-2-2","비자면제협정":"B-1","전자여행허가":"K-ETA","불법체류":"OVS-1","방문취업폐지":"H-2"};
+function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function expandKeywords(keywords){
+    const expanded = new Set(keywords.map(k=>k.toLowerCase()));
+    keywords.forEach(k=>{
+        const nk = k.replace(/\s+/g,'').toLowerCase();
+        if(ALIAS_MAP[nk]) expanded.add(ALIAS_MAP[nk].toLowerCase());
+    });
+    return [...expanded];
+}
+
+function executeSearch() {
+    if (!dataReady) return;
+    document.getElementById('auto-list').classList.remove('active');
+    const query = qEl.value.trim(); if (!query) return;
+    document.body.classList.add('searched');
+    renderResults(query);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderResults(query){
+    if(!dataReady) return;
+    const kw=query.trim().split(/\s+/).filter(Boolean), kwL=expandKeywords(kw.map(k=>k.toLowerCase()));
+    let scored=VISA_DATA.map(v=>({...v,_score:calculateScore(v,kwL)})), filtered=scored.filter(v=>v._score>0).sort((a,b)=>b._score-a._score);
+    
+    if(!filtered.length){
+        rlist.innerHTML=`<div class="es"><div class="es-t">궤도를 이탈했습니다</div><div class="es-d">'${escapeHtml(query)}'에 해당하는 정보가 없습니다.</div></div>`;
+        rcEl.textContent='0건'; return;
+    }
+    
+    const fg=document.createDocumentFragment();
+    filtered.forEach((v,idx)=>{
+        const c=document.createElement('article'); c.className='vc'; c.style.setProperty('--i', Math.min(idx,10));
+        const hs=v.subCodes&&v.subCodes.length>0;
+        if(kw.length&&(v._score>=50)) c.classList.add('open');
+        
+        let sh='';
+        if(hs){
+            sh=`<div class="ss"><div class="ss-t"><b>세부항목</b>${v.subCodes.length}개</div>`;
+            v.subCodes.forEach(s => {
+                sh+=`<div class="su"><div class="su-h" data-action="toggle-su"><span class="s-c">${hl(s.code,kw)}</span><span class="s-n">${hl(s.name,kw)}</span><span class="tgl">▼</span></div><div class="su-cw"><div class="su-c"><div class="su-s"><div class="ct">${hl(s.note||'상세 설명 없음',kw)}</div></div></div></div></div>`;
+            });
+            sh+=`</div>`;
+        }
+        
+        c.innerHTML=`
+            <div class="vc-h" data-action="toggle-su">
+                <span class="bc">${hl(v.code,kw)}</span><span class="vt">${hl(v.name,kw)}</span>
+                ${hs?`<span class="bn">+${v.subCodes.length}</span>`:''}<span class="tgl">▼</span>
+            </div>
+            <div class="vc-cw"><div class="vc-c">
+                <div class="doc-buttons-grid">
+                    <button type="button" class="doc-trigger-btn" data-action="open-doc-modal"><span class="icon">📝</span><span>서류 확인</span></button>
+                    <button type="button" class="doc-trigger-btn" data-action="open-ai-modal"><span class="icon">🤖</span><span>AI 팩트체크</span></button>
+                </div>
+                ${v.newReq ? `<div class="vs"><div class="tl">발급/개요</div><div class="ct">${hl(v.newReq,kw)}</div></div>` : ''}
+                ${v.extReq ? `<div class="vs"><div class="tl">연장/상세</div><div class="ct">${hl(v.extReq,kw)}</div></div>` : ''}
+                ${sh}
+            </div></div>`;
+        fg.appendChild(c);
+    });
+    rlist.innerHTML=''; rlist.appendChild(fg);
+    rcEl.textContent=`검색 결과 ${filtered.length}건`;
+}
+
+searchForm.addEventListener('submit', (e) => { e.preventDefault(); executeSearch(); });
+qEl.addEventListener('input', () => {
+    const v=qEl.value; document.getElementById('xb').classList.toggle('v',v.length>0); 
+    if(document.body.classList.contains('searched')) renderResults(v);
+});
+
+// Single Event Delegation for entire body
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -755,6 +966,16 @@ document.addEventListener('click', (e) => {
     
     if (action === 'toggle-theme') document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     if (action === 'reset-to-landing') resetToLanding();
+    if (action === 'clear-search') { qEl.value=''; qEl.focus(); document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active'); if(document.body.classList.contains('searched')) renderResults(''); }
+    if (action === 'set-search-mode') { currentSearchMode = actionBtn.dataset.mode; document.getElementById('ma').classList.toggle('on', currentSearchMode==='and'); document.getElementById('mo').classList.toggle('on', currentSearchMode==='or'); if(document.body.classList.contains('searched')) renderResults(qEl.value); }
+    if (action === 'search-hint') { qEl.value = actionBtn.dataset.query; executeSearch(); }
+    if (action === 'close-ai-modal') closeModal('aiModalOverlay');
+    if (action === 'close-doc-modal') closeModal('docModalOverlay');
+    if (action === 'close-faq-modal') closeModal('faqModalOverlay');
+    if (action === 'close-jobcode-modal') closeModal('jobCodeModalOverlay');
+    if (action === 'close-jurisdiction-modal') closeModal('jurisdictionModalOverlay');
+    if (action === 'open-ai-modal') openModal('aiModalOverlay');
+    if (action === 'open-doc-modal') openModal('docModalOverlay');
 });
 
 document.getElementById('searchForm')?.addEventListener('submit', (e) => {
