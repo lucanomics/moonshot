@@ -6,6 +6,7 @@
     <title>Paradiso 39 — 대한민국 39가지 체류자격을 한 번에</title>
     <meta name="theme-color" content="#0f172a">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2274%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%2272%22 font-weight=%22700%22 fill=%22%230EA37B%22 text-anchor=%22middle%22>P</text><circle cx=%2278%22 cy=%2228%22 r=%226%22 fill=%22%23FF6B5B%22/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 180 180%22><rect width=%22180%22 height=%22180%22 fill=%22%230f172a%22/><text x=%2290%22 y=%22130%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%22130%22 font-weight=%22700%22 fill=%22%230EA37B%22 text-anchor=%22middle%22>P</text><circle cx=%22138%22 cy=%2244%22 r=%2210%22 fill=%22%23FF6B5B%22/><text x=%2290%22 y=%22162%22 font-family=%22Helvetica,sans-serif%22 font-size=%2222%22 font-weight=%22700%22 fill=%22%23FF6B5B%22 text-anchor=%22middle%22 letter-spacing=%222%22>39</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;1,6..96,400;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -43,19 +44,19 @@
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
-button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 html { font-size: var(--fs); scroll-behavior: smooth; }
 body { font-family: var(--ff) !important; background: transparent !important; color: var(--t1); line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: color 0.3s; }
 
-/* Canvas & Overlays */
+/* Canvas & Ambient Background */
 #starCanvas { position: fixed; inset: 0; z-index: -1; background: var(--bg0); opacity: 1; transition: background 0.6s ease; }
-.hero-container::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--bg0) 10%, transparent), color-mix(in srgb, var(--bg0) 65%, transparent) 75%); pointer-events: none; z-index: -1; transition: opacity 0.6s; }
-body.searched .hero-container::before { opacity: 0; }
-body.night-light-mode .hero-container::before { opacity: 0.08 !important; }
-body.night-light-mode .hero-container { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+body::before { content: ""; position: fixed; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--color-primary-soft) 0%, transparent 60%); top: -20%; left: -20%; opacity: 0.12; pointer-events: none; z-index: -2; animation: ambientFloat 22s infinite alternate ease-in-out; }
+body::after { content: ""; position: fixed; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--color-accent-soft) 0%, transparent 60%); bottom: -20%; right: -15%; opacity: 0.1; pointer-events: none; z-index: -2; animation: ambientFloat2 26s infinite alternate ease-in-out; }
+@keyframes ambientFloat { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(8%, 12%) scale(1.05); } }
+@keyframes ambientFloat2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-10%, -15%) scale(0.95); } }
 
-/* Header Elements */
+/* Header & Controls */
 .top-ctrls { position: fixed; top: 1.2rem; right: 1.2rem; z-index: 100; display: flex; gap: 0.5rem; align-items: center; }
 .theme-btn { background: var(--bg2); border: 1px solid var(--bd); color: var(--t1); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.2s; }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem 1rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
@@ -144,8 +145,31 @@ body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overf
 .results-area { max-width: 1160px; margin: 0 auto; padding: 0 1rem; min-height: 100vh; }
 .results-area .rlist, .results-area .qf { opacity: 0; transform: translateY(24px); pointer-events: none; transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s; }
 body.searched .results-area .rlist, body.searched .results-area .qf { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.qf { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 1rem 0 0.8rem; }
+.qb { background: var(--bg2); border: 1px solid var(--bd); border-radius: 6px; padding: 0.22rem 0.65rem; font-size: 0.7rem; color: var(--t3); cursor: pointer; font-weight: 500; transition: all 0.15s ease; }
+.qb:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); }
 
-.rlist { display: flex; flex-direction: column; gap: 0.85rem; padding-bottom: 5rem; padding-top: 0.5rem; }
+/* Modals CSS (RESTORED) */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s; padding: 1rem; }
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-box { background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--shD); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.modal-overlay.active .modal-box { transform: scale(1); }
+.modal-header { padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--bd2); display: flex; justify-content: space-between; align-items: center; color: var(--t1); }
+.modal-title { margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.4; }
+.modal-close { background: none; border: none; color: var(--t3); cursor: pointer; font-size: 1.4rem; transition: color 0.2s; padding: 0.2rem; }
+.modal-close:hover { color: var(--t1); }
+.modal-body { padding: 1.4rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+.ai-textarea { width: 100%; min-height: 100px; padding: 0.8rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 0.9rem; resize: vertical; transition: border-color 0.2s; }
+.ai-textarea:focus { border-color: var(--ac); outline: none; }
+.ai-action-btn { background: var(--bg2); color: var(--ac); border: 1px solid var(--ac); padding: 0.8rem; border-radius: 8px; font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+.ai-action-btn:hover { background: var(--acL); }
+.ai-action-btn.primary { background: var(--ac); color: white; border-color: var(--ac); }
+.ai-action-btn.primary:hover { opacity: 0.9; }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: currentColor; animation: spin 1s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Result List Cards */
+.rlist { display: flex; flex-direction: column; gap: 0.85rem; padding-bottom: 5rem; padding-top: 0.5rem; min-height: 60vh; }
 .vc { background: var(--bg1); border: 1px solid var(--bd2); border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: transform 0.28s, box-shadow 0.28s, border-color 0.28s; animation: cIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 40ms); overflow: hidden; }
 [data-theme="dark"] .vc { box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 .vc:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: color-mix(in srgb, var(--ac) 25%, var(--bd2)); }
@@ -167,6 +191,11 @@ mark.h { background: color-mix(in srgb, var(--ac) 22%, transparent); color: var(
 .es { text-align: center; padding: 4.5rem 1rem; }
 .es-t { font-weight: 800; font-size: 1.05rem; color: var(--t2); margin-bottom: 0.35rem; }
 .es-d { font-size: 0.88rem; color: var(--t3); line-height: 1.6; }
+
+/* Buttons & Elements inside Result */
+.doc-buttons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin: 1rem 1rem; }
+.doc-trigger-btn { background: var(--bg1); border: 1px solid var(--bd); padding: 1.2rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; color: var(--t2); display: flex; flex-direction: column; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); box-shadow: var(--sh1); font-family: var(--ff) !important; }
+.doc-trigger-btn:hover { background: var(--acL); border-color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); color: var(--ac); }
 
 /* Brand Hero & Sections */
 .brand-hero, .brand-feature, .about-me { display: block; transition: opacity 0.4s; }
@@ -403,12 +432,57 @@ body.searched .section-divider { display: none; }
     <div class="rlist" id="rlist"></div>
 </main>
 
+<!-- RESTORED: MODALS 100% -->
+<div class="modal-overlay" id="aiModalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 class="modal-title">✨ <span id="aiModalTitleText">AI 분석</span></h2>
+            <button type="button" class="modal-close" data-action="close-ai-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.85rem; color:var(--t3); margin-bottom:1rem;">현재 직면한 상황(국적, 체류상태 등)을 상세히 적어주시면, AI가 법령 및 매뉴얼 원문에 근거하여 철저한 법적 판단 및 절차를 검증합니다.</p>
+            <textarea id="aiInput" class="ai-textarea" placeholder="상황을 상세히 입력하세요..."></textarea>
+            <button type="button" class="ai-action-btn primary" data-type="analyze">
+                <span>✨ 종합 상황 분석 요청</span>
+                <div class="spinner"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="docModalOverlay">
+    <div class="modal-box" style="max-width: 640px;">
+        <div class="modal-header">
+            <h2 id="docModalTitle" class="modal-title">구비서류 확인</h2>
+            <button type="button" class="modal-close" data-action="close-doc-modal">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="docModalDesc" class="text-desc" style="display:none;"></div>
+            <div id="docModalChecklist"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="faqModalOverlay">
+    <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 id="faqModalTitle" class="modal-title">💡 자주 묻는 질문 (FAQ)</h2>
+            <button type="button" class="modal-close" data-action="close-faq-modal">✕</button>
+        </div>
+        <div class="modal-body" id="faqModalBody"></div>
+    </div>
+</div>
+
 <script>
 function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 function hl(t,k) {
     if(!k || !k.length) return escapeHtml(t);
     return escapeHtml(t).replace(new RegExp(`(${k.map(s => String(s).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')).join('|')})`,'gi'),'<mark class="h">$1</mark>');
 }
+
+// Modal Engine
+function openModal(id) { const m = document.getElementById(id); if (m) m.classList.add('active'); }
+function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('active'); }
 
 // Canvas Effect
 (async function initParadisoHorizon() {
@@ -435,8 +509,6 @@ function hl(t,k) {
         const horizonY = h * 0.62 + py * 0.3;
         
         ctx.clearRect(0, 0, w, h);
-        
-        // Simple horizon drawing to save space while keeping dynamic effect
         ctx.fillStyle = '#0A1628'; ctx.fillRect(0, 0, w, horizonY);
         ctx.fillStyle = '#102235'; ctx.fillRect(0, horizonY, w, h - horizonY);
         
@@ -568,8 +640,6 @@ const searchForm = document.getElementById('searchForm');
 const searchToggleBtn = document.getElementById('searchToggleBtn');
 const rlist = document.getElementById('rlist');
 
-const CC = {short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
-
 searchToggleBtn?.addEventListener('click', function() {
     searchForm.style.display = 'flex'; this.style.display = 'none'; qEl.focus();
 });
@@ -623,29 +693,6 @@ function expandKeywords(keywords){
     return [...expanded];
 }
 
-const PREDEF_KEYWORDS = ["체류지 변경", "등록증 재발급", "제주 무사증", "K-ETA", "E-7", "유학", "결혼이민"];
-function showSuggestions(val) {
-    if(!dataReady) return;
-    const list = document.getElementById('auto-list'); list.innerHTML = '';
-    if(!val) { list.classList.remove('active'); return; }
-    const lowerVal = val.toLowerCase();
-    const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
-    VISA_DATA.forEach(v => {
-        if((v.code||'').toLowerCase().includes(lowerVal) || (v.name||'').toLowerCase().includes(lowerVal)) {
-            const str = `${v.code} ${v.name}`; if(!matches.includes(str)) matches.push(str);
-        }
-    });
-    if(matches.length > 0) {
-        matches.slice(0, 5).forEach(m => {
-            const div = document.createElement('div'); div.className = 'auto-item';
-            div.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg> <span>${hl(m, [val])}</span>`;
-            div.setAttribute('data-action', 'search-hint'); div.setAttribute('data-query', m);
-            list.appendChild(div);
-        });
-        list.classList.add('active');
-    } else list.classList.remove('active');
-}
-
 function executeSearch() {
     if (!dataReady) return;
     document.getElementById('auto-list').classList.remove('active');
@@ -686,6 +733,10 @@ function renderResults(query){
                 ${hs?`<span class="bn">+${v.subCodes.length}</span>`:''}<span class="tgl">▼</span>
             </div>
             <div class="vc-cw"><div class="vc-c">
+                <div class="doc-buttons-grid">
+                    <button type="button" class="doc-trigger-btn" data-action="open-doc-modal"><span class="icon">📝</span><span>서류 확인</span></button>
+                    <button type="button" class="doc-trigger-btn" data-action="open-ai-modal"><span class="icon">🤖</span><span>AI 팩트체크</span></button>
+                </div>
                 ${v.newReq ? `<div class="vs"><div class="tl">발급/개요</div><div class="ct">${hl(v.newReq,kw)}</div></div>` : ''}
                 ${v.extReq ? `<div class="vs"><div class="tl">연장/상세</div><div class="ct">${hl(v.extReq,kw)}</div></div>` : ''}
                 ${sh}
@@ -698,10 +749,11 @@ function renderResults(query){
 
 searchForm.addEventListener('submit', (e) => { e.preventDefault(); executeSearch(); });
 qEl.addEventListener('input', () => {
-    const v=qEl.value; document.getElementById('xb').classList.toggle('v',v.length>0); showSuggestions(v);
+    const v=qEl.value; document.getElementById('xb').classList.toggle('v',v.length>0); 
     if(document.body.classList.contains('searched')) renderResults(v);
 });
 
+// Single Event Delegation for entire body
 document.addEventListener('click', (e) => {
     const toggleSu = e.target.closest('[data-action="toggle-su"]');
     if (toggleSu) { toggleSu.parentElement.classList.toggle('open'); return; }
@@ -715,6 +767,13 @@ document.addEventListener('click', (e) => {
     if (action === 'clear-search') { qEl.value=''; qEl.focus(); document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active'); if(document.body.classList.contains('searched')) renderResults(''); }
     if (action === 'set-search-mode') { currentSearchMode = actionBtn.dataset.mode; document.getElementById('ma').classList.toggle('on', currentSearchMode==='and'); document.getElementById('mo').classList.toggle('on', currentSearchMode==='or'); if(document.body.classList.contains('searched')) renderResults(qEl.value); }
     if (action === 'search-hint') { qEl.value = actionBtn.dataset.query; executeSearch(); }
+    if (action === 'close-ai-modal') closeModal('aiModalOverlay');
+    if (action === 'close-doc-modal') closeModal('docModalOverlay');
+    if (action === 'close-faq-modal') closeModal('faqModalOverlay');
+    if (action === 'close-jobcode-modal') closeModal('jobCodeModalOverlay');
+    if (action === 'close-jurisdiction-modal') closeModal('jurisdictionModalOverlay');
+    if (action === 'open-ai-modal') openModal('aiModalOverlay');
+    if (action === 'open-doc-modal') openModal('docModalOverlay');
 });
 
 function startPreEntryTrack() { document.getElementById('visaManualDynamic').innerHTML = `<div class="visa-step-container"><h3 style="margin-bottom:1rem;">목적 선택</h3><div class="visa-purpose-grid"><div class="visa-purpose-card">📚 유학</div><div class="visa-purpose-card">💼 취업</div></div></div>`; }
