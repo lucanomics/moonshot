@@ -95,7 +95,9 @@ body { background: transparent !important; color: var(--t1); line-height: 1.65; 
 .toast-success { border-left: 3px solid var(--color-success); }
 
 /* QA Main & Buttons */
-.qa-main { display: flex; gap: 0.8rem; justify-content: center; margin-top: 1.8rem; transition: opacity 0.4s; flex-wrap: wrap; }
+.qa-main { display: flex; gap: 0.8rem; justify-content: center; margin-top: 0.8rem; transition: opacity 0.4s; flex-wrap: wrap; }
+body.searched .qa-main { display: none; }
+body.searched .visa-manual-section.in-hero { display: none; }
 .qa-btn { background: var(--bg1); border: 1px solid var(--bd); padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 800; font-size: 0.95rem; color: var(--t2); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; box-shadow: var(--sh1); font-family: var(--ff) !important; }
 .qa-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
 .jc-ai-search-row { display: flex; justify-content: flex-end; margin-bottom: 0.8rem; }
@@ -771,6 +773,29 @@ body.searched #searchForm { display: block !important; }
             🔍 비자 코드 및 키워드 직접 검색하기
         </button>
 
+        <div class="qa-main" id="qaMain">
+            <button class="qa-btn" data-action="open-jobcode-modal">💼 취업신고용 업종/직종 코드 찾기</button>
+            <button class="qa-btn" data-action="open-jurisdiction-modal">🏛 관할 출입국관서 조회</button>
+        </div>
+
+        <section id="visaManualSection" class="visa-manual-section in-hero" aria-labelledby="visaManualTitle">
+            <h2 id="visaManualTitle" class="visa-manual-title" data-reveal="fade-up">사증·체류 매뉴얼</h2>
+            <p class="visa-manual-subtitle" data-reveal="fade-up">입국 전 사증 발급부터 입국 후 체류 연장까지, 단계별 안내</p>
+            <div class="visa-track-selector" data-reveal="fade-up">
+                <div class="visa-track-card" onclick="startPreEntryTrack()" tabindex="0" role="button" aria-label="입국 전 사증 발급 트랙">
+                    <div class="visa-track-icon">✈️</div>
+                    <h3 class="visa-track-title">입국 전</h3>
+                    <p class="visa-track-desc">해외에서 주한공관을 통한 사증(비자) 신규 발급 절차</p>
+                </div>
+                <div class="visa-track-card" onclick="startInKoreaTrack()" tabindex="0" role="button" aria-label="입국 후 체류 관리 트랙">
+                    <div class="visa-track-icon">🏛</div>
+                    <h3 class="visa-track-title">입국 후</h3>
+                    <p class="visa-track-desc">외국인등록, 체류기간 연장, 자격 변경 등 국내 체류 민원</p>
+                </div>
+            </div>
+            <div id="visaManualDynamic" class="visa-dynamic-content" aria-live="polite"></div>
+        </section>
+
         <form class="search-wrap" id="searchForm" role="search" style="display:none;">
             <div class="sbar">
                 <svg class="sbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
@@ -791,11 +816,6 @@ body.searched #searchForm { display: block !important; }
             <button class="cb" data-action="toggle-accordions" data-fold="false">펼치기</button>
         </div>
 
-        <div class="qa-main" id="qaMain">
-            <button class="qa-btn" data-action="open-jobcode-modal">💼 취업신고용 업종/직종 코드 찾기</button>
-            <button class="qa-btn" data-action="open-jurisdiction-modal">🏛 관할 출입국관서 조회</button>
-        </div>
-        
         <div class="landing-hints" id="landingHints" aria-label="빠른 추천 검색어"></div>
     </div>
     <button type="button" class="scroll-cue" id="scrollCue" data-action="scroll-to-brand" aria-label="아래로 스크롤">
