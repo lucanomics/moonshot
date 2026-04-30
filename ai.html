@@ -2,586 +2,509 @@
 <html lang="ko" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paradiso 39 AI — 민원 안내 도우미</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2246%22 fill=%22%231F6B5E%22/><g fill=%22%23C97A4A%22><circle cx=%2250%22 cy=%2250%22 r=%228%22/><ellipse cx=%2250%22 cy=%2228%22 rx=%227%22 ry=%2212%22/><ellipse cx=%2271%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(72 71 43)%22/><ellipse cx=%2263%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(144 63 68)%22/><ellipse cx=%2237%22 cy=%2268%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-144 37 68)%22/><ellipse cx=%2229%22 cy=%2443%22 rx=%227%22 ry=%2212%22 transform=%22rotate(-72 29 43)%22/></g></svg>">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paradiso 39 AI — 체류 행정 심층 분석 시스템</title>
+    <meta name="description" content="2026년 출입국관리법 및 실무 매뉴얼 기반 맞춤형 체류자격 및 절차 분석 AI">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230B2A24%22/><text x=%2250%22 y=%2274%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%2272%22 font-weight=%22700%22 fill=%22%2334D4A8%22 text-anchor=%22middle%22>P</text><circle cx=%2278%22 cy=%2228%22 r=%226%22 fill=%22%23FF8B7A%22/></svg>">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-    
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        
         :root {
-            /* Paradiso 39 — Emerald + Coral (dark surface) */
-            --ff: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            --ff-logo: 'Bodoni Moda', 'Didot', Georgia, serif;
-            --ff-display: 'DM Sans', 'Pretendard Variable', sans-serif;
-
-            --color-primary: #0EA37B;
-            --color-accent:  #FF6B5B;
-            --color-surface: #F4EDDC;
-            --color-surface-dark: #0B2A24;
-
+            --ff: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             --bg0: #0B2A24; --bg1: #113B32; --bg2: #184B40;
-            --bd: #2D5A50;
+            --bd: #2D5A50; --bd2: #224A41;
             --t1: #F3EEDF; --t2: #C7BFA8; --t3: #8C8572;
-            --ac: #34D4A8; --cy: #FF8B7A;
-            --warn: #FFB27A; --err: #FF8B7A; --ok: #34D4A8;
-            --shD: 0 15px 35px rgba(0, 0, 0, 0.5);
+            --ac: #34D4A8; --ac2: #17B388; --acL: #163E36;
+            --cy: #FF8B7A;
+            --error: #FF6B5B; --warning: #E68A3A;
+            --sh-modal: 0 12px 48px rgba(0,0,0,0.55);
+            --fs-base: clamp(14px, 1.5vw, 15px);
         }
         
-        html, body { height: 100dvh; overflow: hidden; margin: 0; padding: 0; }
-        body { font-family: var(--ff) !important; background: var(--bg0); color: var(--t1); display: flex; flex-direction: column; }
-
-        header { background: var(--bg1); padding: 1rem 1.5rem; border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shD); z-index: 10; flex-shrink: 0; }
-        .back-btn { background: none; border: none; color: var(--t2); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; font-weight: 600; text-decoration: none; font-family: var(--ff) !important; }
-        .back-btn:hover { color: var(--t1); }
-        h1 { font-family: var(--ff-logo) !important; font-size: 1.45rem; font-weight: 500; letter-spacing: -0.02em; color: var(--t1); margin: 0; display: flex; align-items: baseline; gap: 0.25em; font-optical-sizing: auto; } h1 em { font-style: italic; font-weight: 600; color: var(--color-accent); letter-spacing: -0.03em; } h1 small { font-family: var(--ff-display); font-style: normal; font-weight: 500; font-size: 0.7rem; color: var(--t2); letter-spacing: 0.08em; text-transform: uppercase; }
-        .quota-badge { font-size: 0.72rem; color: var(--t3); padding: 0.25rem 0.6rem; background: var(--bg0); border: 1px solid var(--bd); border-radius: 999px; font-weight: 600; }
-        .quota-badge.warn { color: var(--warn); border-color: var(--warn); }
-        .quota-badge.err { color: var(--err); border-color: var(--err); }
-
-        .chat-container { flex: 1; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; width: 100%; position: relative; min-height: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        :focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; border-radius: 4px; }
         
-        .messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
-        .msg { padding: 1rem 1.2rem; border-radius: 12px; max-width: 85%; line-height: 1.6; font-size: 0.95rem; word-break: keep-all; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .msg.ai { background: var(--bg1); color: var(--t1); border: 1px solid var(--bd); align-self: flex-start; border-bottom-left-radius: 4px; }
-        .msg.user { background: var(--ac); color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .msg.sys-warn { background: var(--bg1); border: 1px solid var(--warn); color: var(--warn); align-self: center; max-width: 95%; font-size: 0.85rem; }
-        .msg.sys-err { background: var(--bg1); border: 1px solid var(--err); color: var(--err); align-self: center; max-width: 95%; font-size: 0.85rem; }
-        .msg.cached-tag { font-size: 0.7rem; color: var(--ok); margin-top: 0.4rem; display: block; font-weight: 600; }
-        .msg-disc { display: block; margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px dashed var(--bd); font-size: 0.75rem; color: var(--t3); }
-
-        .input-area { padding: 1.5rem; background: var(--bg1); border-top: 1px solid var(--bd); display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; }
-        .input-row { display: flex; gap: 0.5rem; }
-        .input-area input { flex: 1; padding: 1rem 1.2rem; border: 1px solid var(--bd); border-radius: 8px; background: var(--bg0); color: var(--t1); font-size: 1rem; font-family: var(--ff) !important; outline: none; transition: border-color 0.2s; }
-        .input-area input:focus { border-color: var(--ac); }
-        .input-area input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .input-area button { background: var(--ac); color: #fff; border: none; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; font-family: var(--ff) !important; transition: background 0.2s; white-space: nowrap; }
-        .input-area button:hover:not(:disabled) { background: #4f46e5; }
-        .input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .input-meta { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--t3); padding: 0 0.2rem; }
-        .input-meta .counter.warn { color: var(--warn); }
-        .input-meta .counter.err { color: var(--err); font-weight: 700; }
-
-        @media (max-width: 600px) {
-            .msg { max-width: 95%; font-size: 0.9rem; padding: 0.8rem 1rem; }
-            .input-area { padding: 1rem; }
-            .input-area input { padding: 0.8rem 1rem; font-size: 0.9rem; }
-            .input-area button { padding: 0 1rem; font-size: 0.9rem; }
-            .quota-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
+        body {
+            font-family: var(--ff); font-size: var(--fs-base); line-height: 1.6;
+            background-color: var(--bg0); color: var(--t1);
+            height: 100vh; height: 100dvh; display: flex; flex-direction: column;
+            overflow: hidden; margin: 0;
         }
-        .model-badge {
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            font-size: 0.68rem; font-weight: 700;
-            padding: 0.2rem 0.55rem; border-radius: 999px;
-            margin-top: 0.6rem; letter-spacing: 0.04em; opacity: 0.85;
+
+        /* Ambient Background */
+        body::before { content: ""; position: fixed; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(52,212,168,0.08) 0%, transparent 60%); top: -20%; left: -20%; opacity: 1; pointer-events: none; z-index: -2; animation: ambientFloat 20s infinite alternate ease-in-out; }
+        body::after { content: ""; position: fixed; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(255,139,122,0.06) 0%, transparent 60%); bottom: -20%; right: -15%; opacity: 1; pointer-events: none; z-index: -2; animation: ambientFloat2 24s infinite alternate ease-in-out; }
+        @keyframes ambientFloat { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(5%, 8%) scale(1.05); } }
+        @keyframes ambientFloat2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-8%, -10%) scale(0.95); } }
+
+        /* Header (Glassmorphism) */
+        .chat-header {
+            flex-shrink: 0; background: color-mix(in srgb, var(--bg1) 85%, transparent);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--bd); padding: 0.8rem 1.2rem;
+            display: flex; justify-content: space-between; align-items: center; z-index: 10;
         }
-        .model-badge.deepseek { background: rgba(74,144,217,0.15); color: #4A90D9; border: 1px solid rgba(74,144,217,0.3); }
-        .model-badge.gemma    { background: rgba(66,133,244,0.12); color: #4285F4; border: 1px solid rgba(66,133,244,0.3); }
-        .model-badge.kimi     { background: rgba(168,85,247,0.12); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
-        .model-badge.groq     { background: rgba(52,212,168,0.12); color: #34D4A8; border: 1px solid rgba(52,212,168,0.3); }
-        .model-badge.unknown  { background: rgba(140,133,114,0.12); color: #8C8572; border: 1px solid rgba(140,133,114,0.3); }
+        .header-left { display: flex; align-items: center; gap: 0.8rem; }
+        .back-btn {
+            background: transparent; border: 1px solid var(--bd); color: var(--t2);
+            width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: var(--bg2); color: var(--t1); border-color: var(--ac); }
+        .ai-title { display: flex; flex-direction: column; }
+        .ai-title-main { font-weight: 800; font-size: 1.05rem; color: var(--ac); letter-spacing: -0.02em; }
+        .ai-status { font-size: 0.72rem; color: var(--t3); display: flex; align-items: center; gap: 4px; }
+        .status-dot { width: 6px; height: 6px; background: var(--ac); border-radius: 50%; box-shadow: 0 0 6px var(--ac); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .header-right { display: flex; align-items: center; gap: 0.5rem; }
+        .quota-badge { background: var(--bg2); border: 1px solid var(--bd); padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; color: var(--t2); font-variant-numeric: tabular-nums; }
+
+        /* Chat History */
+        .chat-history {
+            flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; scroll-behavior: smooth;
+        }
+        .chat-history::-webkit-scrollbar { width: 6px; }
+        .chat-history::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 3px; }
+
+        /* Messages */
+        .msg-row { display: flex; flex-direction: column; max-width: 85%; animation: msgIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(10px); }
+        .msg-row.ai { align-self: flex-start; }
+        .msg-row.user { align-self: flex-end; align-items: flex-end; }
+        @keyframes msgIn { to { opacity: 1; transform: translateY(0); } }
+
+        .msg-bubble {
+            padding: 0.85rem 1.1rem; border-radius: 16px; font-size: 0.95rem; line-height: 1.6; word-break: keep-all; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .msg-row.ai .msg-bubble { background: var(--bg1); border: 1px solid var(--bd); border-bottom-left-radius: 4px; color: var(--t1); }
+        .msg-row.user .msg-bubble { background: var(--acL); border: 1px solid var(--ac2); border-bottom-right-radius: 4px; color: var(--t1); }
+        .msg-row.sys-err .msg-bubble { background: #3f1515; border: 1px solid var(--error); color: #fecaca; }
+
+        .msg-time { font-size: 0.7rem; color: var(--t3); margin-top: 0.3rem; margin-bottom: 0.1rem; }
+        .msg-row.user .msg-time { text-align: right; }
+        .msg-disc { display: block; font-size: 0.72rem; color: var(--t3); margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px dashed var(--bd); line-height: 1.4; }
+
+        /* Badge/Formatting in AI text */
+        .msg-bubble strong { color: var(--ac); font-weight: 800; }
+        .bdg-wrap { margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .bdg { display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid; background: var(--bg2); cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .bdg.bdg-visa { color: var(--ac); border-color: var(--ac); }
+        .bdg.bdg-link { color: var(--cy); border-color: var(--cy); }
+        .bdg:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+        /* Input Area (Glassmorphism) */
+        .chat-input-area {
+            flex-shrink: 0; background: color-mix(in srgb, var(--bg1) 85%, transparent);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--bd); padding: 1rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+            display: flex; flex-direction: column; gap: 0.6rem; z-index: 10;
+        }
+        .input-wrapper { display: flex; gap: 0.6rem; align-items: flex-end; }
+        .ai-textarea {
+            flex: 1; min-height: 52px; max-height: 140px; background: var(--bg0); border: 1px solid var(--bd);
+            color: var(--t1); border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.95rem; font-family: var(--ff);
+            resize: none; outline: none; transition: border-color 0.2s; overflow-y: auto; line-height: 1.5;
+        }
+        .ai-textarea:focus { border-color: var(--ac); box-shadow: 0 0 0 2px var(--acG); }
+        .ai-textarea::placeholder { color: var(--t3); }
+        
+        .send-btn {
+            background: var(--ac); color: #000; border: none; width: 52px; height: 52px; border-radius: 12px;
+            font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;
+        }
+        .send-btn:hover:not(:disabled) { background: var(--ac2); transform: translateY(-2px); }
+        .send-btn:disabled { background: var(--bg2); color: var(--t3); cursor: not-allowed; transform: none; }
+
+        .input-footer { display: flex; justify-content: space-between; align-items: center; padding: 0 0.2rem; }
+        .char-counter { font-size: 0.72rem; color: var(--t3); font-variant-numeric: tabular-nums; }
+        .char-counter.limit { color: var(--error); font-weight: 700; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; z-index: 2000; opacity: 0; transition: opacity 0.3s; padding: 1.2rem;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-box {
+            background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; width: 100%; max-width: 460px;
+            box-shadow: var(--sh-modal); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1); display: flex; flex-direction: column; overflow: hidden;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--bd2); }
+        .modal-title { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--ac); }
+        
+        .modal-body { padding: 1.5rem; font-size: 0.9rem; color: var(--t2); line-height: 1.6; max-height: 60vh; overflow-y: auto; }
+        .modal-body p { margin-bottom: 0.8rem; word-break: keep-all; }
+        .modal-body ul { margin-left: 1.2rem; margin-bottom: 1rem; color: var(--t1); }
+        .modal-body li { margin-bottom: 0.4rem; }
+        
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--bd2); display: flex; justify-content: flex-end; gap: 0.6rem; background: var(--bg0); }
+        .btn-cancel { background: transparent; border: 1px solid var(--bd); color: var(--t2); padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--ff); }
+        .btn-cancel:hover { background: var(--bg2); color: var(--t1); }
+        .btn-agree { background: var(--ac); border: 1px solid var(--ac); color: #000; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 800; font-family: var(--ff); }
+        .btn-agree:hover { filter: brightness(1.1); }
+
+        /* Loader */
+        .typing-loader { display: inline-flex; align-items: center; gap: 4px; padding: 0.4rem; }
+        .typing-dot { width: 6px; height: 6px; background: var(--ac); border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 480px) {
+            .chat-history { padding: 1rem; }
+            .msg-row { max-width: 90%; }
+            .msg-bubble { font-size: 0.9rem; padding: 0.75rem 1rem; }
+        }
     </style>
-<base target="_blank">
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="back-btn">← 검색으로 돌아가기</a>
-        <h1>Paradiso <em>39</em> <small>AI</small></h1>
-        <span class="quota-badge" id="quotaBadge" title="일일 질문 가능 횟수">-- / --</span>
+    <!-- Header -->
+    <header class="chat-header">
+        <div class="header-left">
+            <!-- Canvas/Sandbox 호환성을 위해 JS의 location.href 대신 <a> 태그 기반 네비게이션 적용 -->
+            <a href="index.html" class="back-btn" aria-label="메인 화면으로 돌아가기" style="text-decoration: none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <div class="ai-title">
+                <h1 class="ai-title-main">Paradiso 39 AI</h1>
+                <div class="ai-status">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span id="systemStatus">시스템 대기 중</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="quota-badge" aria-label="남은 분석 횟수" title="일일 분석 횟수">잔여: <span id="quotaCount">0</span>회</span>
+        </div>
     </header>
 
-    <div class="chat-container">
-        <div class="messages" id="aiMsgs">
-            <div class="msg ai">
-                출입국 민원 안내 도우미 Paradiso 39 AI입니다. 문장 형태로 질문해 주세요.<br>
-                예시: "베트남 사람인데 비자 없이 제주도에 여행 갈 수 있나요?"
-                <span class="msg-disc">⚠  Paradiso 39의 검색 및 답변 결과는 사전 안내 목적이므로, 법적 근거로 활용될 수 없습니다. 최종 결정 전 반드시 관할 출입국관서의 확인을 거치시기 바랍니다.</span>
+    <!-- Chat Area -->
+    <main class="chat-history" id="chatHistory" aria-live="polite" aria-atomic="false">
+        <!-- Initial Message -->
+        <div class="msg-row ai">
+            <div class="msg-bubble">
+                안녕하십니까. 대한민국 체류 행정 심층 분석 시스템 <strong>Paradiso 39 AI</strong>입니다.<br><br>
+                2026년 출입국관리법 및 실무 매뉴얼에 근거하여 본인의 국적, 현재 체류 자격, 취업 희망 직무 등을 고려한 맞춤형 행정 절차와 구비 서류를 검증해 드립니다.<br><br>
+                분석을 위해 현재 직면하신 상황을 하단 입력창에 최대한 상세히 기술해 주십시오.
             </div>
+            <div class="msg-time">시스템 메시지</div>
         </div>
-        
-        <div class="input-area">
-            <div class="input-row">
-                <input type="text" id="aiQ" placeholder="질문을 입력하세요 · Ask in any language · 请用任何语言提问" autocomplete="off" maxlength="500" disabled>
-                <button id="aiSend" onclick="sendAi()" disabled>전송</button>
-            </div>
-            <div class="input-meta">
-                <span id="statusMsg">동의 대기 중</span>
-                <span class="counter" id="charCounter">0 / 500</span>
-            </div>
+    </main>
+
+    <!-- Input Area -->
+    <footer class="chat-input-area">
+        <div class="input-wrapper">
+            <label for="aiQ" class="sr-only">상황 분석 요청 입력창</label>
+            <textarea id="aiQ" class="ai-textarea" rows="1" placeholder="예: 미국 국적, 이태원 거주, D-10 비자 상태인데 E-7 취업을 희망합니다..." aria-describedby="charCount"></textarea>
+            <button type="button" class="send-btn" id="sendBtn" onclick="sendAi()" aria-label="분석 요청 전송" disabled>전송</button>
         </div>
-    </div>
+        <div class="input-footer">
+            <span class="char-counter" id="charCount">0 / 500자</span>
+        </div>
+    </footer>
 
-    <style>
-        .consent-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
-        .consent-box { background: var(--bg1); border: 1px solid var(--bd); border-radius: 16px; padding: 2rem; max-width: 420px; width: 90%; box-shadow: var(--shD); }
-        .consent-box h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--t1); }
-        .consent-box p { font-size: 0.9rem; color: var(--t2); line-height: 1.7; margin-bottom: 1.5rem; }
-        .consent-box .usage-note { font-size: 0.78rem; color: var(--t3); background: var(--bg0); padding: 0.6rem 0.8rem; border-radius: 6px; margin-bottom: 1.25rem; border-left: 3px solid var(--ac); }
-        .consent-box .btns { display: flex; gap: 0.75rem; }
-        .consent-box .btn-agree { flex: 1; background: var(--ac); color: #fff; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-family: var(--ff) !important; font-size: 0.95rem; }
-        .consent-box .btn-agree:hover { background: #4f46e5; }
-        .consent-box .btn-deny { flex: 1; background: none; color: var(--t2); border: 1px solid var(--bd); padding: 0.75rem; border-radius: 8px; cursor: pointer; font-family: var(--ff) !important; font-size: 0.95rem; }
-        .consent-box .btn-deny:hover { color: var(--t1); border-color: var(--t2); }
-    </style>
-
-    <div class="consent-overlay" id="consentOverlay">
-        <div class="consent-box">
-            <h2>서비스 이용 전 안내</h2>
-            <p>Paradiso 39 AI는 서비스 개선을 위해 <strong>익명화된 질문 카테고리</strong>를 수집합니다.<br>
-            개인 식별 정보(질문 원문, IP 등)는 저장하지 않습니다.</p>
-            <div class="usage-note">
-                📊 <strong>이용 제한 안내</strong><br>
-                서버 비용 절감을 위해 다음 제한이 적용됩니다:<br>
-                • 질문 1건당 최대 500자<br>
-                • 분당 최대 3건<br>
-                • 하루 최대 30건<br>
-                • 동일 질문은 자동 캐시 처리
+    <!-- Consent Modal -->
+    <div class="modal-overlay" id="consentModal" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="consentTitle" class="modal-title">⚠️ 개인정보 처리 및 면책 동의</h2>
             </div>
-            <div class="btns">
-                <button class="btn-agree" onclick="handleConsent(true)">동의하고 시작하기</button>
-                <button class="btn-deny" onclick="handleConsent(false)">거부</button>
+            <div class="modal-body">
+                <p>본 AI 분석 시스템 이용을 위해 다음 사항에 동의해야 합니다.</p>
+                <ul>
+                    <li><strong>데이터 활용:</strong> 입력하신 정보는 세션 내 문맥 유지 및 시스템 개선 목적으로만 임시 처리되며 영구 저장되지 않습니다.</li>
+                    <li><strong>개인정보 보호:</strong> 여권번호, 외국인등록번호 등 민감한 고유 식별 정보는 절대 입력하지 마십시오.</li>
+                    <li><strong>면책 조항:</strong> AI가 생성한 결과는 2026년 실무 매뉴얼을 바탕으로 한 <strong>참고용 정보</strong>일 뿐, 법적 효력을 갖지 않습니다. 최종 판단은 관할 출입국·외국인관서에 귀속됩니다.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="handleConsent(false)">동의 거부 (이전으로)</button>
+                <button type="button" class="btn-agree" onclick="handleConsent(true)">확인 및 동의</button>
             </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 설정 상수
+        // Constants & State
         // ==========================================
-        const DISCLAIMER = "이 답변은 AI가 작성한 참고용 정보입니다. 법적 효력이 없으며, 최종 결정 전 반드시 관할 출입국관서 및 1345에 확인하시기 바랍니다.";
-        const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === 'file:') ? "" : "https://web-production-14f9a.up.railway.app";
-        const API_URL = `${API_BASE ? API_BASE : "https://web-production-14f9a.up.railway.app"}/api/ask`;
-
-        // 3층 방어선 설정
-        const LIMITS = {
-            MAX_CHARS: 500,
-            PER_MINUTE: 3,
-            PER_DAY: 30,
-            CACHE_TTL_MS: 24*60*60*1000,
-            CACHE_MAX_ENTRIES: 100,
-            DUP_WARN_THRESHOLD: 5
-        };
-
+        const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:') ? "" : "https://web-production-14f9a.up.railway.app";
+        const MAX_CHARS = 500;
+        const QUOTA_LIMIT = 30;
         const STORE_KEYS = {
-            TIMESTAMPS: 'moonshot_req_timestamps',
-            CACHE: 'moonshot_qa_cache',
-            CONSENT: 'moonshot_consent'
+            CONSENT: 'paradiso_ai_consent',
+            QUOTA: 'paradiso_ai_quota'
         };
+        const DISCLAIMER = "※ 2026년 출입국 매뉴얼 기반 AI 분석 결과입니다. 정확한 행정 처리는 관할 관서 및 1345에 확인하십시오.";
 
-        let userConsent = null;
         let VISA_DATA = [];
+        let _abortController = null;
+        let _isConsentGranted = false;
 
         // ==========================================
-        // RAG 데이터 로드 로직
+        // UI Helpers
+        // ==========================================
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s ?? '';
+            return d.innerHTML;
+        }
+
+        function formatTime() {
+            const now = new Date();
+            return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function setStatus(msg) {
+            const statusEl = document.getElementById('systemStatus');
+            if (statusEl) statusEl.textContent = msg;
+        }
+
+        // ==========================================
+        // LocalStorage Helpers
+        // ==========================================
+        function safeGet(key, def) {
+            try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } 
+            catch (e) { return def; }
+        }
+        function safeSet(key, val) {
+            try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+        }
+
+        // ==========================================
+        // Quota Management
+        // ==========================================
+        function getQuota() {
+            const today = new Date().toISOString().split('T')[0];
+            const state = safeGet(STORE_KEYS.QUOTA, { date: today, count: 0 });
+            if (state.date !== today) { state.date = today; state.count = 0; safeSet(STORE_KEYS.QUOTA, state); }
+            return state;
+        }
+        function useQuota() {
+            const state = getQuota();
+            if (state.count >= QUOTA_LIMIT) return false;
+            state.count++; safeSet(STORE_KEYS.QUOTA, state);
+            updateQuotaBadge();
+            return true;
+        }
+        function updateQuotaBadge() {
+            const state = getQuota();
+            const remain = Math.max(0, QUOTA_LIMIT - state.count);
+            const badge = document.getElementById('quotaCount');
+            if (badge) badge.textContent = remain;
+        }
+
+        // ==========================================
+        // Data Load
         // ==========================================
         async function loadVisaData() {
+            setStatus('매뉴얼 DB 로딩 중...');
             try {
-                const isSandbox = ['data:', 'about:', 'blob:'].includes(window.location.protocol);
-                
-                // 1. 메인 API 시도
-                try {
-                    const targetUrl = API_BASE ? `${API_BASE}/api/visas` : "https://web-production-14f9a.up.railway.app/api/visas";
-                    const res = await fetch(targetUrl);
-                    if (res.ok) {
-                        const data = await res.json();
-                        VISA_DATA = data.data || data;
-                        return;
-                    }
-                } catch (err) {
-                    console.warn("메인 API 데이터 로드 실패:", err);
-                }
-
-                // 2. 샌드박스가 아닐 때만 로컬 JSON 폴백 시도
-                if (!isSandbox) {
-                    try {
-                        const fb = await fetch('./visa_data.json');
-                        if (fb.ok) {
-                            const json = await fb.json();
-                            VISA_DATA = json.data || json;
-                        }
-                    } catch (err) {
-                        console.warn("로컬 JSON 데이터 로드 실패:", err);
-                    }
-                } else {
-                    console.warn("미리보기(샌드박스) 환경에서는 상대 경로 파일(./visa_data.json)을 로드할 수 없습니다.");
+                if (!API_BASE) throw new Error("Local");
+                const res = await fetch(`${API_BASE}/api/visas`, { cache: 'no-store' });
+                if (res.ok) {
+                    const raw = await res.json();
+                    VISA_DATA = Array.isArray(raw) ? raw : (Array.isArray(raw.data) ? raw.data : []);
                 }
             } catch (e) {
-                console.error("비자 데이터 로드 중 예상치 못한 오류:", e);
+                try {
+                    const res = await fetch('./visa_data.json', { cache: 'no-store' });
+                    if (res.ok) {
+                        const raw = await res.json();
+                        VISA_DATA = Array.isArray(raw) ? raw : (Array.isArray(raw.data) ? raw.data : []);
+                    }
+                } catch (err) {}
+            }
+            setStatus('분석 준비 완료');
+        }
+
+        // ==========================================
+        // Consent Modal Logic
+        // ==========================================
+        function showConsent() {
+            const m = document.getElementById('consentModal');
+            if (m) {
+                m.classList.add('active');
+                // Focus trap
+                const agreeBtn = m.querySelector('.btn-agree');
+                if (agreeBtn) agreeBtn.focus();
+            }
+        }
+
+        function handleConsent(agree) {
+            if (agree) {
+                _isConsentGranted = true;
+                safeSet(STORE_KEYS.CONSENT, { agreed: true, at: Date.now() });
+                const m = document.getElementById('consentModal');
+                if (m) m.classList.remove('active');
+                const inp = document.getElementById('aiQ');
+                if (inp) inp.focus();
+            } else {
+                // Canvas 샌드박스 호환을 위해 window.location.href 대신 history.back() 사용
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    alert('동의를 거부하셨습니다. 좌측 상단의 뒤로가기 버튼을 눌러 메인 화면으로 돌아가 주십시오.');
+                }
             }
         }
 
         // ==========================================
-        // 유틸리티
+        // Chat Interactions
         // ==========================================
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str ?? '';
-            return div.innerHTML;
+        function updateCharCounter() {
+            const el = document.getElementById('aiQ');
+            const cnt = document.getElementById('charCount');
+            const btn = document.getElementById('sendBtn');
+            if (!el || !cnt || !btn) return;
+
+            // Auto-resize
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+
+            const len = el.value.length;
+            cnt.textContent = `${len} / ${MAX_CHARS}자`;
+            
+            if (len > MAX_CHARS) cnt.classList.add('limit');
+            else cnt.classList.remove('limit');
+
+            const state = getQuota();
+            btn.disabled = len === 0 || len > MAX_CHARS || state.count >= QUOTA_LIMIT;
         }
 
-        function detectLang(text) {
-            if (/[\uAC00-\uD7A3\u3131-\u3163\u1100-\u11FF]/.test(text)) return 'ko';
-            if (/[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]/.test(text)) return 'zh';
-            if (/[\u3040-\u30FF\u31F0-\u31FF\uFF65-\uFF9F]/.test(text)) return 'ja';
-            if (/[\u0E00-\u0E7F]/.test(text)) return 'th';
-            if (/[\u0400-\u04FF]/.test(text)) return 'ru';
-            if (/[\u0600-\u06FF]/.test(text)) return 'ar';
-            return 'en';
+        function appendMsg(htmlContent, typeClass = 'ai') {
+            const hist = document.getElementById('chatHistory');
+            if (!hist) return;
+            
+            const row = document.createElement('div');
+            row.className = `msg-row ${typeClass}`;
+            
+            const timeStr = formatTime();
+            const senderName = typeClass === 'user' ? '사용자' : (typeClass === 'sys-err' ? '시스템 오류' : 'Paradiso AI');
+
+            row.innerHTML = `
+                <div class="msg-bubble">${htmlContent}</div>
+                <div class="msg-time">${senderName} · ${timeStr}</div>
+            `;
+            hist.appendChild(row);
+            hist.scrollTop = hist.scrollHeight;
         }
 
-        function normalizeQuery(q) {
-            return q.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,!?;:()"'\[\]{}]/g, '');
-        }
-
-        function hashStr(str) {
-            let h = 0;
-            for (let i = 0; i < str.length; i++) {
-                h = ((h << 5) - h) + str.charCodeAt(i);
-                h |= 0;
-            }
-            return 'h' + Math.abs(h).toString(36);
-        }
-
-        function safeGet(key, fallback) {
-            try {
-                const v = localStorage.getItem(key);
-                return v ? JSON.parse(v) : fallback;
-            } catch { return fallback; }
-        }
-        function safeSet(key, value) {
-            try { localStorage.setItem(key, JSON.stringify(value)); return true; }
-            catch { return false; }
-        }
-
-        // ==========================================
-        // Layer 2: Rate Limiting
-        // ==========================================
-        function getRequestHistory() {
-            const now = Date.now();
-            const history = safeGet(STORE_KEYS.TIMESTAMPS, []);
-            const cutoff = now - 24*60*60*1000;
-            return history.filter(ts => ts > cutoff);
-        }
-
-        function checkRateLimit() {
-            const now = Date.now();
-            const history = getRequestHistory();
-
-            const lastMinute = history.filter(ts => ts > now - 60*1000);
-            const lastDay = history;
-
-            if (lastDay.length >= LIMITS.PER_DAY) {
-                const oldest = Math.min(...lastDay);
-                const resetAt = oldest + 24*60*60*1000;
-                const hoursLeft = Math.ceil((resetAt - now) / (60*60*1000));
-                return { ok: false, reason: 'daily', msg: `일일 질문 한도(${LIMITS.PER_DAY}건)를 초과했습니다. 약 ${hoursLeft}시간 후 다시 이용 가능합니다.` };
-            }
-
-            if (lastMinute.length >= LIMITS.PER_MINUTE) {
-                const oldest = Math.min(...lastMinute);
-                const resetAt = oldest + 60*1000;
-                const secsLeft = Math.ceil((resetAt - now) / 1000);
-                return { ok: false, reason: 'minute', msg: `너무 빠르게 질문하고 있습니다. ${secsLeft}초 후 다시 시도해주세요.` };
-            }
-
-            return { ok: true, usedToday: lastDay.length, remainingToday: LIMITS.PER_DAY - lastDay.length };
-        }
-
-        function recordRequest() {
-            const history = getRequestHistory();
-            history.push(Date.now());
-            safeSet(STORE_KEYS.TIMESTAMPS, history);
-            updateQuotaBadge();
-        }
-
-        function updateQuotaBadge() {
-            const badge = document.getElementById('quotaBadge');
-            if (!badge) return;
-            const used = getRequestHistory().length;
-            const remaining = LIMITS.PER_DAY - used;
-            badge.textContent = `${remaining} / ${LIMITS.PER_DAY}`;
-            badge.classList.remove('warn', 'err');
-            if (remaining <= 0) badge.classList.add('err');
-            else if (remaining <= 5) badge.classList.add('warn');
-            badge.title = `오늘 남은 질문: ${remaining}건 (총 ${LIMITS.PER_DAY}건)`;
-        }
-
-        // ==========================================
-        // Layer 3: 로컬 캐싱
-        // ==========================================
-        function getCache() {
-            return safeGet(STORE_KEYS.CACHE, {});
-        }
-
-        function cacheLookup(query, visaCode) {
-            const cache = getCache();
-            const composite = (visaCode || '_general') + ':' + normalizeQuery(query);
-            const key = hashStr(composite);
-            const entry = cache[key];
-            if (!entry) return null;
-            if (Date.now() - entry.t > LIMITS.CACHE_TTL_MS) {
-                delete cache[key];
-                safeSet(STORE_KEYS.CACHE, cache);
-                return null;
-            }
-            return entry.a;
-        }
-
-        function cacheStore(query, answer, visaCode) {
-            const cache = getCache();
-            const composite = (visaCode || '_general') + ':' + normalizeQuery(query);
-            const key = hashStr(composite);
-            cache[key] = { a: answer, t: Date.now() };
-
-            const keys = Object.keys(cache);
-            if (keys.length > LIMITS.CACHE_MAX_ENTRIES) {
-                const sorted = keys.sort((a,b) => cache[a].t - cache[b].t);
-                const toRemove = sorted.slice(0, keys.length - LIMITS.CACHE_MAX_ENTRIES);
-                toRemove.forEach(k => delete cache[k]);
-            }
-            safeSet(STORE_KEYS.CACHE, cache);
-        }
-
-        // ==========================================
-        // UI 헬퍼
-        // ==========================================
-        function appendMsg(html, cls = 'ai') {
-            const msgs = document.getElementById('aiMsgs');
-            if (!msgs) return null;
-            const id = 'm-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-            msgs.insertAdjacentHTML('beforeend', `<div class="msg ${cls}" id="${id}">${html}</div>`);
-            setTimeout(() => msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' }), 50);
+        function buildLoaderId() { return 'ldr-' + Date.now(); }
+        function appendLoader() {
+            const id = buildLoaderId();
+            const hist = document.getElementById('chatHistory');
+            const row = document.createElement('div');
+            row.id = id;
+            row.className = 'msg-row ai';
+            row.innerHTML = `<div class="msg-bubble"><div class="typing-loader"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div><div class="msg-time">분석 중...</div>`;
+            hist.appendChild(row);
+            hist.scrollTop = hist.scrollHeight;
             return id;
         }
 
-        function updateCharCounter() {
-            const inp = document.getElementById('aiQ');
-            const ctr = document.getElementById('charCounter');
-            if (!inp || !ctr) return;
-            const len = inp.value.length;
-            ctr.textContent = `${len} / ${LIMITS.MAX_CHARS}`;
-            ctr.classList.remove('warn', 'err');
-            if (len >= LIMITS.MAX_CHARS) ctr.classList.add('err');
-            else if (len >= LIMITS.MAX_CHARS * 0.8) ctr.classList.add('warn');
-        }
+        function generateBadges(text) {
+            if (!text) return '';
+            const matchVisas = [...new Set(text.match(/[A-Z]-\d+-[A-Z0-9]+/g) || text.match(/[A-Z]-\d+/g) || [])];
+            if (!matchVisas.length && !text.includes('1345')) return '';
 
-        function setStatus(text) {
-            const el = document.getElementById('statusMsg');
-            if (el) el.textContent = text;
-        }
-
-        // ==========================================
-        // 동의 처리
-        // ==========================================
-        window.handleConsent = function(agreed) {
-            userConsent = agreed;
-            safeSet(STORE_KEYS.CONSENT, { agreed, at: Date.now() });
-            const overlay = document.getElementById('consentOverlay');
-            if (overlay) overlay.style.display = 'none';
-
-            if (agreed) {
-                appendMsg('동의가 완료되었습니다. 무엇을 도와드릴까요?');
-                const inp = document.getElementById('aiQ');
-                const btn = document.getElementById('aiSend');
-                if (inp) { inp.disabled = false; inp.focus(); }
-                if (btn) btn.disabled = false;
-                setStatus('질문 대기 중');
-                updateQuotaBadge();
-            } else {
-                appendMsg('동의하지 않으시면 AI 상담을 이용할 수 없습니다. 화면을 새로고침하여 다시 선택해주세요.', 'sys-err');
+            let html = '<div class="bdg-wrap">';
+            matchVisas.forEach(v => {
+                html += `<a href="index.html?q=${encodeURIComponent(v)}" class="bdg bdg-visa">매뉴얼: ${v}</a>`;
+            });
+            if (text.includes('1345')) {
+                html += `<a href="tel:1345" class="bdg bdg-link">☎ 1345 문의</a>`;
             }
-        };
-
-        // ==========================================
-        // 모델 뱃지 헬퍼
-        // ==========================================
-        function getModelBadge(model, provider) {
-            const map = {
-                "deepseek-chat":                  { cls: "deepseek", label: "DeepSeek V3" },
-                "google/gemma-4-26b-a4b-it:free": { cls: "gemma",    label: "Gemma 4" },
-                "moonshotai/kimi-k2:free":        { cls: "kimi",     label: "Kimi K2" },
-                "llama-3.3-70b-versatile":        { cls: "groq",     label: "Llama 3.3 (Groq)" },
-                "llama-3.1-8b-instant":           { cls: "groq",     label: "Llama 3.1 (Groq)" },
-            };
-            const info = map[model] || { cls: "unknown", label: model || provider || "AI" };
-            return `<span class="model-badge ${info.cls}">● ${info.label}</span>`;
+            html += '</div>';
+            return html;
         }
 
-        // ==========================================
-        // 메인 전송 함수 (RAG 도입 및 3층 방어선 적용)
-        // ==========================================
         async function sendAi() {
+            if (!_isConsentGranted) return showConsent();
+
+            const state = getQuota();
+            if (state.count >= QUOTA_LIMIT) {
+                showToast("일일 분석 한도(30회)를 초과했습니다. 내일 다시 이용해 주십시오.");
+                return;
+            }
+
             const inp = document.getElementById('aiQ');
-            const btn = document.getElementById('aiSend');
-            const q = inp.value.trim();
+            const btn = document.getElementById('sendBtn');
+            const text = inp.value.trim();
+            
+            if (!text || text.length > MAX_CHARS) return;
 
-            if (!q) return;
+            // Stop previous request if any
+            if (_abortController) _abortController.abort();
 
-            // --- Layer 1: 입력 길이 검증 ---
-            if (q.length > LIMITS.MAX_CHARS) {
-                appendMsg(`질문은 최대 ${LIMITS.MAX_CHARS}자까지 입력 가능합니다. (현재 ${q.length}자)`, 'sys-warn');
-                return;
-            }
-            if (q.length < 2) {
-                appendMsg('질문이 너무 짧습니다. 구체적으로 작성해주세요.', 'sys-warn');
-                return;
-            }
-
-            // --- Layer 3: 캐시 조회 (비자 코드 포함 복합 키) ---
-            const cacheVisaCode = (VISA_DATA && VISA_DATA.length > 0) ? (() => {
-                const kw0 = q.toLowerCase().split(/\s+/);
-                let bv = null, ms = 0;
-                VISA_DATA.forEach(v => {
-                    let s = 0;
-                    const t = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
-                    kw0.forEach(k => { if (k.length > 1 && t.includes(k)) s++; });
-                    if (s > ms) { ms = s; bv = v; }
-                });
-                return (bv && ms > 0) ? bv.code : '_general';
-            })() : '_general';
-            const cached = cacheLookup(q, cacheVisaCode);
-            if (cached) {
-                appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
-                inp.value = '';
-                updateCharCounter();
-                appendMsg(
-                    `${escapeHtml(cached).replace(/\n/g, '<br>')}` +
-                    `<span class="cached-tag">💾 캐시된 답변 (24시간 이내 동일 질문)</span>` +
-                    `<span class="msg-disc">${DISCLAIMER}</span>`
-                );
-                inp.focus();
-                return;
-            }
-
-            // --- Layer 2: Rate Limiting ---
-            const rl = checkRateLimit();
-            if (!rl.ok) {
-                appendMsg(rl.msg, 'sys-err');
-                return;
-            }
-
-            // --- Layer 4: 비자 매칭 (question은 원본 유지, context/visa_data 분리 전송) ---
-            // Codex P1: question에 지침 블록을 prepend하면 백엔드 detect(req.question)이 오염되어
-            // 비한국어 사용자 질문도 ko로 판정되는 regression이 발생함.
-            // index.html v25 방식을 따라 question=원본, context=지침, visa_data=구조화 데이터로 분리.
-            let matchedVisaData = null;
-            let contextDirective = "";
-
-            if (VISA_DATA && VISA_DATA.length > 0) {
-                const kw = q.toLowerCase().split(/\s+/);
-                let bestVisa = null, maxScore = 0;
-
-                VISA_DATA.forEach(v => {
-                    let score = 0;
-                    const textToSearch = `${v.code} ${v.name} ${v.newReq||''} ${v.extReq||''} ${v.faq||''}`.toLowerCase();
-                    kw.forEach(k => {
-                        if (k.length > 1 && textToSearch.includes(k)) score++;
-                    });
-                    if (score > maxScore) {
-                        maxScore = score;
-                        bestVisa = v;
-                    }
-                });
-
-                if (bestVisa && maxScore > 0) {
-                    matchedVisaData = {
-                        code: bestVisa.code,
-                        name: bestVisa.name,
-                        cat: bestVisa.cat || '',
-                        period: bestVisa.period || '',
-                        newReq: bestVisa.newReq || '',
-                        extReq: bestVisa.extReq || '',
-                        faq: bestVisa.faq || ''
-                    };
-                    contextDirective = `[요청 작업] 위 비자 데이터에 근거하여 사용자 질문에 사실 위주로 답변하십시오. 데이터에 없는 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
-                } else {
-                    // 매칭 없음: 일반 지침만 전달
-                    contextDirective = `[요청 작업] 대한민국 출입국 관련 질문입니다. 확인되지 않은 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
-                }
-            } else {
-                contextDirective = `[요청 작업] 대한민국 출입국 관련 질문입니다. 확인되지 않은 내용은 단언하지 말고 관할 출입국관리사무소(☎ 1345) 또는 HiKorea 확인을 안내하십시오.`;
-            }
-
-            // 캐시 키용 비자 코드
-            const matchedVisaCode = matchedVisaData ? matchedVisaData.code : '_general';
-
-            // --- API 호출 진행 ---
-            appendMsg(`<div>${escapeHtml(q)}</div>`, 'user');
+            // Append User Msg
+            appendMsg(escapeHtml(text).replace(/\n/g, '<br>'), 'user');
             inp.value = '';
             updateCharCounter();
+
             btn.disabled = true;
             inp.disabled = true;
             btn.textContent = '...';
-            setStatus('답변 생성 중...');
 
-            const lid = appendMsg('답변을 생성 중입니다... (최대 10~15초 소요)');
+            const lid = appendLoader();
+            setStatus('법령 분석 및 데이터 맵핑 중...');
 
+            _abortController = new AbortController();
+            
             try {
-                const res = await fetch(API_URL, {
+                const response = await fetch(`${API_BASE}/api/ask`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        question: q,
-                        consent: userConsent,
-                        context: contextDirective,
-                        lang: detectLang(q),
-                        visa_data: matchedVisaData
-                    })
+                    body: JSON.stringify({
+                        question: text,
+                        consent: true,
+                        context: "[요구사항] 출입국관리법 및 실무 매뉴얼에 근거하여 사용자 상황을 객관적이고 논리적으로 진단하고, 필요한 구비서류와 절차를 명확히 제시하십시오.",
+                        lang: "ko",
+                        visa_data: { code: 'N/A', cat: 'N/A' } // General context
+                    }),
+                    signal: _abortController.signal
                 });
 
-                if (!res.ok) throw new Error(`서버 응답 오류 (${res.status})`);
-
-                const data = await res.json();
-                const answer = data.answer || data.detail || "응답을 처리할 수 없습니다.";
-
-                // --- 비한국어 문자 후처리 필터 ---
-                const hasNonKorean = /[\u3040-\u30FF\u31F0-\u31FF\uFF65-\uFF9F]/.test(answer);
-                if (hasNonKorean) {
-                    const loader2 = document.getElementById(lid);
-                    if (loader2) loader2.remove();
-                    appendMsg('<b>⚠️ 답변 생성 중 오류가 발생했습니다. 다시 시도하거나 1345로 문의하세요.</b>', 'sys-err');
-                    setStatus('답변 오류 — 다시 시도 가능');
-                    btn.disabled = false;
-                    inp.disabled = false;
-                    btn.textContent = '전송';
-                    inp.focus();
-                    return;
-                }
-
-                recordRequest();
-                cacheStore(q, answer, matchedVisaCode);
-
-                const loader = document.getElementById(lid);
-                if (loader) loader.remove();
+                if (!response.ok) throw new Error(`서버 응답 오류 (${response.status})`);
                 
-                let formattedText = escapeHtml(answer).replace(/\n/g, '<br>');
-                formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                const badge = getModelBadge(data.model, data.provider);
-                appendMsg(`${formattedText}${badge}<span class="msg-disc">${DISCLAIMER}</span>`);
-                setStatus('질문 대기 중');
-            } catch (err) {
+                const result = await response.json();
+                useQuota();
+
                 const loader = document.getElementById(lid);
                 if (loader) loader.remove();
-                appendMsg(`오류: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span>`, 'sys-err');
-                setStatus('오류 발생 — 다시 시도 가능');
-            }
 
-            btn.disabled = false;
-            inp.disabled = false;
-            btn.textContent = '전송';
-            inp.focus();
+                const ans = result.answer || "매뉴얼 내에서 분석 가능한 데이터를 찾지 못했습니다.";
+                const formattedText = escapeHtml(ans).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                const badge = generateBadges(ans);
+
+                appendMsg(`${formattedText}${badge}<span class="msg-disc">${DISCLAIMER}</span>`);
+                setStatus('분석 완료');
+
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                const loader = document.getElementById(lid);
+                if (loader) loader.remove();
+                appendMsg(`시스템 통신 장애가 발생했습니다: ${escapeHtml(err.message)}<span class="msg-disc">${DISCLAIMER}</span>`, 'sys-err');
+                setStatus('오류 발생 — 재시도 요망');
+            } finally {
+                btn.disabled = false;
+                inp.disabled = false;
+                btn.textContent = '전송';
+                inp.focus();
+                _abortController = null;
+            }
         }
 
         // ==========================================
-        // 초기화
+        // Initialization
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            loadVisaData(); // 데이터 로드 호출
+            loadVisaData();
+            
             const qEl = document.getElementById('aiQ');
             if (qEl) {
                 qEl.addEventListener('input', updateCharCounter);
@@ -595,9 +518,10 @@
             updateCharCounter();
             updateQuotaBadge();
 
+            // Consent check
             const prev = safeGet(STORE_KEYS.CONSENT, null);
-            if (prev && prev.agreed && (Date.now() - prev.at) < 24*60*60*1000) {
-                handleConsent(true);
+            if (prev && prev.agreed && (Date.now() - prev.at) < 24 * 60 * 60 * 1000) {
+                _isConsentGranted = true;
             }
         });
     </script>
