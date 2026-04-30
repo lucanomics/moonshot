@@ -115,7 +115,8 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 .hero-actions { display: grid; grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-5); }
 .qa-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-2); }
 .qa-main .hero-action-btn { min-width: 0; }
-body.searched .hero-actions { display: none; }
+body.searched .hero-actions,
+body.searched .qa-main { display: none !important; }
 body.searched .visa-manual-section.in-hero { display: none; }
 .hero-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-2); background: color-mix(in srgb, var(--bg1) 80%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--bd); min-height: var(--btn-h-xl); padding: var(--sp-3) var(--sp-3); border-radius: var(--btn-r-lg); font-family: var(--ff) !important; font-weight: var(--btn-fw); font-size: 0.82rem; color: var(--t2); cursor: pointer; transition: var(--btn-tr); box-shadow: var(--sh1); text-align: center; line-height: 1.35; }
 .hero-action-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
