@@ -71,8 +71,8 @@
 }
 [data-theme="dark"] {
   --bg0: #0B2A24; --bg1: #113B32; --bg2: #184B40; --bg3: #205A4E;
-  --bgI: #0B2A24; --bd: #2D5A50; --bd2: #224A41; --bd3: #2D5A50;
-  --t1: #F3EEDF; --t2: #C7BFA8; --t3: #8C8572;
+  --bgI: #0B2A24; --bd: #3A6B61; --bd2: #2D5A50; --bd3: #3A6B61;
+  --t1: #F3EEDF; --t2: #D4CBB3; --t3: #A29A82;
   --ac: #34D4A8; --ac2: #17B388;
   --acG: rgba(52,212,168,0.14); --acL: #163E36;
   --cy: #FF8B7A; --cyL: #3A1E1A;
@@ -112,11 +112,8 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 .toast-success { border-left: 3px solid var(--color-success); }
 
 /* Hero Actions Panel */
-.hero-actions { display: grid; grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-5); }
-.qa-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-2); }
-.qa-main .hero-action-btn { min-width: 0; }
-body.searched .hero-actions,
-body.searched .qa-main { display: none !important; }
+.hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); width: 100%; max-width: 680px; margin-top: var(--sp-5); }
+body.searched .hero-actions { display: none; }
 body.searched .visa-manual-section.in-hero { display: none; }
 .hero-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-2); background: color-mix(in srgb, var(--bg1) 80%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--bd); min-height: var(--btn-h-xl); padding: var(--sp-3) var(--sp-3); border-radius: var(--btn-r-lg); font-family: var(--ff) !important; font-weight: var(--btn-fw); font-size: 0.82rem; color: var(--t2); cursor: pointer; transition: var(--btn-tr); box-shadow: var(--sh1); text-align: center; line-height: 1.35; }
 .hero-action-btn:hover { background: var(--acL); border-color: var(--ac); color: var(--ac); transform: translateY(-3px); box-shadow: var(--shD); }
@@ -201,7 +198,8 @@ body.searched #q { padding: 0.7rem 0.7rem 0.7rem 2.6rem; font-size: 0.9rem; }
 .auto-list.active { display: block; opacity: 1; transform: translateY(0); }
 .auto-item { padding: 0.7rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--t1); border-bottom: 1px solid var(--bd2); transition: background 0.15s; }
 .auto-item:last-child { border-bottom: none; }
-.auto-item:hover { background: var(--bg2); }
+.auto-item:hover, .auto-item.is-active { background: var(--bg2); }
+.auto-item.is-active { box-shadow: inset 3px 0 0 var(--ac); }
 .auto-item svg { color: var(--t3); width: 14px; height: 14px; flex-shrink: 0; }
 .smeta { display: flex; justify-content: space-between; margin-top: 0.4rem; font-size: 0.72rem; color: var(--t3); padding: 0 0.5rem; opacity: 0; height: 0; overflow: hidden; transition: opacity 0.3s ease; }
 body.searched .smeta { opacity: 1; height: auto; overflow: visible; }
@@ -785,8 +783,9 @@ body::before {
 body.searched .visa-manual-section.in-hero { display: none !important; }
 
 /* Search Toggle (inherits .hero-action-btn, accent border for primary action) */
-.hero-action-btn.search-toggle-btn { border: 1.5px dashed var(--ac); color: var(--ac); font-weight: 800; }
+.hero-action-btn.search-toggle-btn { border: 1.5px dashed var(--ac); color: var(--ac); font-weight: 800; grid-column: 1 / -1; }
 .hero-action-btn.search-toggle-btn:hover { background: color-mix(in srgb, var(--ac) 12%, var(--bg1)); border-style: solid; }
+.hero-action-btn.search-toggle-btn.active { background: color-mix(in srgb, var(--ac) 15%, var(--bg1)); border-style: solid; }
 body.searched .search-toggle-btn { display: none !important; }
 body.searched #searchForm { display: block !important; }
     </style>
@@ -855,7 +854,7 @@ body.searched #searchForm { display: block !important; }
 
 
         <div class="hero-actions" id="heroActions">
-            <button type="button" id="searchToggleBtn" class="hero-action-btn search-toggle-btn" data-action="toggle-search">
+            <button type="button" id="searchToggleBtn" class="hero-action-btn search-toggle-btn" data-action="toggle-search" aria-expanded="false">
                 <span class="hero-action-icon">🔍</span>
                 <span class="hero-action-label">비자 코드 및 키워드 직접 검색</span>
             </button>
@@ -891,13 +890,13 @@ body.searched #searchForm { display: block !important; }
         <form class="search-wrap" id="searchForm" role="search" style="display:none;">
             <div class="sbar">
                 <svg class="sbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-                <input type="search" id="q" aria-label="비자 자격 및 키워드 검색" placeholder="데이터 로딩 중…" autocomplete="off" spellcheck="false" disabled>
+                <input type="search" id="q" aria-label="비자 자격 및 키워드 검색" aria-autocomplete="list" aria-controls="auto-list" aria-expanded="false" aria-haspopup="listbox" role="combobox" placeholder="데이터 로딩 중…" autocomplete="off" spellcheck="false" disabled>
                 <button type="button" class="xb" id="xb" data-action="clear-search" aria-label="검색어 지우기">✕</button>
                 <button type="submit" class="sbar-go" aria-label="검색" disabled>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
             </div>
-            <div class="auto-list" id="auto-list"></div>
+            <div class="auto-list" id="auto-list" role="listbox" aria-label="검색 자동완성"></div>
             <div class="smeta"><span id="rc">데이터 로딩 중…</span><span id="rh"></span></div>
         </form>
 
@@ -2523,7 +2522,8 @@ const PREDEF_KEYWORDS = [
 function showSuggestions(val) {
     if(!dataReady) return;
     const list = document.getElementById('auto-list'); list.innerHTML = '';
-    if(!val) { list.classList.remove('active'); return; }
+    const setExpanded = (open) => qEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if(!val) { list.classList.remove('active'); setExpanded(false); qEl.removeAttribute('aria-activedescendant'); return; }
     const lowerVal = val.toLowerCase();
     const matches = PREDEF_KEYWORDS.filter(k => k.toLowerCase().includes(lowerVal));
     VISA_DATA.forEach(v => {
@@ -2532,14 +2532,53 @@ function showSuggestions(val) {
         }
     });
     if(matches.length > 0) {
-        matches.slice(0, 7).forEach(m => {
+        matches.slice(0, 7).forEach((m, i) => {
             const div = document.createElement('div'); div.className = 'auto-item';
+            div.id = `auto-item-${i}`;
+            div.setAttribute('role', 'option');
+            div.setAttribute('aria-selected', 'false');
             div.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg> <span>${hl(m, [val])}</span>`;
             div.setAttribute('data-action', 'search-hint'); div.setAttribute('data-query', m);
             list.appendChild(div);
         });
         list.classList.add('active');
-    } else list.classList.remove('active');
+        setExpanded(true);
+        qEl.removeAttribute('aria-activedescendant');
+    } else { list.classList.remove('active'); setExpanded(false); qEl.removeAttribute('aria-activedescendant'); }
+}
+
+function moveSuggestion(direction) {
+    const list = document.getElementById('auto-list');
+    if (!list || !list.classList.contains('active')) return false;
+    const items = Array.from(list.querySelectorAll('.auto-item'));
+    if (!items.length) return false;
+    const currentIdx = items.findIndex(el => el.classList.contains('is-active'));
+    let nextIdx;
+    if (direction === 'down') nextIdx = currentIdx < 0 ? 0 : (currentIdx + 1) % items.length;
+    else nextIdx = currentIdx <= 0 ? items.length - 1 : currentIdx - 1;
+    items.forEach((el, i) => {
+        const active = i === nextIdx;
+        el.classList.toggle('is-active', active);
+        el.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    const target = items[nextIdx];
+    qEl.setAttribute('aria-activedescendant', target.id);
+    target.scrollIntoView({ block: 'nearest' });
+    return true;
+}
+
+function commitSuggestion() {
+    const list = document.getElementById('auto-list');
+    if (!list || !list.classList.contains('active')) return false;
+    const active = list.querySelector('.auto-item.is-active');
+    if (!active) return false;
+    const q = active.dataset.query || active.textContent.trim();
+    qEl.value = q;
+    list.classList.remove('active');
+    qEl.setAttribute('aria-expanded', 'false');
+    qEl.removeAttribute('aria-activedescendant');
+    executeSearch();
+    return true;
 }
 function executeSearch() {
     if (!dataReady) return;
@@ -2576,10 +2615,10 @@ function resetToLanding(){
     document.getElementById('rlist').innerHTML=''; rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
     const sf = document.getElementById('searchForm');
     const stb = document.getElementById('searchToggleBtn');
-    const ha = document.getElementById('heroActions');
+    const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'none';
-    if (stb) stb.style.display = '';
-    if (ha) ha.style.display = '';
+    if (stb) { stb.style.display = ''; stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
+    if (vms) vms.style.display = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetReveal();
 }
@@ -2795,11 +2834,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 'toggle-search': () => {
                     const sf = document.getElementById('searchForm');
                     const stb = document.getElementById('searchToggleBtn');
-                    const ha = document.getElementById('heroActions');
-                    if (sf) sf.style.display = 'block';
-                    if (stb) stb.style.display = 'none';
-                    if (ha) ha.style.display = 'none';
-                    if (qEl) qEl.focus();
+                    const vms = document.getElementById('visaManualSection');
+                    const isOpen = stb && stb.getAttribute('aria-expanded') === 'true';
+                    if (isOpen) {
+                        if (sf) sf.style.display = 'none';
+                        if (vms) vms.style.display = '';
+                        if (stb) { stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
+                    } else {
+                        if (sf) sf.style.display = 'block';
+                        if (vms) vms.style.display = 'none';
+                        if (stb) { stb.setAttribute('aria-expanded', 'true'); stb.classList.add('active'); }
+                        if (qEl) qEl.focus();
+                    }
                 },
                 'open-jobcode-modal': () => openJobCodeModal(),
                 'open-jurisdiction-modal': () => openJurisdictionModal(),
