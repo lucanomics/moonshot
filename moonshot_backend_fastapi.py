@@ -299,7 +299,7 @@ DISCLAIMER_SUFFIX = (
 ANTI_HALLUCINATION_INSTRUCTION = (
     "[답변 생성 지침]\n"
     "- 위 [참고 자료]에 명시된 내용만 인용하십시오.\n"
-    "- [참고 자료]에 없는 내용을 질문받으면: \"해당 사항은 제공된 자료에 명시되어 있지 않습니다. ☎ 1345로 직접 문의하십시오.\"라고만 답하십시오.\n"
+    "- [참고 자료]에 없는 내용을 질문받으면, 확인된 범위와 누락 범위를 분리해 설명하고 마지막에 ☎ 1345 문의 안내를 덧붙이십시오.\n"
     "- 수치(금액, 기간, 점수, 비율)가 포함된 답변은 반드시 출처 문장(예: \"매뉴얼 [신규 요건] 항목에 따르면\")을 함께 명시하십시오.\n"
 )
 
@@ -436,6 +436,15 @@ async def ask_ai(req: AskRequest):
             "번호 목록 형식으로 명확하게 작성하십시오.\n"
         )
 
+    aux_context_parts = []
+    if cached_public_visa_data != "DATA MISSING":
+        aux_context_parts.append(f"- 법무부 체류자격 코드 캐시: {cached_public_visa_data}")
+    if cached_public_job_data != "DATA MISSING":
+        aux_context_parts.append(f"- 통계청 산업/직업분류 캐시: {cached_public_job_data}")
+    if realtime_law_context != "DATA MISSING":
+        aux_context_parts.append(f"- 국가법령정보공유서비스(출입국관리법) 실시간 조회: {realtime_law_context}")
+    aux_context = "\n".join(aux_context_parts) if aux_context_parts else "- 추가 보조 컨텍스트 없음"
+
     system_prompt = (
         "당신은 대한민국 법무부 출입국·외국인정책본부의 2026년 4월 최신 실무 매뉴얼"
         "(사증민원·체류민원)에 정통한 비자 상담 전문가입니다.\n\n"
@@ -449,9 +458,7 @@ async def ask_ai(req: AskRequest):
         "7. 근거 없는 절차 안내(예: '방문하여 신청하시면 됩니다')를 단독으로 제시하지 마십시오.\n"
         f"8. 모든 답변 마지막에 반드시 다음 면책 고지를 그대로 추가하십시오:\n   \"{DISCLAIMER_SUFFIX}\"\n\n"
         "[보조 컨텍스트 (RAG 캐시)]\n"
-        f"- 법무부 체류자격 코드 캐시: {cached_public_visa_data}\n"
-        f"- 통계청 산업/직업분류 캐시: {cached_public_job_data}\n"
-        f"- 국가법령정보공유서비스(출입국관리법) 실시간 조회: {realtime_law_context}\n"
+        f"{aux_context}\n"
     )
 
     visa_block = _build_visa_block(req.visa_data)
@@ -459,6 +466,7 @@ async def ask_ai(req: AskRequest):
 
     rag_visa_code = req.visa_data.get("code") if req.visa_data else None
     rag_block = await retrieve_manual_context(req.question, rag_visa_code)
+    has_grounding = bool(rag_block or visa_block or extra_context)
 
     user_prompt_parts = []
     if rag_block:
@@ -470,6 +478,8 @@ async def ask_ai(req: AskRequest):
     if extra_context:
         user_prompt_parts.append(f"[프론트엔드 제공 컨텍스트]\n{extra_context}")
     user_prompt_parts.append(f"[민원인 질문]\n{req.question}")
+    if not has_grounding:
+        user_prompt_parts.append("[중요] 참고 자료가 부족합니다. 구체 수치/요건 단정 금지, 확인된 사실만 답변하고 불확실성 명시.")
     user_prompt_parts.append(ANTI_HALLUCINATION_INSTRUCTION)
     user_prompt = "\n\n".join(user_prompt_parts)
 
@@ -497,13 +507,16 @@ async def ask_ai(req: AskRequest):
                 resp.raise_for_status()
                 data   = resp.json()
                 answer = data["choices"][0]["message"]["content"]
+                model_resolved = data.get("model") or model_name
 
                 append_log(category, success=True)
                 return {
                     "answer":        answer,
                     "model":         model_name,
+                    "model_resolved": model_resolved,
                     "provider":      provider,
                     "lang_detected": user_lang,
+                    "retrieval_used": bool(rag_block),
                 }
         except Exception as e:
             logger.error(f"[{provider}/{model_name}] 호출 실패: {e}")
