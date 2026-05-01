@@ -40,7 +40,7 @@
             font-family: var(--ff); font-size: var(--fs-base); line-height: 1.6;
             background-color: var(--bg0); color: var(--t1);
             height: 100vh; height: 100dvh; display: flex; flex-direction: column;
-            overflow: hidden; margin: 0;
+            overflow: hidden; overflow-x: hidden; margin: 0; max-width: 100%;
         }
 
         /* Ambient Background */
@@ -96,6 +96,7 @@
         .msg-time { font-size: 0.7rem; color: var(--t3); margin-top: 0.3rem; margin-bottom: 0.1rem; }
         .msg-row.user .msg-time { text-align: right; }
         .msg-disc { display: block; font-size: 0.72rem; color: var(--t3); margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px dashed var(--bd); line-height: 1.4; }
+        .model-badge { display:inline-flex; align-items:center; gap:.3rem; margin-top:.6rem; padding:.2rem .55rem; border-radius:999px; font-size:.72rem; font-weight:700; border:1px solid var(--bd); color:var(--t2); background:var(--bg2); }
 
         /* Badge/Formatting in AI text */
         .msg-bubble strong { color: var(--ac); font-weight: 800; }
@@ -153,7 +154,7 @@
         .modal-body li { margin-bottom: 0.4rem; }
         
         .modal-footer { padding: var(--sp-3) var(--sp-5); border-top: 1px solid var(--bd2); display: flex; justify-content: flex-end; gap: var(--sp-2); background: var(--bg0); }
-        .btn-cancel, .btn-agree { display: inline-flex; align-items: center; justify-content: center; min-height: var(--btn-h-md); padding: 0 var(--sp-4); border-radius: var(--btn-r-md); cursor: pointer; font-family: var(--ff); transition: var(--btn-tr); line-height: 1.2; }
+        .btn-cancel, .btn-agree { display: inline-flex; align-items: center; justify-content: center; min-height: var(--btn-h-lg); padding: 0 var(--sp-4); border-radius: var(--btn-r-md); cursor: pointer; font-family: var(--ff); transition: var(--btn-tr); line-height: 1.2; font-weight: 700; }
         .btn-cancel { background: transparent; border: 1px solid var(--bd); color: var(--t2); font-weight: 600; }
         .btn-cancel:hover { background: var(--bg2); color: var(--t1); }
         .btn-agree { background: var(--ac); border: 1px solid var(--ac); color: #000; font-weight: 800; }
@@ -168,6 +169,10 @@
 
         @media (max-width: 768px) {
             .chat-header { padding: var(--sp-2) var(--sp-3); }
+            .header-right, .header-left { min-width: 0; }
+            .quota-badge { white-space: nowrap; }
+            .input-wrapper { flex-direction: column; align-items: stretch; }
+            .send-btn { width: 100%; height: var(--btn-h-lg); border-radius: var(--btn-r-md); }
             .chat-history { padding: var(--sp-4); gap: var(--sp-3); }
             .chat-input-area { padding: var(--sp-3); padding-bottom: calc(var(--sp-3) + env(safe-area-inset-bottom)); }
             .msg-row { max-width: 92%; }
@@ -430,6 +435,15 @@
             return id;
         }
 
+        function getModelBadge(model, provider, modelResolved) {
+            const resolved = modelResolved || model || '';
+            let label = resolved || provider || 'AI';
+            if (!resolved && provider) label = provider.toUpperCase();
+            if (provider === 'openrouter' && resolved) label = `OpenRouter · ${resolved}`;
+            if (provider === 'groq' && resolved) label = `Groq · ${resolved}`;
+            return `<div class="model-badge">응답 모델: ${escapeHtml(label)}</div>`;
+        }
+
         function generateBadges(text) {
             if (!text) return '';
             const matchVisas = [...new Set(text.match(/[A-Z]-\d+-[A-Z0-9]+/g) || text.match(/[A-Z]-\d+/g) || [])];
@@ -503,8 +517,9 @@
                 const ans = result.answer || "매뉴얼 내에서 분석 가능한 데이터를 찾지 못했습니다.";
                 const formattedText = escapeHtml(ans).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 const badge = generateBadges(ans);
+                const modelBadge = getModelBadge(result.model, result.provider, result.model_resolved);
 
-                appendMsg(`${formattedText}${badge}<span class="msg-disc">${DISCLAIMER}</span>`);
+                appendMsg(`${formattedText}${badge}${modelBadge}<span class="msg-disc">${DISCLAIMER}</span>`);
                 setStatus('분석 완료');
 
             } catch (err) {
