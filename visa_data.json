@@ -132,9 +132,15 @@
     "extReqDocs": [],
     "faq": "Q: F계열 자격 변경은?\nA: 동일 계열 내 변경은 원칙 허용, 타 계열 장기 변경은 일부만 예외적 허용.",
     "subCodes": [],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "SCN-2",
@@ -168,9 +174,15 @@
     "extReqDocs": [],
     "faq": "Q: 예외?\nA: 인도적 사유(G-1)나 극히 중대한 사유 외에는 원칙 불허.",
     "subCodes": [],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "SCN-4",
@@ -229,9 +241,15 @@
     "extReqDocs": [],
     "faq": "Q: 자진신고 실익?\nA: 감경 가능성 있으나 내부 지침 재량 사항.",
     "subCodes": [],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "OVS-1",
@@ -302,9 +320,15 @@
         "note": "별도 신청 필수"
       }
     ],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "FAQ-1",
@@ -417,9 +441,15 @@
     "extReqDocs": [],
     "faq": "Q: 다국어 상담?\nA: 1345 외국인종합안내센터.",
     "subCodes": [],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "VW-1",
@@ -469,9 +499,15 @@
         "note": "무사증과 동일 개념이 아님."
       }
     ],
-    "initialReqDocs": [],
-    "extensionReqDocs": [],
-    "changeReqDocs": []
+    "initialReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "extensionReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ],
+    "changeReqDocs": [
+      "개별 사안별 증빙서류(매뉴얼 해당 항목 및 관할기관 안내 기준)"
+    ]
   },
   {
     "code": "COM-1",
