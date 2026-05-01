@@ -2389,6 +2389,15 @@ function showJurisdiction() {
 function openJurisdictionModal() { openModal('jurisdictionModalOverlay'); initJurisdictionSelects(); }
 
 // --- AI Analysis Processing ---
+function buildModelBadgeHtml(result) {
+    const rawModel = result?.model_resolved || result?.model || '';
+    const provider = result?.provider || '';
+    let label = rawModel || provider || 'AI';
+    if (provider === 'openrouter' && rawModel) label = `OpenRouter · ${rawModel}`;
+    else if (provider === 'groq' && rawModel) label = `Groq · ${rawModel}`;
+    return `<div style="margin-top:.65rem;font-size:.75rem;color:var(--t3);">응답 모델: <span style="display:inline-block;border:1px solid var(--bd);background:var(--bg2);padding:.15rem .5rem;border-radius:999px;color:var(--t2);font-weight:700;">${escapeHtml(label)}</span></div>`;
+}
+
 async function submitAiAnalysis(actionType, btnEl) {
     if (actionType === 'jurisdiction') return openJurisdictionModal();
     if (actionType === 'job_code') return openJobCodeModal();
@@ -2429,7 +2438,8 @@ async function submitAiAnalysis(actionType, btnEl) {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
         let formattedText = escapeHtml(result.answer || "결과 생성 불가").replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        resultBox.innerHTML = formattedText; resultBox.style.display = 'block';
+        const modelBadge = buildModelBadgeHtml(result);
+        resultBox.innerHTML = formattedText + modelBadge; resultBox.style.display = 'block';
     } catch (error) {
         if (error.name === 'AbortError') return;
         resultBox.innerHTML = "<b>⚠ 분석 중 오류가 발생했습니다.</b>"; resultBox.style.display = 'block';
