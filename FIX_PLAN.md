@@ -1,43 +1,87 @@
-# FIX_PLAN
+## Landing UX and search-entry recommendations
 
-## File: `index.html`
-1. Replace “주한공관 사증(비자) 신청” with “재외공관 사증(비자) 신청”.  
-   - Rationale: align with overseas pre-entry issuance terminology in visa manual.
-   - Evidence: visa manual flow language around overseas consular processing.
+### 1) Current UX problem
+- 현재 추천 키워드 칩(`.landing-hints`)은 제목/설명 없이 단독 노출되어, 사용자가 **무엇을 위한 목록인지 즉시 이해하기 어렵습니다**.
+- 항목 수가 많고 성격(일반 민원/특수 상황/고난도 이슈)이 섞여 있어 첫 화면에서 인지 부하가 큽니다.
+- 검색 토글 CTA와 입국 전/후 트랙의 관계가 불명확해, 첫 방문자가 “어디서 시작해야 하는지” 잠깐 멈추게 됩니다.
 
-2. Replace hardcoded example “(예: C-3 → D-2 불가)” with neutral, condition-based caution text.  
-   - Rationale: remove potentially unsupported universal claim.
-   - Evidence: stay manual treats change-of-status under conditions/doc review.
+### 2) Recommended decision
+- **Option B 채택 (유지 + 재라벨링/재구성)**
+  - 키워드 블록을 삭제하지 않고, 명확한 제목과 보조 문구를 붙여 “보조 진입로”로 재정의합니다.
+  - 다만 초기 노출 항목은 축소하고, 나머지는 2차 노출(더보기/검색 후 추천)로 내려 인지 부담을 줄입니다.
 
-3. Keep “39” branding unchanged for this patch, but mark as terminology risk in audit report only.  
-   - Rationale: large UX/content ripple; conservative fix scope this round.
+### 3) Copy changes in Korean
+- 블록 제목(권장): **"많이 찾는 민원"**
+- 보조 문구(권장): **"자주 문의되는 항목을 빠르게 선택해 검색할 수 있습니다."**
+- 검색 CTA 문구(유지/미세 수정안):
+  - 기존: "비자 코드 및 키워드 직접 검색"
+  - 권장: **"비자 코드/키워드 직접 검색"** (가독성 개선, 의미 동일)
 
-## File: `AUDIT_REPORT.md`
-- Add evidence-based discrepancy log and classifications.
+### 4) Layout changes
+- `landing-hints` 상단에 heading + supporting text를 추가해 **문맥 라벨링**을 보강합니다.
+- 칩 그룹은 모바일에서 2~3줄 이내로 보이도록 기본 노출 개수를 제한하고, 나머지는 “더보기”로 확장합니다.
+- 칩 간격은 8pt 그리드 기준(`gap: 8px` 또는 토큰 `var(--sp-2)`) 유지, 줄바꿈 시 행간을 충분히 확보합니다.
+- 키워드 칩은 버튼 역할과 포커스 스타일을 유지해 키보드/스크린리더 접근성을 보장합니다.
 
-## File: `FIX_PLAN.md`
-- Track minimal safe edit plan before patch execution.
+### 5) Keyword block decision (remove/relabel/redesign)
+- **결론: 제거하지 않고, 재라벨링 + 경량 재구성**
+- 추천 1차 노출(예시 6개):
+  1. 체류지 변경(주민센터)
+  2. 등록증 재발급
+  3. K-ETA 발급
+  4. 결혼이민(F-6)
+  5. 숙련기능(E-7-4)
+  6. 오버스테이
+- 2차 노출(더보기/검색 후 추천으로 이동):
+  - 만료 당일/임산부 등
+  - 동반(F-3) 소득요건
+  - 결핵 제출 대상
+  - 난민신청 절차
+  - 여권 갱신(비예약)
+  - 제주 무사증
+- 이유: 첫 화면은 “대다수 사용자가 빠르게 클릭할 수 있는 보편 항목” 위주가 효율적이며, 특수/상황의존 키워드는 보조 레이어가 더 적합합니다.
 
-## Required document accuracy remediation plan
+### 6) Direct search CTA visibility decision
+- **결론: 즉시 노출 유지 (단, 보조 위계 유지)**
+- "입국 전 / 입국 후" 트랙 바로 아래(또는 동일 시야 내)에 직접 검색 CTA를 보여주면 탐색 실패 시 우회 경로가 즉시 제공되어 마찰이 줄어듭니다.
+- 단, 정보 위계상 1순위는 트랙 선택이므로 CTA는 시각적으로 과도하게 강조하지 않고 **보조 액션**으로 유지합니다.
 
-1. **Files to change**
-   - `visa_data.json`: introduce explicit stage-separated fields (`initial_issue_docs`, `extension_docs`, `change_status_docs`) while preserving legacy keys for compatibility.
-   - `index.html`: render stage tabs strictly by stage field and display official document labels first, with helper text secondary.
-   - `docs/sajeung-manual.md`, `docs/ceryu-manual.md` (reference only): use exact manual wording as authoritative labels during curation.
+### 7) Rationale summary
+- 첫 액션 명확성: 트랙 선택(주 경로) + 직접 검색(보조 경로)의 2축을 동시에 명시하면 초행 사용자 이탈을 줄입니다.
+- 인지 부하 관리: 라벨 없는 칩 나열은 혼란을 유발하므로, 제목/마이크로카피/항목 축소가 필수입니다.
+- 접근성/모바일 가독성: 짧은 라벨, 제한된 초기 개수, 명확한 포커스/터치 타겟이 실제 사용성 개선에 직접적입니다.
+- 과도한 재디자인 없이 텍스트/구조 중심의 최소 수정으로도 즉시 품질 개선이 가능합니다.
 
-2. **Data fields to correct/split**
-   - Split `newReqDocs` into visa-issuance vs in-country initial registration where currently blended.
-   - Keep `extReqDocs` but add condition metadata (`conditional`, `substitute_allowed`, `applies_to_subcodes`).
-   - Add per-code `change_status_docs` (currently absent across searchable entries).
+### Direct-search CTA position stability bug
 
-3. **UI labels to update**
-   - Show official document names (e.g., `사증발급신청서(별지 제17호 서식)`) as primary labels.
-   - Move simplified helper wording into expandable notes; do not replace official labels.
+1. **Root cause**
+- 현재 `index.html`에서 `#searchToggleBtn`은 `.hero-actions`에 있고, 두 경로 버튼은 별도 `.qa-main`에 분리되어 있습니다.
+- 클릭 시 `toggle-search` 동작으로 `body.searched` 상태가 적용되면, `body.searched .hero-actions, body.searched .qa-main` 은닉 규칙과 `#searchForm` 표시 규칙이 동시에 작동하면서 헤더 내부 레이아웃 재배치(reflow)가 발생합니다.
+- 결과적으로 사용자는 CTA가 “같은 의미 위치”에 고정된 것이 아니라, 상호작용 후 다른 버튼군 대비 상대적 계층이 바뀐 것처럼 인지합니다.
 
-4. **Stage separation**
-   - Enforce explicit separation for `신규 발급/신청`, `체류기간 연장`, `체류자격 변경`.
-   - If a stage is unsupported for a code, render `매뉴얼에서 해당 단계의 일반요건을 확인 필요` rather than reusing another stage list.
+2. **Chosen stable placement rule**
+- **고정 규칙: direct-search CTA를 항상 두 메인 경로 버튼(입국 전/입국 후) 위에 배치하고, 클릭 후에도 동일한 계층 위치에 유지**합니다.
+- 클릭은 “검색 입력 영역 표시”만 수행하고, CTA 자신의 의미적 위치(경로 버튼 대비 위/아래)는 변경하지 않습니다.
 
-5. **Safe immediate fixes vs manual review**
-   - **Safe immediate**: terminology/UI warnings, non-canonical helper rows clearly tagged as `가이드/시나리오` not visa qualification.
-   - **Manual review required**: every per-code official document list normalization against the two manuals (especially subcode-dependent conditions and substitution clauses).
+3. **Exact file(s) and selector(s) involved**
+- 파일: `index.html`
+- 관련 선택자/요소:
+  - `#searchToggleBtn`
+  - `.hero-actions`
+  - `.qa-main`
+  - `.visa-manual-section.in-hero .visa-track-selector`
+  - `#searchForm`
+  - `body.searched .hero-actions`, `body.searched .qa-main`, `body.searched #searchForm`
+
+4. **Minimal patch strategy**
+- `.hero-actions`와 `.qa-main`을 다시 섞거나 동적으로 재삽입하지 않고, 현재 DOM 구조를 유지합니다.
+- `body.searched` 전환 시에도 CTA 레일의 공간을 예측 가능하게 유지하도록 다음 최소 원칙을 적용합니다.
+  - CTA와 경로 버튼을 하나의 고정된 수직 흐름으로 취급(상단 CTA, 하단 경로 버튼).
+  - 검색 폼(`#searchForm`)은 같은 레일 내에서 “아래로 펼침”되도록 하고, 기존 액션 블록의 상대 순서를 바꾸지 않음.
+  - 필요 시 CTA는 숨기되(`display:none`) 숨기기 전/후에 경로 버튼의 상대 계층이 바뀌지 않도록 고정된 블록 순서를 유지.
+- 애니메이션 기반 위치 이동은 배제하고, 단순 `display`/`visibility`/고정 간격 토큰으로 결정론적 레이아웃만 사용합니다.
+
+5. **Why the fix improves usability**
+- 사용자가 클릭 전후 동일한 액션 맵을 유지하므로 “버튼이 도망간다”는 인지적 불안정이 사라집니다.
+- 상호작용 결과가 “콘텐츠 확장”으로만 해석되어 학습 비용이 줄고, 첫 방문자의 과업 시작 속도가 개선됩니다.
+- 모바일에서도 레이아웃 점프가 줄어 오탭/재탐색이 감소하고, 검색 진입 동선이 예측 가능해집니다.
