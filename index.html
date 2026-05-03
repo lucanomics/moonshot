@@ -212,6 +212,10 @@ body.searched .ctrls { opacity: 1; pointer-events: auto; max-width: 300px; overf
 .cb.on { background: var(--ac); color: #fff; border-color: var(--ac); }
 .landing-hints { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 1.8rem; max-width: 680px; transition: opacity 0.4s, max-height 0.4s; overflow: hidden; }
 body.searched .landing-hints { opacity: 0; max-height: 0; margin: 0; pointer-events: none; }
+.landing-hints-section { width: 100%; max-width: 680px; margin-top: 1.4rem; display: flex; flex-direction: column; align-items: center; }
+.landing-hints-title { margin: 0; font-size: 0.92rem; font-weight: 800; letter-spacing: 0.02em; color: var(--t3); align-self: flex-start; }
+.landing-hints-section .landing-hints { margin-top: 0.55rem; width: 100%; justify-content: flex-start; }
+body.searched .landing-hints-section { display: none; }
 .lh { background: var(--bg2); border: 1px solid var(--bd); border-radius: var(--btn-r-sm); height: var(--btn-h-sm); padding: 0 var(--sp-3); font-size: 0.78rem; color: var(--t2); cursor: pointer; font-weight: 500; transition: var(--btn-tr); display: inline-flex; align-items: center; line-height: 1; }
 .lh:hover { background: var(--acL); color: var(--ac); border-color: var(--ac); transform: translateY(-1px); }
 .results-area { max-width: 1160px; margin: 0 auto; padding: 0 1rem; }
@@ -789,6 +793,10 @@ body.searched .visa-manual-section.in-hero { display: none !important; }
 .hero-action-btn.search-toggle-btn:hover { background: color-mix(in srgb, var(--ac) 12%, var(--bg1)); border-style: solid; }
 body.searched .search-toggle-btn { display: none !important; }
 body.searched #searchForm { display: block !important; }
+body.searching #searchForm { display: block !important; }
+body.searching .hero-actions,
+body.searching .qa-main,
+body.searching #visaManualSection { display: none !important; }
     </style>
 </head>
 <body class="landing" data-theme="light">
@@ -908,7 +916,10 @@ body.searched #searchForm { display: block !important; }
             <button class="cb" data-action="toggle-accordions" data-fold="false">펼치기</button>
         </div>
 
-        <div class="landing-hints" id="landingHints" aria-label="빠른 추천 검색어"></div>
+        <section class="landing-hints-section" aria-labelledby="landingHintsTitle">
+            <h2 class="landing-hints-title" id="landingHintsTitle">추천 키워드</h2>
+            <div class="landing-hints" id="landingHints" aria-label="빠른 추천 검색어"></div>
+        </section>
     </div>
     <button type="button" class="scroll-cue" id="scrollCue" data-action="scroll-to-brand" aria-label="아래로 스크롤">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -2571,7 +2582,7 @@ function executeSearch() {
     } else renderResults(query);
 }
 function resetToLanding(){
-    document.body.classList.remove('searched'); document.body.classList.add('landing'); qEl.value='';
+    document.body.classList.remove('searched', 'searching'); document.body.classList.add('landing'); qEl.value='';
     document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active');
     document.getElementById('rlist').innerHTML=''; rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
     const sf = document.getElementById('searchForm');
@@ -2800,10 +2811,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (isOpen) {
                         if (sf) sf.style.display = 'none';
                         if (vms) vms.style.display = '';
+                        document.body.classList.remove('searching');
                         if (stb) { stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
                     } else {
                         if (sf) sf.style.display = 'block';
                         if (vms) vms.style.display = 'none';
+                        document.body.classList.add('searching');
                         if (stb) { stb.setAttribute('aria-expanded', 'true'); stb.classList.add('active'); }
                         if (qEl) qEl.focus();
                     }
