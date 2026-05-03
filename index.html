@@ -468,6 +468,7 @@ body.searched .about-me { display: none !important; }
 .brand-vision { font-size: 1rem; font-weight: 700; color: var(--color-primary-ink); margin: 0.4rem 0 0; line-height: 1.5; word-break: keep-all; padding: 0.7rem 0.9rem; background: color-mix(in srgb, var(--color-primary-soft) 30%, transparent); border-radius: 10px; border-left: 3px solid var(--color-primary); }
 [data-theme="dark"] .brand-vision { color: #c8f5e3; }
 .brand-disclaimer { font-size: 0.8rem; color: var(--t3); margin: 0; line-height: 1.55; word-break: keep-all; }
+.reference-disclaimer { width: 100%; max-width: 680px; margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; border-radius: 10px; border: 1px solid var(--bd); background: var(--bg2); color: var(--t3); font-size: 0.78rem; line-height: 1.55; word-break: keep-all; }
 
 .about-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
 .intro-img-placeholder { background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary-soft) 40%, var(--bg1)), var(--bg2)); border-radius: 24px; aspect-ratio: 4/3; width: 100%; box-shadow: var(--sh1); display: flex; align-items: center; justify-content: center; font-size: 4rem; opacity: 0.8; }
@@ -908,6 +909,7 @@ body.searching #visaManualSection { display: none !important; }
             <div class="auto-list" id="auto-list"></div>
             <div class="smeta"><span id="rc">데이터 로딩 중…</span><span id="rh"></span></div>
         </form>
+        <p class="reference-disclaimer">본 서비스는 공개 법령·매뉴얼 기반 참고용 정보 제공 도구이며, 법적 상담이나 민원 대행이 아닙니다. 최종 판단은 출입국·외국인청, 하이코리아, 또는 자격 있는 전문가에게 확인하세요.</p>
 
         <div class="ctrls" aria-label="검색결과 정렬 및 조작">
             <button class="cb on" id="ma" data-action="set-search-mode" data-mode="and">AND</button>
