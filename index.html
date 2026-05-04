@@ -457,6 +457,17 @@ body.searched .about-me { display: none !important; }
 [data-theme="dark"] .anagram-row.top-row .al.lit { color: #7FFFD4 !important; text-shadow: 0 0 16px rgba(52,212,168,0.85); }
 [data-theme="dark"] .anagram-row.bot-row .al.lit { color: #FFB3A7 !important; text-shadow: 0 0 16px rgba(255,107,91,0.85); }
 .anagram-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 1; pointer-events: none; }
+
+.anagram-panel { margin-top: 1rem; padding: 1rem; border-radius: 14px; background: color-mix(in srgb, var(--bg0) 86%, white); border: 1px solid var(--bd2); }
+.anagram-kicker { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t3); margin-bottom: 0.5rem; }
+.anagram-stage { position: relative; width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 4rem; user-select: none; }
+.anagram-word { font-size: 0.75rem; color: var(--t3); }
+.anagram-note { margin-top: 0.8rem; font-size: 0.78rem; color: var(--t3); }
+@media (prefers-reduced-motion: reduce) {
+  .ag-line { transition: none; stroke-dasharray: none !important; stroke-dashoffset: 0 !important; opacity: 0.32 !important; }
+  .anagram-row .al { transition: none; }
+}
+
 .ag-line { fill: none; stroke: var(--t3); stroke-width: 1.8; stroke-linecap: round; opacity: 0; transition: opacity 0.2s; }
 [data-theme="dark"] .ag-line { stroke: rgba(255,255,255,0.45); }
 .ag-line.drawn { opacity: 1; }
@@ -1349,6 +1360,180 @@ body.searched .es { padding: 5rem 1rem; }
   body.searched .doc-trigger-btn { padding: 0.85rem 0.7rem; font-size: 0.84rem; }
   body.searched .doc-buttons-grid { margin: 0.85rem 0.85rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Phase 6 · Mobile & tablet responsive polish
+   Scope: CSS-only responsive refinements for landing/direct-search/visa/results
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  body:not(.searched) .hero-container {
+    padding: clamp(3.5rem, 10vw, 5rem) 1rem 2.25rem;
+    justify-content: flex-start;
+  }
+  body:not(.searched) .hero-container::before {
+    background:
+      linear-gradient(160deg, rgba(0,0,0,.68) 0%, rgba(0,0,0,.60) 100%),
+      url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 30% / cover no-repeat,
+      #0d1f1b;
+  }
+  body:not(.searched) .header-inner { gap: 1.25rem; max-width: 100%; }
+  body:not(.searched) .logo-area { width: 100%; }
+  body:not(.searched) .logo-brand { font-size: clamp(2.8rem, 10vw, 4rem); line-height: 0.95; }
+  body:not(.searched) .logo-sub { font-size: 0.68rem; letter-spacing: 0.08em; }
+
+  .search-wrap, #searchForm, .sbar { width: 100%; }
+  #q { min-height: 48px; padding-top: 0.9rem; padding-bottom: 0.9rem; }
+  #xb, .sbar-go { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+  .hero-actions, .qa-main { margin-top: 0.8rem; }
+  .hero-action-btn { min-height: 52px; }
+
+  .landing-hints-section { margin-top: 1rem; max-width: 100%; }
+  .landing-hints { gap: 0.5rem; }
+  .lh { min-height: 38px; white-space: normal; text-align: center; }
+
+  #visaManualSection { margin-top: 0.75rem; }
+  .visa-track-card, .visa-purpose-card { min-height: 96px; }
+  .visa-step-container { padding: 1rem; }
+
+  body.searched .hero-container { min-height: 58px; }
+  body.searched .header-inner { align-items: center; padding: 0.45rem 0.75rem; }
+  body.searched .logo-area { min-width: 0; }
+  body.searched .search-wrap { min-width: 0; }
+  body.searched .results-area { padding: 0 0.75rem; }
+  body.searched .qf { gap: 0.45rem; margin-top: 0.95rem; margin-bottom: 0.75rem; }
+  body.searched .qb { min-height: 34px; padding: 0.35rem 0.75rem; }
+  body.searched .rlist { gap: 0.85rem; }
+  body.searched .vc { border-radius: 10px; }
+  body.searched .vc-h { padding: 0.95rem 1rem; }
+  body.searched .vs { padding: 0.9rem 1rem; }
+  body.searched .doc-buttons-grid { grid-template-columns: 1fr; margin: 0.8rem; gap: 0.6rem; }
+  body.searched .doc-trigger-btn { min-height: 46px; padding: 0.85rem 0.75rem; }
+
+  .modal-wrap, .modal-content, .modal-box { max-width: calc(100% - 1.2rem); }
+}
+
+@media (max-width: 640px) {
+  body:not(.searched) .hero-container { padding-top: 3.6rem; padding-bottom: 2rem; }
+  body:not(.searched) .header-inner { gap: 1rem; }
+  body:not(.searched) .logo-brand { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+
+  #q { font-size: 1rem; padding-left: 2.7rem; }
+  .sbar-icon { left: 0.85rem; }
+
+  .landing-hints-section .landing-hints { justify-content: flex-start; }
+  .lh { font-size: 0.76rem; padding: 0.45rem 0.7rem; }
+
+  .visa-track-card { padding: 0.9rem 0.75rem; }
+  .visa-purpose-card { min-height: 90px; padding: 0.8rem 0.75rem; }
+
+  body.searched .hero-container { top: 0; }
+  body.searched .header-inner { gap: 0.45rem; }
+  body.searched .logo-brand { font-size: 1.05rem; }
+  body.searched #q { min-height: 42px; font-size: 0.92rem; }
+  body.searched .qf { padding-top: 0.5rem; }
+  body.searched .qb { font-size: 0.7rem; }
+}
+
+@media (max-width: 480px) {
+  body:not(.searched) .hero-container {
+    padding: 3.4rem 0.7rem 1.8rem;
+  }
+  body:not(.searched) .hero-container::before {
+    background:
+      linear-gradient(160deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.64) 100%),
+      url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 24% / cover no-repeat,
+      #0d1f1b;
+  }
+  .logo-sub { line-height: 1.35; }
+  #q { min-height: 46px; }
+  .hero-action-btn { padding: 0.75rem 0.7rem; }
+  .visa-step-container { padding: 0.85rem 0.75rem; }
+
+  body.searched .results-area { padding: 0 0.6rem; }
+  body.searched .vc-h { padding: 0.85rem 0.9rem; }
+  body.searched .vs { padding: 0.8rem 0.9rem; }
+  body.searched .doc-buttons-grid { margin: 0.7rem; }
+
+  .modal-box { max-height: 88vh; overflow-y: auto; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Phase 8 · Figma-derived landing scroll narrative sections
+   ═══════════════════════════════════════════════════════════════════ */
+body.searched .landing-narrative { display: none !important; }
+body:not(.searched) .landing-narrative {
+  max-width: 1160px;
+  margin: 1.3rem auto 0;
+  border-radius: 22px;
+  padding: 2.4rem 2rem;
+  border: 1px solid var(--bd2);
+  background: color-mix(in srgb, var(--bg1) 92%, white);
+}
+.narrative-title { font-family: var(--ff-display); font-size: clamp(1.55rem, 3vw, 2.35rem); line-height: 1.25; letter-spacing: -0.03em; color: var(--t1); margin-bottom: 0.9rem; }
+.narrative-copy { color: var(--t2); line-height: 1.75; max-width: 860px; }
+.narrative-subcopy, .narrative-note { margin-top: 0.7rem; color: var(--t3); font-size: 0.82rem; line-height: 1.6; }
+.narrative-kicker { color: color-mix(in srgb, var(--color-accent) 70%, var(--t2)); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.76rem; margin-bottom: 0.7rem; }
+
+.narrative-brand-bridge {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,130,95,.20), rgba(14,163,123,.20)),
+    color-mix(in srgb, var(--bg1) 88%, #fff);
+}
+.narrative-brand-bridge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 58%/cover no-repeat;
+  opacity: 0.10;
+  pointer-events: none;
+}
+.narrative-shell { position: relative; z-index: 1; }
+.narrative-stats { margin-top: 1.2rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
+.narrative-stat-card { background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.65); border-radius: 14px; padding: 1rem; }
+.narrative-stat-card h3 { font-size: 0.92rem; margin-bottom: 0.35rem; color: var(--t2); }
+.narrative-stat-card strong { display: block; font-size: 2rem; line-height: 1; color: var(--color-primary-ink); margin-bottom: 0.5rem; }
+.narrative-stat-card p { font-size: 0.76rem; color: var(--t3); }
+
+.narrative-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.2rem; align-items: start; }
+.narrative-checklist { background: var(--bg0); border: 1px solid var(--bd2); border-radius: 14px; padding: 1rem; }
+.narrative-checklist h3 { font-size: 0.92rem; margin-bottom: 0.6rem; }
+.narrative-checklist ul { list-style: none; display: grid; gap: 0.55rem; }
+.narrative-checklist li { font-size: 0.84rem; color: var(--t2); padding-left: 1rem; position: relative; }
+.narrative-checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--ac); font-weight: 700; }
+
+.narrative-brand-story { text-align: left; }
+.narrative-anagram { margin-top: 1rem; font-family: var(--ff-display); font-weight: 800; letter-spacing: 0.08em; color: var(--color-primary-ink); }
+.narrative-anagram span { color: var(--color-accent); padding: 0 0.35rem; }
+
+.narrative-values-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.8rem; }
+.narrative-value-card { background: var(--bg0); border: 1px solid var(--bd2); border-radius: 14px; padding: 1rem; }
+.narrative-value-card h3 { margin-bottom: 0.4rem; font-size: 1rem; }
+.narrative-value-card p { font-size: 0.84rem; color: var(--t2); line-height: 1.6; }
+
+.narrative-roadmap-list { margin-top: 0.9rem; display: grid; gap: 0.7rem; }
+.narrative-roadmap-list article { display: grid; grid-template-columns: 88px 1fr; gap: 0.7rem; background: var(--bg0); border: 1px solid var(--bd2); border-radius: 12px; padding: 0.85rem 0.9rem; }
+.narrative-roadmap-list span { font-weight: 800; color: var(--ac); }
+.narrative-roadmap-list p { color: var(--t2); }
+
+.narrative-final-cta { text-align: center; background: linear-gradient(140deg, color-mix(in srgb, var(--color-primary-soft) 38%, #fff), color-mix(in srgb, var(--color-accent-soft) 42%, #fff)); }
+.narrative-cta-actions { margin-top: 1rem; display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+.narrative-cta-actions .hero-action-btn { max-width: 340px; width: 100%; }
+.narrative-link-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.8rem 1.1rem; border-radius: 12px; border: 1px solid var(--bd); color: var(--t1); text-decoration: none; background: rgba(255,255,255,.75); font-weight: 700; }
+
+@media (max-width: 768px) {
+  body:not(.searched) .landing-narrative { margin-top: 1rem; padding: 1.5rem 1rem; border-radius: 16px; }
+  .narrative-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .narrative-grid, .narrative-values-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .narrative-stats { grid-template-columns: 1fr; }
+  .narrative-roadmap-list article { grid-template-columns: 1fr; }
+}
+
     </style>
 </head>
 <body class="landing" data-theme="light">
@@ -1483,226 +1668,83 @@ body.searched .es { padding: 5rem 1rem; }
 
 <main id="mainContent" class="results-area">
     
-    <!-- Hero Section -->
-    <section id="brandHero" class="brand-hero" aria-labelledby="brandHeroTitle">
-        <div class="brand-hero-text" data-reveal="fade-up">
-            <h2 id="brandHeroTitle" class="brand-hero-headline">
-                분절된 체류 행정,<br>
-                단일 플랫폼으로 통합하다.
-            </h2>
-            <p class="brand-hero-subtitle" lang="en">
-                Korea's 39 visa categories. Unified.
-            </p>
-            <div class="brand-hero-buttons">
-                <a href="#aboutMe" class="btn-primary">
-                    <span>서비스 소개</span><span class="btn-en" lang="en">About</span>
-                </a>
-                <a href="tel:1345" class="btn-secondary">
-                    <span>1345 직접 문의</span><span class="btn-en" lang="en">1345 Hotline</span>
-                </a>
-            </div>
-        </div>
-        
-        <div class="brand-hero-stats" aria-label="비자 카테고리 통계" data-stagger>
-            <div class="stat-card">
-                <div class="stat-icon" aria-hidden="true">💼</div>
-                <div class="stat-num" id="stat-work" data-count="14">0</div>
-                <div class="stat-label">취업·전문직<br><span lang="en">Employment</span></div>
-                <div class="stat-codes" aria-hidden="true">
-                    <span class="stat-code-chip">D-7</span>
-                    <span class="stat-code-chip">D-8</span>
-                    <span class="stat-code-chip">E-7</span>
-                    <span class="stat-code-chip">E-9</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" aria-hidden="true">🎓</div>
-                <div class="stat-num" id="stat-study" data-count="8">0</div>
-                <div class="stat-label">유학·연수<br><span lang="en">Study</span></div>
-                <div class="stat-codes" aria-hidden="true">
-                    <span class="stat-code-chip">D-2</span>
-                    <span class="stat-code-chip">D-4</span>
-                    <span class="stat-code-chip">D-10</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" aria-hidden="true">🏠</div>
-                <div class="stat-num" id="stat-residence" data-count="7">0</div>
-                <div class="stat-label">거주·결혼<br><span lang="en">Residence</span></div>
-                <div class="stat-codes" aria-hidden="true">
-                    <span class="stat-code-chip">F-2</span>
-                    <span class="stat-code-chip">F-4</span>
-                    <span class="stat-code-chip">F-5</span>
-                    <span class="stat-code-chip">F-6</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" aria-hidden="true">✈️</div>
-                <div class="stat-num" id="stat-visit" data-count="10">0</div>
-                <div class="stat-label">방문·기타<br><span lang="en">Visit & Other</span></div>
-                <div class="stat-codes" aria-hidden="true">
-                    <span class="stat-code-chip">B-2</span>
-                    <span class="stat-code-chip">C-3</span>
-                    <span class="stat-code-chip">H-2</span>
-                </div>
+    <section class="landing-narrative narrative-brand-bridge" aria-labelledby="narrativeBridgeTitle">
+        <div class="narrative-shell">
+            <p class="narrative-kicker" lang="en">Korea's 39 visa categories. Unified.</p>
+            <h2 id="narrativeBridgeTitle" class="narrative-title">분절된 체류 행정,<br>단일 플랫폼으로 통합하다.</h2>
+            <p class="narrative-copy">Paradiso는 흩어진 체류·비자 정보를 한 화면에서 탐색할 수 있도록 정리해, 사용자가 목적에 맞는 경로를 단계적으로 확인하도록 돕는 안내형 검색 경험을 제공합니다.</p>
+            <p class="narrative-note">※ 아래 분류와 수치는 데모 시연을 위한 서비스 내부 그룹 기준이며, 법령상 공식 분류 체계와 동일하지 않을 수 있습니다.</p>
+            <div class="narrative-stats" aria-label="서비스 데모용 체류자격 그룹">
+                <article class="narrative-stat-card"><h3>취업·전문직</h3><strong>14</strong><p>D-7, D-8, E-7, E-9</p></article>
+                <article class="narrative-stat-card"><h3>유학·연수</h3><strong>8</strong><p>D-2, D-4, D-10</p></article>
+                <article class="narrative-stat-card"><h3>거주·결혼</h3><strong>7</strong><p>F-2, F-4, F-5, F-6</p></article>
+                <article class="narrative-stat-card"><h3>방문·기타</h3><strong>10</strong><p>B-2, C-3, H-2</p></article>
             </div>
         </div>
     </section>
 
-    <div class="section-divider" aria-hidden="true"></div>
-
-    <!-- Feature Section -->
-    <section id="brandFeature" class="brand-feature" aria-labelledby="brandFeatureTitle">
-        <div class="feature-content" data-reveal="fade-left">
-            <h2 id="brandFeatureTitle" class="feature-headline">
-                법무부 출입국·외국인정책본부<br>
-                매뉴얼 기반
-            </h2>
-            <p class="feature-subtitle" lang="en">
-                Built on Ministry of Justice Immigration Manual
-            </p>
-            <p class="feature-body">
-                본 서비스는 2026년 현행 출입국관리법 시행규칙과 출입국·외국인정책본부
-                실무 매뉴얼을 기반으로 합니다. 다만 최종 판단은 관할 출입국·외국인관서에
-                귀속됩니다.
-            </p>
-            <a href="tel:1345" class="btn-primary feature-cta">
-                <span>1345 외국인종합안내센터</span><span class="btn-en" lang="en">Contact 1345</span>
-            </a>
-        </div>
-        <aside class="feature-checklist" aria-label="서비스 핵심 기능" data-reveal="fade-right" data-reveal-delay="150">
-            <ul class="check-list" data-stagger data-stagger-delay="100">
-                <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>39개 체류자격 통합 검색</strong>
-                    <span lang="en">Search across 39 visa types</span></div></li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>자격별 구비서류 자동 생성</strong>
-                    <span lang="en">Auto-generated document checklist</span></div></li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>관할 출입국관서 즉시 조회</strong>
-                    <span lang="en">Find your jurisdiction office</span></div></li>
-                <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>취업신고 직종·업종 코드</strong>
-                    <span lang="en">Employment notification codes</span></div></li>
-            </ul>
-        </aside>
-    </section>
-
-    <div class="section-divider" aria-hidden="true"></div>
-
-    <!-- About Me Portfolio Section (NEW) -->
-    <section id="aboutMe" class="about-me" aria-labelledby="aboutMeTitle">
-        <h2 id="aboutMeTitle" class="about-title" data-reveal="fade-up">플랫폼 소개</h2>
-
-        <div class="about-brand" data-reveal="fade-up">
-            <div class="brand-anagram">
-                <div class="anagram-stage" id="anagramStage">
-                    <div class="anagram-row top-row" id="agTop">
-                        <span class="al" data-i="0">D</span><span class="al" data-i="1">I</span><span class="al" data-i="2">A</span><span class="al" data-i="3">S</span><span class="al" data-i="4">P</span><span class="al" data-i="5">O</span><span class="al" data-i="6">R</span><span class="al" data-i="7">A</span>
-                    </div>
-                    <svg class="anagram-svg" id="anagramSvg"></svg>
-                    <div class="anagram-row bot-row" id="agBot">
-                        <span class="al" data-i="0">P</span><span class="al" data-i="1">A</span><span class="al" data-i="2">R</span><span class="al" data-i="3">A</span><span class="al" data-i="4">D</span><span class="al" data-i="5">I</span><span class="al" data-i="6">S</span><span class="al" data-i="7">O</span>
-                    </div>
-                </div>
-            </div>
-            <div class="brand-meaning">
-                <h3 class="brand-h3">브랜드 철학 및 어원 <span class="brand-h3-en" lang="en">— Brand Philosophy & Etymology</span></h3>
-                <ul class="brand-points">
-                    <li><strong>Paradiso</strong> — 이탈리아어 "낙원(Paradise)". 한국에서의 체류가 모두에게 낙원처럼 머무를 만한 곳이기를 바랍니다.</li>
-                    <li><strong>Diaspora (애너그램)</strong> — 'Paradiso'는 이주민을 뜻하는 영단어 'Diaspora'의 알파벳 8개를 재배열(Anagram)한 단어입니다. 고국을 떠나온 이주민(Diaspora)들이 체계적인 체류·행정 인프라를 바탕으로 대한민국에서 안정적이고 편안한 정주 환경(Paradiso)을 영위할 수 있도록 지원한다는 플랫폼의 공식적 지향점을 담았습니다.</li>
-                    <li><strong>39</strong> — 출입국관리법령상 대한민국 체류자격 39종을 의미합니다.</li>
-                </ul>
-                <p class="brand-vision">300만 체류 외국인 시대를 위한 공식 인프라로의 도약.</p>
-                <p class="brand-disclaimer">2026년 출입국·외국인정책본부 실무 매뉴얼 기반. 최종 판단은 관할 출입국·외국인관서 및 1345 외국인종합안내센터에 귀속됩니다.</p>
-            </div>
-        </div>
-
-        <div class="about-intro" data-reveal="fade-left">
-            <div class="intro-img-placeholder" aria-hidden="true">🚀</div>
-            <div class="intro-text">
-                <h3>Paradiso의 시작</h3>
-                <p>
-                    대한민국에는 39가지의 체류자격이 존재하지만, 법령과 매뉴얼은 파편화되어 있어 진입 장벽이 높습니다. Paradiso는 출입국·외국인정책본부 실무 매뉴얼을 기반으로, 가장 정확한 비자 정보와 관할 관서를 단일 플랫폼에서 직관적으로 제공하기 위해 기획되었습니다. 향후 체류 외국인 300만 시대를 대비하는 공식 인프라로 도약하고자 합니다.
-                </p>
-            </div>
-        </div>
-
-        <div class="about-hobbies" data-reveal="fade-right">
-            <h3>핵심 가치 및 비전</h3>
-            <p>
-                단순한 정보 나열을 넘어, 사용자 맞춤형 AI 상황 분석과 정확한 직종·산업 코드 매칭을 통해 실질적인 행정 처리 시간을 단축하고 정보의 비대칭성을 해소합니다.
-            </p>
-            <div class="hobbies-grid">
-                <div class="hobby-card hobby-1" aria-label="정확성과 신뢰성">
-                    <div class="hobby-inner">
-                        <div class="hobby-icon" aria-hidden="true">📑</div>
-                        <div class="hobby-title">Data Integrity</div>
-                        <div class="hobby-desc">법무부 출입국·외국인정책본부 실무 매뉴얼과 시행규칙을 1차 출처로 삼습니다.</div>
-                    </div>
-                </div>
-                <div class="hobby-card hobby-2" aria-label="사용자 중심 UX">
-                    <div class="hobby-inner">
-                        <div class="hobby-icon" aria-hidden="true">🧭</div>
-                        <div class="hobby-title">User Centric</div>
-                        <div class="hobby-desc">39개 자격을 4개 카테고리로 묶어 한 화면에서 비교·검색합니다.</div>
-                    </div>
-                </div>
-                <div class="hobby-card hobby-3" aria-label="AI 기반 분석">
-                    <div class="hobby-inner">
-                        <div class="hobby-icon" aria-hidden="true">✨</div>
-                        <div class="hobby-title">AI Powered</div>
-                        <div class="hobby-desc">국적·체류자격·직무 정보로 본인 상황에 맞는 절차를 즉시 제시합니다.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="about-experience" data-reveal="fade-left">
-            <h3 class="exp-heading">로드맵</h3>
-            <div class="exp-row">
-                <span class="exp-dot" aria-hidden="true"></span>
-                <div class="exp-text">
-                    <span class="exp-company">정식 서비스 런칭 및 다국어 지원 확대</span>
-                    <span class="exp-detail">영어·중국어·베트남어 UI 동시 제공, 1345 핫라인 연동 강화</span>
-                </div>
-                <span class="exp-year">2026 Q3</span>
-            </div>
-            <div class="exp-row">
-                <span class="exp-dot" aria-hidden="true"></span>
-                <div class="exp-text">
-                    <span class="exp-company">AI 맞춤형 비자 진단 고도화</span>
-                    <span class="exp-detail">RAG 기반 매뉴얼 검색·국적별 케이스 매칭으로 정밀도 향상</span>
-                </div>
-                <span class="exp-year">2026 Q1</span>
-            </div>
-            <div class="exp-row">
-                <span class="exp-dot" aria-hidden="true"></span>
-                <div class="exp-text">
-                    <span class="exp-company">공공데이터 활용 공모전 출품 및 베타 테스트</span>
-                    <span class="exp-detail">39개 자격 통합 검색 MVP 공개·실사용자 피드백 수집</span>
-                </div>
-                <span class="exp-year">2025 Q4</span>
-            </div>
-        </div>
-
-        <div class="about-footer" data-reveal="fade-right">
-            <div class="footer-hero-img" aria-hidden="true">
-                <div class="footer-hero-inner">
-                    <div class="footer-hero-eyebrow">Paradiso</div>
-                    <div class="footer-hero-title">대한민국 39가지<br>체류자격, 한 곳에서.</div>
-                    <div class="footer-hero-chips">
-                        <span class="footer-chip">📑 매뉴얼 기반</span>
-                        <span class="footer-chip">🤖 AI 분석</span>
-                        <span class="footer-chip">🏛 관할관서 조회</span>
-                        <span class="footer-chip">💼 직종·업종 코드</span>
-                    </div>
-                </div>
-            </div>
+    <section class="landing-narrative narrative-trust" aria-labelledby="narrativeTrustTitle">
+        <div class="narrative-grid">
             <div>
-                <h3>한국에서의 새로운 시작, 흔들림 없이.</h3>
-                <p>지금 바로 AI 맞춤 분석을 통해 당신에게 가장 적합한 체류 자격과 취업 가능 여부를 팩트체크하세요.</p>
+                <h2 id="narrativeTrustTitle" class="narrative-title">예쁜 검색창보다 중요한 건,<br>믿을 수 있는 구조입니다</h2>
+                <p class="narrative-copy">Paradiso는 체류자격 데이터를 구조화하고, 출처 확인이 가능한 안내 흐름을 함께 제시해 사용자가 가능성 높은 체류·비자 정보를 탐색하도록 지원합니다.</p>
+                <p class="narrative-subcopy">본 서비스는 정보 탐색을 돕는 도구이며, 최종 판단과 신청 절차 확인은 관할 기관 안내를 함께 참고해야 합니다.</p>
             </div>
+            <aside class="narrative-checklist" aria-label="핵심 기능 체크리스트">
+                <h3>Core Checklist</h3>
+                <ul>
+                    <li>39가지 체류자격 통합 탐색</li>
+                    <li>목적별 체류 경로 정리</li>
+                    <li>관할기관 확인 흐름</li>
+                    <li>취업 관련 직종·업종 코드 접근</li>
+                    <li>결과와 근거를 함께 확인</li>
+                </ul>
+            </aside>
+        </div>
+    </section>
+
+    <section class="landing-narrative narrative-brand-story" aria-labelledby="narrativeStoryTitle">
+        <h2 id="narrativeStoryTitle" class="narrative-title">Paradiso는 Diaspora에서 출발합니다</h2>
+        <p class="narrative-copy">Paradiso라는 이름은 Diaspora의 문자를 재배열한 착안에서 출발했습니다. 이동과 정착의 여정 사이에서, 사용자가 필요한 정보를 더 명확하게 찾도록 길을 정리하는 브랜드 방향을 담고 있습니다.</p>
+        <div class="anagram-panel" aria-label="DIASPORA에서 PARADISO로의 애너그램 매핑">
+            <p class="anagram-kicker" lang="en">Animated brand anagram</p>
+            <div class="anagram-stage" id="anagramStage">
+                <div class="anagram-word anagram-row top-row" id="agTop" aria-label="DIASPORA source letters">
+                    <span class="anagram-letter al">D</span><span class="anagram-letter al">I</span><span class="anagram-letter al">A</span><span class="anagram-letter al">S</span><span class="anagram-letter al">P</span><span class="anagram-letter al">O</span><span class="anagram-letter al">R</span><span class="anagram-letter al">A</span>
+                </div>
+                <svg class="anagram-lines anagram-svg" id="anagramSvg" aria-hidden="true"></svg>
+                <div class="anagram-word anagram-row bot-row" id="agBot" aria-label="PARADISO target letters">
+                    <span class="anagram-letter al">P</span><span class="anagram-letter al">A</span><span class="anagram-letter al">R</span><span class="anagram-letter al">A</span><span class="anagram-letter al">D</span><span class="anagram-letter al">I</span><span class="anagram-letter al">S</span><span class="anagram-letter al">O</span>
+                </div>
+            </div>
+            <p class="anagram-note">DIASPORA의 각 문자가 PARADISO의 대응 문자로 순차 매핑됩니다. (MAP = [4, 5, 1, 6, 0, 7, 2, 3])</p>
+        </div>
+    </section>
+
+    <section class="landing-narrative narrative-values" aria-labelledby="narrativeValuesTitle">
+        <h2 id="narrativeValuesTitle" class="narrative-title">핵심 가치</h2>
+        <div class="narrative-values-grid">
+            <article class="narrative-value-card"><h3>Data Integrity</h3><p>구조화된 체류자격 데이터와 출처 확인 흐름</p></article>
+            <article class="narrative-value-card"><h3>User Centric</h3><p>사용자의 목적과 상황에 맞춘 탐색 경험</p></article>
+            <article class="narrative-value-card"><h3>AI Assisted</h3><p>복잡한 조건을 자연어 질문으로 정리하는 안내 보조</p></article>
+        </div>
+    </section>
+
+    <section class="landing-narrative narrative-roadmap" aria-labelledby="narrativeRoadmapTitle">
+        <h2 id="narrativeRoadmapTitle" class="narrative-title">로드맵</h2>
+        <p class="narrative-note">프로젝트 추진 방향을 공유하기 위한 계획이며, 공식 출시 보장을 의미하지 않습니다.</p>
+        <div class="narrative-roadmap-list">
+            <article><span>2025 Q4</span><p>공공데이터 활용 공모전 출품 및 MVP 검증</p></article>
+            <article><span>2026 Q1</span><p>AI 기반 질의응답과 안내 품질 고도화</p></article>
+            <article><span>2026 Q3</span><p>다국어 UI와 사용자 접근성 확대</p></article>
+        </div>
+    </section>
+
+    <section class="landing-narrative narrative-final-cta" aria-labelledby="narrativeCtaTitle">
+        <h2 id="narrativeCtaTitle" class="narrative-title">대한민국 39가지 체류자격,<br>한 곳에서 탐색하세요.</h2>
+        <div class="narrative-cta-actions">
+            <button type="button" class="hero-action-btn" data-action="toggle-search" aria-expanded="false">비자 코드 및 키워드 직접 검색</button>
+            <a href="#visaManualSection" class="narrative-link-btn">체류 경로 선택하기</a>
         </div>
     </section>
 
@@ -3627,62 +3669,79 @@ function resetReveal() {
     const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
     const topEls = Array.from(agTop.querySelectorAll('.al'));
     const botEls = Array.from(agBot.querySelectorAll('.al'));
-    let lineEls = [];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let cycleIndex = 0;
+    let timer = null;
+    let activeLine = null;
 
-    function buildLines() {
-        svg.innerHTML = ''; lineEls = [];
+    function createLine() {
+        svg.innerHTML = '';
         const sRect = stage.getBoundingClientRect();
         svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
 
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `<marker id="ag-arr" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,5.5 L4.5,3 z" fill="var(--ac)"/></marker>`;
+        defs.innerHTML = '<marker id="ag-arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,1 L0,7 L6,4 z" fill="var(--ac)"/></marker>';
         svg.appendChild(defs);
 
-        MAP.forEach((bIdx, tIdx) => {
-            const tR = topEls[tIdx].getBoundingClientRect();
-            const bR = botEls[bIdx].getBoundingClientRect();
-            const x1 = tR.left + tR.width/2 - sRect.left, y1 = tR.bottom - sRect.top + 4;
-            const x2 = bR.left + bR.width/2 - sRect.left, y2 = bR.top - sRect.top - 4;
-            const len = Math.hypot(x2-x1, y2-y1);
-
-            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-            line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-            line.setAttribute('class','ag-line');
-            line.setAttribute('marker-end', 'url(#ag-arr)');
-            line.dataset.len = len;
-            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
-            svg.appendChild(line); lineEls.push(line);
-        });
-        drawAll();
+        activeLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+        activeLine.setAttribute('class','ag-line anagram-line');
+        activeLine.setAttribute('marker-end', 'url(#ag-arr)');
+        activeLine.style.strokeWidth = '2.2';
+        activeLine.style.opacity = reduceMotion ? '0.32' : '0.92';
+        svg.appendChild(activeLine);
     }
 
-    function drawAll() {
-        lineEls.forEach((ln, i) => {
-            const len = parseFloat(ln.dataset.len);
-            ln.getAnimations().forEach(a => a.cancel());
-            ln.animate([
-                { strokeDashoffset: len, opacity: 0 },
-                { strokeDashoffset: len, opacity: 1, offset: 0.01 },
-                { strokeDashoffset: 0, opacity: 1 }
-            ], { duration: 380, delay: i * 45, easing: 'cubic-bezier(0.85, 0, 0.15, 1)', fill: 'forwards' });
-        });
+    function setLineFor(topIndex) {
+        if (!activeLine) return;
+        const bottomIndex = MAP[topIndex];
+        const sRect = stage.getBoundingClientRect();
+        const tR = topEls[topIndex].getBoundingClientRect();
+        const bR = botEls[bottomIndex].getBoundingClientRect();
+        const x1 = tR.left + tR.width / 2 - sRect.left;
+        const y1 = tR.bottom - sRect.top + 3;
+        const x2 = bR.left + bR.width / 2 - sRect.left;
+        const y2 = bR.top - sRect.top - 3;
+        const len = Math.hypot(x2 - x1, y2 - y1);
+
+        activeLine.setAttribute('x1', x1);
+        activeLine.setAttribute('y1', y1);
+        activeLine.setAttribute('x2', x2);
+        activeLine.setAttribute('y2', y2);
+
+        if (!reduceMotion) {
+            activeLine.style.strokeDasharray = `${len}`;
+            activeLine.style.strokeDashoffset = `${len}`;
+            requestAnimationFrame(() => {
+                activeLine.style.transition = 'stroke-dashoffset 0.42s cubic-bezier(0.2,0.7,0.2,1), opacity 0.25s';
+                activeLine.style.strokeDashoffset = '0';
+            });
+        }
     }
 
-    function highlight(tIdx, bIdx, on) {
-        lineEls.forEach((line, i) => { line.style.strokeWidth = (on && i === tIdx) ? '4' : ''; line.style.opacity = (on && i === tIdx) ? '1' : ''; });
-        topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
-        botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
+    function setActive(topIndex) {
+        const bottomIndex = MAP[topIndex];
+        topEls.forEach((el, i) => el.classList.toggle('lit', i === topIndex));
+        botEls.forEach((el, i) => el.classList.toggle('lit', i === bottomIndex));
+        setLineFor(topIndex);
     }
 
-    topEls.forEach((el,tIdx) => { el.addEventListener('mouseenter', () => highlight(tIdx, MAP[tIdx], true)); el.addEventListener('mouseleave', () => highlight(tIdx, MAP[tIdx], false)); });
-    botEls.forEach((el,bIdx) => { const tIdx = MAP.indexOf(bIdx); el.addEventListener('mouseenter', () => highlight(tIdx, bIdx, true)); el.addEventListener('mouseleave', () => highlight(tIdx, bIdx, false)); });
+    function rebuild() {
+        createLine();
+        setActive(cycleIndex % topEls.length);
+    }
 
-    if (document.readyState === 'complete') buildLines();
-    else window.addEventListener('load', buildLines);
-    window.addEventListener('resize', buildLines);
-    setInterval(drawAll, 3200);
-})();
+    rebuild();
+    window.addEventListener('resize', rebuild);
+
+    if (reduceMotion) return;
+
+    timer = window.setInterval(() => {
+        cycleIndex = (cycleIndex + 1) % topEls.length;
+        setActive(cycleIndex);
+    }, 720);
+
+    window.addEventListener('beforeunload', () => { if (timer) clearInterval(timer); });
+})();;
 
 // ── Visa Manual Section Functions ──────────────────────────────────────────
 
