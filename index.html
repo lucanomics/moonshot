@@ -504,6 +504,111 @@ body.searched .about-me { display: none !important; }
 .about-footer h3 { font-size: 1.8rem; font-weight: 800; color: var(--t1); margin: 0; letter-spacing: -0.03em; }
 .about-footer p { font-size: 1.05rem; color: var(--t2); line-height: 1.7; margin: 0; }
 
+/* ═══════════════════════════════════════════════════════════════
+   Figma reference landing scroll (Stage 2)
+   Visual layer added on top of Phase 1-6 sections, scoped under
+   .landing-scroll. Hidden in body.searched state.
+   ═══════════════════════════════════════════════════════════════ */
+.landing-scroll { display: contents; }
+body.searched .landing-scroll { display: none; }
+
+/* Brand bridge note under stat grid */
+.figma-stat-note { max-width: 820px; margin: 7rem auto 0; padding: 0 1.5rem; font-size: 0.78rem; line-height: 1.6; color: rgba(255,255,255,0.78); text-align: center; word-break: keep-all; letter-spacing: 0.005em; }
+
+/* Stat-grid micro-refinement (additive) */
+.figma-stat-grid .stat-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.figma-stat-grid .stat-card:hover { transform: translateY(-4px); }
+
+/* Feature checklist refinement (additive) */
+.figma-feature-checklist { background: linear-gradient(135deg, #b8ede4, #7dd3e8) !important; aspect-ratio: auto !important; padding: 1.4rem !important; }
+.figma-feature-section .check-list { display: flex !important; flex-direction: column; gap: 0.75rem; padding: 0; list-style: none; margin: 0; }
+.figma-feature-section .check-list li { background: rgba(255,255,255,0.95); border-radius: 14px; padding: 0.95rem 1.05rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); transition: transform 0.2s ease; }
+.figma-feature-section .check-list li:hover { transform: translateX(2px); }
+.figma-feature-section .check-icon { background: var(--color-primary, #0EA37B); color: #fff; box-shadow: 0 2px 6px rgba(14,163,123,0.35); }
+
+/* Anagram section (paradiso.html reference) */
+.figma-anagram-section { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 3rem; align-items: center; padding: 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(255,184,168,0.18), color-mix(in srgb, var(--bg0) 95%, transparent)); border: 1px solid var(--bd2); box-shadow: var(--sh1); }
+.figma-anagram-section .anagram-visual { background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 20px; padding: 2.5rem 1.5rem; border: 1px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 12px rgba(0,0,0,0.04); }
+[data-theme="dark"] .figma-anagram-section .anagram-visual { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
+#anagram { width: 100%; max-width: 320px; user-select: none; }
+.anagram-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--t3); text-align: center; margin: 0.25rem 0; }
+#anagram .anagram-row { display: flex; justify-content: center; }
+.anagram-letter { display: inline-block; width: 2em; text-align: center; padding: 0.2em 0; font-family: var(--ff-display); font-weight: 900; font-size: 1.5rem; letter-spacing: 0.1em; transition: color 0.25s ease, transform 0.25s ease, filter 0.25s ease; cursor: default; }
+.anagram-letter.anagram-top { color: var(--color-primary-ink, #085E48); }
+.anagram-letter.anagram-top.active { color: var(--color-primary, #0EA37B); filter: drop-shadow(0 0 8px rgba(14,163,123,0.5)); transform: translateY(-2px); }
+.anagram-letter.anagram-bot { color: #E0513E; }
+.anagram-letter.anagram-bot.active { color: var(--color-accent, #FF6B5B); filter: drop-shadow(0 0 8px rgba(255,107,91,0.5)); transform: translateY(2px); }
+[data-theme="dark"] .anagram-letter.anagram-top { color: #34D4A8; }
+[data-theme="dark"] .anagram-letter.anagram-top.active { color: #7FFFD4; filter: drop-shadow(0 0 12px rgba(52,212,168,0.85)); }
+[data-theme="dark"] .anagram-letter.anagram-bot { color: #FF8B7A; }
+[data-theme="dark"] .anagram-letter.anagram-bot.active { color: #FFB3A7; filter: drop-shadow(0 0 12px rgba(255,107,91,0.85)); }
+.anagram-svg-wrap { width: 100%; height: 80px; display: block; overflow: visible; }
+.figma-anagram-section .anagram-right h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 1.4rem; font-weight: 900; color: var(--t1); margin: 0 0 1.1rem; letter-spacing: -0.02em; }
+.figma-anagram-section .en-label { font-size: 0.75rem; color: var(--t3); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.figma-anagram-section .philosophy-list { list-style: none; padding: 0; margin: 0 0 1.25rem; display: flex; flex-direction: column; gap: 1.05rem; }
+.figma-anagram-section .philosophy-list li { position: relative; padding-left: 1.1rem; color: var(--t2); line-height: 1.7; font-weight: 500; word-break: keep-all; }
+.figma-anagram-section .philosophy-list li::before { content: "·"; position: absolute; left: 0; top: -0.05rem; color: var(--color-accent, #FF6B5B); font-weight: 900; font-size: 1.4rem; line-height: 1; }
+.figma-anagram-section .philosophy-list strong { color: var(--t1); font-weight: 900; margin-right: 0.25rem; }
+.figma-highlight-box { background: rgba(14,163,123,0.1); border-left: 4px solid var(--color-primary, #0EA37B); padding: 1rem 1.25rem; border-radius: 0 12px 12px 0; margin: 0 0 0.85rem; }
+.figma-highlight-box p { color: var(--color-primary-ink, #085E48); font-weight: 900; font-size: 1rem; letter-spacing: -0.01em; margin: 0; word-break: keep-all; }
+[data-theme="dark"] .figma-highlight-box { background: rgba(14,163,123,0.18); }
+[data-theme="dark"] .figma-highlight-box p { color: #c8f5e3; }
+
+/* Start section image (local asset) */
+.figma-start-section .figma-start-img { background-image: linear-gradient(135deg, rgba(8,94,72,0.18), rgba(255,107,91,0.10)), url("assets/hero/clary-garcia-QHlGCk9I_lY-unsplash.jpg"); background-size: cover; background-position: center 40%; background-repeat: no-repeat; border-radius: 24px; aspect-ratio: 4/3; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.18); transition: transform 0.6s ease; }
+.figma-start-section .figma-start-img:hover { transform: scale(1.015); }
+
+/* Values section refinement (additive) */
+.figma-values-section h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -0.025em; }
+.figma-value-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.figma-value-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+
+/* Roadmap refinement */
+.figma-roadmap-section { border-top: 2px solid color-mix(in srgb, var(--bd) 75%, transparent); padding-top: 3rem; }
+.figma-roadmap-en { font-size: 0.78rem; color: var(--t3); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-left: 0.5rem; }
+.figma-roadmap-note { font-size: 0.82rem; color: var(--t3); margin: 0.4rem 0 1.5rem; line-height: 1.55; word-break: keep-all; }
+.figma-roadmap-section .exp-row { transition: transform 0.25s ease; }
+.figma-roadmap-section .exp-row:hover .exp-dot { transform: scale(1.25); }
+.figma-roadmap-section .exp-dot { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--color-accent, #FF6B5B); box-shadow: 0 0 0 4px rgba(255,184,168,0.4); transition: transform 0.3s ease; flex-shrink: 0; }
+
+/* Footer CTA hero */
+.figma-footer-cta { padding: 0; }
+.figma-footer-hero { position: relative; height: clamp(22rem, 38vw, 28rem); border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; background: #111 url("assets/hero/yeonhee-VWLhifg5VMA-unsplash.jpg") center / cover no-repeat; box-shadow: 0 20px 60px rgba(0,0,0,0.22); }
+.figma-footer-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,12,20,0.92) 0%, rgba(17,17,17,0.55) 60%, rgba(0,0,0,0.25) 100%); pointer-events: none; }
+.figma-footer-hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-width: 720px; }
+.figma-footer-hero-content .footer-hero-eyebrow { color: #7dd8b8; font-weight: 900; letter-spacing: 0.25em; text-transform: uppercase; font-size: 0.78rem; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.figma-footer-hero-title { font-family: var(--ff-display); font-size: clamp(1.85rem, 4vw, 3rem); font-weight: 900; color: #fff; line-height: 1.18; letter-spacing: -0.03em; margin: 0; text-shadow: 0 4px 20px rgba(0,0,0,0.5); word-break: keep-all; }
+.figma-footer-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 0.4rem; }
+.figma-footer-chips .footer-chip { padding: 0.55rem 1.1rem; background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.22); color: #fff; border-radius: 9999px; font-weight: 700; font-size: 0.82rem; box-shadow: 0 2px 12px rgba(0,0,0,0.18); }
+.figma-footer-actions { display: flex; flex-wrap: wrap; gap: 0.85rem; justify-content: center; margin-top: 0.6rem; }
+.figma-footer-actions .figma-footer-btn { background: #fff; color: #111; border-color: #fff; }
+.figma-footer-actions .figma-footer-btn:hover { background: rgba(255,255,255,0.92); }
+.figma-footer-actions .figma-footer-btn-secondary { color: #fff; border-color: rgba(255,255,255,0.7); }
+.figma-footer-actions .figma-footer-btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,0.12); }
+
+/* Responsive — Figma sections */
+@media (max-width: 920px) {
+  .figma-anagram-section { grid-template-columns: 1fr; gap: 2rem; padding: 1.75rem; }
+  .figma-anagram-section .anagram-visual { padding: 2rem 1rem; }
+  .figma-stat-note { margin-top: 6rem; }
+}
+@media (max-width: 768px) {
+  .figma-feature-section .check-list { padding: 1.2rem; }
+  .figma-footer-hero { height: clamp(20rem, 90vw, 24rem); border-radius: 22px; padding: 1.5rem; }
+  .figma-footer-actions { flex-direction: column; width: 100%; }
+  .figma-footer-actions .btn-primary, .figma-footer-actions .btn-secondary { width: 100%; }
+  .figma-roadmap-section .exp-row { flex-wrap: wrap; }
+  .figma-roadmap-section .exp-year { font-size: 0.85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .figma-stat-grid .stat-card,
+  .figma-feature-section .check-list li,
+  .figma-value-card,
+  .figma-roadmap-section .exp-dot,
+  .anagram-letter,
+  .figma-start-section .figma-start-img { transition: none !important; }
+}
+
 /* ── Hero stat cards: icons + visa code chips (additive) ── */
 .stat-card { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; text-align: center; }
 .stat-icon { font-size: 1.4rem; line-height: 1; width: 2.4rem; height: 2.4rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: color-mix(in srgb, var(--color-accent-soft) 55%, #fff); margin-bottom: 0.1rem; }
@@ -1580,9 +1685,11 @@ body.searched .es { padding: 5rem 1rem; }
 </header>
 
 <main id="mainContent" class="results-area">
-    
+
+    <div class="landing-scroll">
+
     <!-- Hero Section -->
-    <section id="brandHero" class="brand-hero" aria-labelledby="brandHeroTitle">
+    <section id="brandHero" class="brand-hero figma-brand-bridge" aria-labelledby="brandHeroTitle">
         <div class="brand-hero-text" data-reveal="fade-up">
             <h2 id="brandHeroTitle" class="brand-hero-headline">
                 분절된 체류 행정,<br>
@@ -1601,7 +1708,7 @@ body.searched .es { padding: 5rem 1rem; }
             </div>
         </div>
 
-        <div class="brand-hero-stats" aria-label="비자 카테고리 통계" data-stagger>
+        <div class="brand-hero-stats figma-stat-grid" aria-label="비자 카테고리 통계" data-stagger>
             <div class="stat-card">
                 <div class="stat-icon" aria-hidden="true">💼</div>
                 <div class="stat-num" id="stat-work" data-count="14">0</div>
@@ -1645,43 +1752,46 @@ body.searched .es { padding: 5rem 1rem; }
                 </div>
             </div>
         </div>
+        <p class="figma-stat-note" aria-label="카테고리 분류 안내">위 카테고리 구분은 서비스 내부 탐색을 돕기 위한 그룹핑이며, 출입국관리법령상의 공식 분류와 다를 수 있습니다.</p>
     </section>
 
     <div class="section-divider" aria-hidden="true"></div>
 
     <!-- Feature Section -->
-    <section id="brandFeature" class="brand-feature" aria-labelledby="brandFeatureTitle">
+    <section id="brandFeature" class="brand-feature figma-feature-section" aria-labelledby="brandFeatureTitle">
         <div class="feature-content" data-reveal="fade-left">
             <h2 id="brandFeatureTitle" class="feature-headline">
-                법무부 출입국·외국인정책본부<br>
-                매뉴얼 기반
+                출입국·외국인정책본부<br>
+                매뉴얼 기반의 정보 탐색
             </h2>
             <p class="feature-subtitle" lang="en">
-                Built on Ministry of Justice Immigration Manual
+                Manual-based information navigation
             </p>
             <p class="feature-body">
-                본 서비스는 2026년 현행 출입국관리법 시행규칙과 출입국·외국인정책본부
-                실무 매뉴얼을 기반으로 합니다. 다만 최종 판단은 관할 출입국·외국인관서에
-                귀속됩니다.
+                구조화된 체류자격 데이터를 토대로 공식 자료 확인을 전제로 한 정보 탐색을 보조합니다.
+                최종 판단과 신청 절차는 관할 출입국·외국인관서 안내 확인이 필요합니다.
             </p>
             <a href="tel:1345" class="btn-primary feature-cta">
                 <span>1345 외국인종합안내센터</span><span class="btn-en" lang="en">Contact 1345</span>
             </a>
         </div>
-        <aside class="feature-checklist" aria-label="서비스 핵심 기능" data-reveal="fade-right" data-reveal-delay="150">
+        <aside class="feature-checklist figma-feature-checklist" aria-label="서비스 핵심 기능" data-reveal="fade-right" data-reveal-delay="150">
             <ul class="check-list" data-stagger data-stagger-delay="100">
                 <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>39개 체류자격 통합 검색</strong>
-                    <span lang="en">Search across 39 visa types</span></div></li>
+                    <div><strong>39가지 체류자격 통합 탐색</strong>
+                    <span lang="en">Browse all 39 stay categories</span></div></li>
                 <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>자격별 구비서류 자동 생성</strong>
-                    <span lang="en">Auto-generated document checklist</span></div></li>
+                    <div><strong>목적별 체류 경로 정리</strong>
+                    <span lang="en">Path overview by purpose</span></div></li>
                 <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>관할 출입국관서 즉시 조회</strong>
-                    <span lang="en">Find your jurisdiction office</span></div></li>
+                    <div><strong>관할기관 확인 흐름</strong>
+                    <span lang="en">Jurisdiction lookup flow</span></div></li>
                 <li><span class="check-icon" aria-hidden="true">✓</span>
-                    <div><strong>취업신고 직종·업종 코드</strong>
-                    <span lang="en">Employment notification codes</span></div></li>
+                    <div><strong>취업 관련 직종·업종 코드 접근</strong>
+                    <span lang="en">Employment occupation &amp; industry codes</span></div></li>
+                <li><span class="check-icon" aria-hidden="true">✓</span>
+                    <div><strong>결과와 근거를 함께 확인</strong>
+                    <span lang="en">Results paired with sources</span></div></li>
             </ul>
         </aside>
     </section>
@@ -1689,120 +1799,137 @@ body.searched .es { padding: 5rem 1rem; }
     <div class="section-divider" aria-hidden="true"></div>
 
     <!-- About Me Portfolio Section (NEW) -->
-    <section id="aboutMe" class="about-me" aria-labelledby="aboutMeTitle">
+    <section id="aboutMe" class="about-me figma-about-section" aria-labelledby="aboutMeTitle">
         <h2 id="aboutMeTitle" class="about-title" data-reveal="fade-up">플랫폼 소개</h2>
 
-        <div class="about-brand" data-reveal="fade-up">
-            <div class="brand-anagram">
-                <div class="anagram-stage" id="anagramStage">
-                    <div class="anagram-row top-row" id="agTop">
-                        <span class="al" data-i="0">D</span><span class="al" data-i="1">I</span><span class="al" data-i="2">A</span><span class="al" data-i="3">S</span><span class="al" data-i="4">P</span><span class="al" data-i="5">O</span><span class="al" data-i="6">R</span><span class="al" data-i="7">A</span>
-                    </div>
-                    <svg class="anagram-svg" id="anagramSvg"></svg>
-                    <div class="anagram-row bot-row" id="agBot">
-                        <span class="al" data-i="0">P</span><span class="al" data-i="1">A</span><span class="al" data-i="2">R</span><span class="al" data-i="3">A</span><span class="al" data-i="4">D</span><span class="al" data-i="5">I</span><span class="al" data-i="6">S</span><span class="al" data-i="7">O</span>
-                    </div>
+        <div class="about-brand figma-anagram-section" data-reveal="fade-up">
+            <div class="anagram-visual">
+                <div id="anagram" aria-label="Diaspora to Paradiso anagram">
+                    <div class="anagram-label">DIASPORA</div>
+                    <div class="anagram-row" id="anagram-top"></div>
+                    <svg id="anagram-svg" class="anagram-svg-wrap" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                            <marker id="ag-arr-active" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0.5 L0,5.5 L4.5,3 z" fill="#0EA37B"/>
+                            </marker>
+                            <marker id="ag-arr-dim" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto" markerUnits="strokeWidth">
+                                <path d="M0,0.5 L0,5.5 L4.5,3 z" fill="#9ca3af"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                    <div class="anagram-row" id="anagram-bot"></div>
+                    <div class="anagram-label">PARADISO</div>
                 </div>
             </div>
-            <div class="brand-meaning">
-                <h3 class="brand-h3">브랜드 철학 및 어원 <span class="brand-h3-en" lang="en">— Brand Philosophy & Etymology</span></h3>
-                <ul class="brand-points">
-                    <li><strong>Paradiso</strong> — 이탈리아어 "낙원(Paradise)". 한국에서의 체류가 모두에게 낙원처럼 머무를 만한 곳이기를 바랍니다.</li>
-                    <li><strong>Diaspora (애너그램)</strong> — 'Paradiso'는 이주민을 뜻하는 영단어 'Diaspora'의 알파벳 8개를 재배열(Anagram)한 단어입니다. 고국을 떠나온 이주민(Diaspora)들이 체계적인 체류·행정 인프라를 바탕으로 대한민국에서 안정적이고 편안한 정주 환경(Paradiso)을 영위할 수 있도록 지원한다는 플랫폼의 공식적 지향점을 담았습니다.</li>
+            <div class="anagram-right">
+                <h3>브랜드 철학 및 어원 <span class="en-label" lang="en">— Brand Philosophy &amp; Etymology</span></h3>
+                <ul class="philosophy-list">
+                    <li><strong>Paradiso</strong> — 이탈리아어 "낙원(Paradise)". 한국에서의 체류가 모두에게 머무를 만한 곳이기를 바랍니다.</li>
+                    <li><strong>Diaspora (애너그램)</strong> — 'Paradiso'는 이주민을 뜻하는 영단어 'Diaspora'의 알파벳 8개를 재배열(Anagram)한 단어입니다. 고국을 떠나온 이주민들이 대한민국에서 안정적인 정주 환경을 영위할 수 있도록 돕고자 하는 지향점을 담았습니다.</li>
                     <li><strong>39</strong> — 출입국관리법령상 대한민국 체류자격 39종을 의미합니다.</li>
                 </ul>
-                <p class="brand-vision">300만 체류 외국인 시대를 위한 공식 인프라로의 도약.</p>
-                <p class="brand-disclaimer">2026년 출입국·외국인정책본부 실무 매뉴얼 기반. 최종 판단은 관할 출입국·외국인관서 및 1345 외국인종합안내센터에 귀속됩니다.</p>
+                <div class="figma-highlight-box">
+                    <p>300만 체류 외국인 시대를 함께 준비합니다.</p>
+                </div>
+                <p class="brand-disclaimer">출입국·외국인정책본부 매뉴얼을 1차 출처로 참고하며, 최종 판단과 신청 절차는 관할 출입국·외국인관서 및 1345 외국인종합안내센터 안내를 확인하세요.</p>
             </div>
         </div>
 
-        <div class="about-intro" data-reveal="fade-left">
-            <div class="intro-img-placeholder" aria-hidden="true">🚀</div>
+        <div class="about-intro figma-start-section" data-reveal="fade-left">
+            <div class="figma-start-img" aria-hidden="true"></div>
             <div class="intro-text">
                 <h3>Paradiso의 시작</h3>
                 <p>
-                    대한민국에는 39가지의 체류자격이 존재하지만, 법령과 매뉴얼은 파편화되어 있어 진입 장벽이 높습니다. Paradiso는 출입국·외국인정책본부 실무 매뉴얼을 기반으로, 가장 정확한 비자 정보와 관할 관서를 단일 플랫폼에서 직관적으로 제공하기 위해 기획되었습니다. 향후 체류 외국인 300만 시대를 대비하는 공식 인프라로 도약하고자 합니다.
+                    대한민국에는 39가지의 체류자격이 존재하지만, 관련 법령과 매뉴얼은 분산되어 있어 정보 탐색에 시간이 걸립니다. Paradiso는 흩어진 비자·체류 정보를 구조화하여 사용자 입장에서 한 번에 살펴볼 수 있는 안내 흐름을 제공하고, 정보 비대칭을 줄이는 사용자 안내 레이어를 지향합니다.
                 </p>
             </div>
         </div>
 
-        <div class="about-hobbies" data-reveal="fade-right">
+        <div class="about-hobbies figma-values-section" data-reveal="fade-right">
             <h3>핵심 가치 및 비전</h3>
             <p>
-                단순한 정보 나열을 넘어, 사용자 맞춤형 AI 상황 분석과 정확한 직종·산업 코드 매칭을 통해 실질적인 행정 처리 시간을 단축하고 정보의 비대칭성을 해소합니다.
+                단순한 정보 나열을 넘어, 구조화된 체류자격 데이터와 사용자 입력에 기반한 안내를 통해 정보 탐색 부담을 줄이고, 공식 자료 확인까지 자연스럽게 이어지도록 설계합니다.
             </p>
-            <div class="hobbies-grid">
-                <div class="hobby-card hobby-1" aria-label="정확성과 신뢰성">
+            <div class="hobbies-grid figma-values-grid">
+                <div class="hobby-card hobby-1 figma-value-card" aria-label="정확성과 신뢰성">
                     <div class="hobby-inner">
                         <div class="hobby-icon" aria-hidden="true">📑</div>
                         <div class="hobby-title">Data Integrity</div>
-                        <div class="hobby-desc">법무부 출입국·외국인정책본부 실무 매뉴얼과 시행규칙을 1차 출처로 삼습니다.</div>
+                        <div class="hobby-desc">출입국·외국인정책본부 매뉴얼과 시행규칙을 1차 출처로 참고합니다.</div>
                     </div>
                 </div>
-                <div class="hobby-card hobby-2" aria-label="사용자 중심 UX">
+                <div class="hobby-card hobby-2 figma-value-card" aria-label="사용자 중심 UX">
                     <div class="hobby-inner">
                         <div class="hobby-icon" aria-hidden="true">🧭</div>
                         <div class="hobby-title">User Centric</div>
-                        <div class="hobby-desc">39개 자격을 4개 카테고리로 묶어 한 화면에서 비교·검색합니다.</div>
+                        <div class="hobby-desc">39개 체류자격을 목적별로 묶어 한 화면에서 비교·탐색할 수 있도록 정리합니다.</div>
                     </div>
                 </div>
-                <div class="hobby-card hobby-3" aria-label="AI 기반 분석">
+                <div class="hobby-card hobby-3 figma-value-card" aria-label="AI 기반 안내 보조">
                     <div class="hobby-inner">
                         <div class="hobby-icon" aria-hidden="true">✨</div>
-                        <div class="hobby-title">AI Powered</div>
-                        <div class="hobby-desc">국적·체류자격·직무 정보로 본인 상황에 맞는 절차를 즉시 제시합니다.</div>
+                        <div class="hobby-title">AI Assisted</div>
+                        <div class="hobby-desc">사용자가 입력한 상황을 기반으로 살펴볼 자격과 확인 흐름을 제안하는 안내 보조입니다.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="about-experience" data-reveal="fade-left">
-            <h3 class="exp-heading">로드맵</h3>
+        <div class="about-experience figma-roadmap-section" data-reveal="fade-left">
+            <h3 class="exp-heading">로드맵 <span class="figma-roadmap-en" lang="en">— Project Roadmap</span></h3>
+            <p class="figma-roadmap-note">아래 일정은 프로젝트 추진 계획이며, 공식 정책 일정이 아닙니다.</p>
             <div class="exp-row">
                 <span class="exp-dot" aria-hidden="true"></span>
                 <div class="exp-text">
-                    <span class="exp-company">정식 서비스 런칭 및 다국어 지원 확대</span>
-                    <span class="exp-detail">영어·중국어·베트남어 UI 동시 제공, 1345 핫라인 연동 강화</span>
+                    <span class="exp-company">2025 Q4 — 공공데이터 활용 공모전 출품 및 MVP 검증</span>
+                    <span class="exp-detail">39가지 체류자격 통합 탐색 MVP 공개·실사용자 피드백 수집</span>
                 </div>
-                <span class="exp-year">2026 Q3</span>
+                <span class="exp-year">2025 Q4</span>
             </div>
             <div class="exp-row">
                 <span class="exp-dot" aria-hidden="true"></span>
                 <div class="exp-text">
-                    <span class="exp-company">AI 맞춤형 비자 진단 고도화</span>
-                    <span class="exp-detail">RAG 기반 매뉴얼 검색·국적별 케이스 매칭으로 정밀도 향상</span>
+                    <span class="exp-company">2026 Q1 — AI 기반 질의응답과 안내 품질 고도화</span>
+                    <span class="exp-detail">매뉴얼 기반 답변 보조와 사용자 상황별 안내 흐름 정교화</span>
                 </div>
                 <span class="exp-year">2026 Q1</span>
             </div>
             <div class="exp-row">
                 <span class="exp-dot" aria-hidden="true"></span>
                 <div class="exp-text">
-                    <span class="exp-company">공공데이터 활용 공모전 출품 및 베타 테스트</span>
-                    <span class="exp-detail">39개 자격 통합 검색 MVP 공개·실사용자 피드백 수집</span>
+                    <span class="exp-company">2026 Q3 — 다국어 UI와 사용자 접근성 확대</span>
+                    <span class="exp-detail">영어·다국어 UI 도입, 1345 안내 흐름 연계 강화</span>
                 </div>
-                <span class="exp-year">2025 Q4</span>
+                <span class="exp-year">2026 Q3</span>
             </div>
         </div>
 
-        <div class="about-footer" data-reveal="fade-right">
-            <div class="footer-hero-img" aria-hidden="true">
-                <div class="footer-hero-inner">
-                    <div class="footer-hero-eyebrow">Paradiso</div>
-                    <div class="footer-hero-title">대한민국 39가지<br>체류자격, 한 곳에서.</div>
-                    <div class="footer-hero-chips">
-                        <span class="footer-chip">📑 매뉴얼 기반</span>
-                        <span class="footer-chip">🤖 AI 분석</span>
-                        <span class="footer-chip">🏛 관할관서 조회</span>
+        <div class="about-footer figma-footer-cta" data-reveal="fade-right">
+            <div class="figma-footer-hero">
+                <div class="figma-footer-hero-overlay" aria-hidden="true"></div>
+                <div class="figma-footer-hero-content">
+                    <span class="footer-hero-eyebrow">Paradiso</span>
+                    <h3 class="figma-footer-hero-title">대한민국 39가지<br>체류자격, 한 곳에서 살펴보세요.</h3>
+                    <div class="figma-footer-chips">
+                        <span class="footer-chip">📑 매뉴얼 기반 탐색</span>
+                        <span class="footer-chip">🧭 목적별 경로 정리</span>
+                        <span class="footer-chip">🏛 관할기관 안내</span>
                         <span class="footer-chip">💼 직종·업종 코드</span>
+                    </div>
+                    <div class="figma-footer-actions">
+                        <a href="#topCtrls" class="btn-primary figma-footer-btn">
+                            <span>지금 탐색 시작</span><span class="btn-en" lang="en">Start exploring</span>
+                        </a>
+                        <a href="tel:1345" class="btn-secondary figma-footer-btn-secondary">
+                            <span>1345 직접 문의</span><span class="btn-en" lang="en">1345 Hotline</span>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div>
-                <h3>한국에서의 새로운 시작, 흔들림 없이.</h3>
-                <p>지금 바로 AI 맞춤 분석을 통해 당신에게 가장 적합한 체류 자격과 취업 가능 여부를 팩트체크하세요.</p>
-            </div>
         </div>
     </section>
+
+    </div><!-- /.landing-scroll -->
 
     <div class="qf" id="qf" aria-label="자주 찾는 검색어 모음"></div>
     <div class="rlist" id="rlist" aria-live="polite"></div>
@@ -3714,72 +3841,102 @@ function resetReveal() {
     });
 })();
 
-// ── WAAPI Anagram Engine ──────────────────────────────────────────
-(function initAnagramLines() {
-    const stage = document.getElementById('anagramStage');
-    const svg   = document.getElementById('anagramSvg');
-    const agTop = document.getElementById('agTop');
-    const agBot = document.getElementById('agBot');
-    if (!stage || !svg || !agTop || !agBot) return;
+// ── Diaspora → Paradiso Anagram (paradiso.html reference) ─────────
+(function initFigmaAnagram() {
+    const wrap   = document.getElementById('anagram');
+    const topRow = document.getElementById('anagram-top');
+    const botRow = document.getElementById('anagram-bot');
+    const svg    = document.getElementById('anagram-svg');
+    if (!wrap || !topRow || !botRow || !svg) return;
 
-    const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
-    const topEls = Array.from(agTop.querySelectorAll('.al'));
-    const botEls = Array.from(agBot.querySelectorAll('.al'));
-    let lineEls = [];
+    const MAP = [4, 5, 1, 6, 0, 7, 2, 3]; // DIASPORA[i] → PARADISO position
+    const topWord = ['D','I','A','S','P','O','R','A'];
+    const botWord = ['P','A','R','A','D','I','S','O'];
+
+    topWord.forEach((ch, i) => {
+        const s = document.createElement('span');
+        s.className = 'anagram-letter anagram-top';
+        s.id = `at-${i}`;
+        s.textContent = ch;
+        topRow.appendChild(s);
+    });
+    botWord.forEach((ch, i) => {
+        const s = document.createElement('span');
+        s.className = 'anagram-letter anagram-bot';
+        s.id = `ab-${i}`;
+        s.textContent = ch;
+        botRow.appendChild(s);
+    });
 
     function buildLines() {
-        svg.innerHTML = ''; lineEls = [];
-        const sRect = stage.getBoundingClientRect();
-        svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
-
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `<marker id="ag-arr" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,5.5 L4.5,3 z" fill="var(--ac)"/></marker>`;
-        svg.appendChild(defs);
+        const wRect = wrap.getBoundingClientRect();
+        if (!wRect.width) return;
+        svg.setAttribute('viewBox', `0 0 ${wRect.width} 80`);
+        svg.style.height = '80px';
+        svg.querySelectorAll('line').forEach(l => l.remove());
 
         MAP.forEach((bIdx, tIdx) => {
-            const tR = topEls[tIdx].getBoundingClientRect();
-            const bR = botEls[bIdx].getBoundingClientRect();
-            const x1 = tR.left + tR.width/2 - sRect.left, y1 = tR.bottom - sRect.top + 4;
-            const x2 = bR.left + bR.width/2 - sRect.left, y2 = bR.top - sRect.top - 4;
-            const len = Math.hypot(x2-x1, y2-y1);
+            const tEl = document.getElementById(`at-${tIdx}`);
+            const bEl = document.getElementById(`ab-${bIdx}`);
+            if (!tEl || !bEl) return;
+            const tR = tEl.getBoundingClientRect();
+            const bR = bEl.getBoundingClientRect();
+            const x1 = tR.left + tR.width / 2 - wRect.left;
+            const x2 = bR.left + bR.width / 2 - wRect.left;
+            const y1 = 4, y2 = 76;
+            const len = Math.hypot(x2 - x1, y2 - y1);
 
-            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-            line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-            line.setAttribute('class','ag-line');
-            line.setAttribute('marker-end', 'url(#ag-arr)');
-            line.dataset.len = len;
-            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
-            svg.appendChild(line); lineEls.push(line);
-        });
-        drawAll();
-    }
-
-    function drawAll() {
-        lineEls.forEach((ln, i) => {
-            const len = parseFloat(ln.dataset.len);
-            ln.getAnimations().forEach(a => a.cancel());
-            ln.animate([
-                { strokeDashoffset: len, opacity: 0 },
-                { strokeDashoffset: len, opacity: 1, offset: 0.01 },
-                { strokeDashoffset: 0, opacity: 1 }
-            ], { duration: 380, delay: i * 45, easing: 'cubic-bezier(0.85, 0, 0.15, 1)', fill: 'forwards' });
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#9ca3af');
+            line.setAttribute('stroke-width', '1.5');
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('marker-end', 'url(#ag-arr-dim)');
+            line.setAttribute('opacity', '0.45');
+            line.setAttribute('stroke-dasharray', len);
+            line.setAttribute('stroke-dashoffset', '0');
+            line.dataset.idx = tIdx;
+            svg.appendChild(line);
         });
     }
-
-    function highlight(tIdx, bIdx, on) {
-        lineEls.forEach((line, i) => { line.style.strokeWidth = (on && i === tIdx) ? '4' : ''; line.style.opacity = (on && i === tIdx) ? '1' : ''; });
-        topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
-        botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
-    }
-
-    topEls.forEach((el,tIdx) => { el.addEventListener('mouseenter', () => highlight(tIdx, MAP[tIdx], true)); el.addEventListener('mouseleave', () => highlight(tIdx, MAP[tIdx], false)); });
-    botEls.forEach((el,bIdx) => { const tIdx = MAP.indexOf(bIdx); el.addEventListener('mouseenter', () => highlight(tIdx, bIdx, true)); el.addEventListener('mouseleave', () => highlight(tIdx, bIdx, false)); });
 
     if (document.readyState === 'complete') buildLines();
     else window.addEventListener('load', buildLines);
     window.addEventListener('resize', buildLines);
-    setInterval(drawAll, 3200);
+    setTimeout(buildLines, 150);
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let activeIdx = -1;
+    let cycleCount = 0;
+    setInterval(() => {
+        cycleCount++;
+        activeIdx = (cycleCount % 10 < 8) ? (cycleCount % 10) : -1;
+
+        topWord.forEach((_, i) => document.getElementById(`at-${i}`)?.classList.remove('active'));
+        botWord.forEach((_, i) => document.getElementById(`ab-${i}`)?.classList.remove('active'));
+        svg.querySelectorAll('line').forEach(l => {
+            l.setAttribute('stroke', '#9ca3af');
+            l.setAttribute('stroke-width', '1.5');
+            l.setAttribute('opacity', '0.45');
+            l.setAttribute('marker-end', 'url(#ag-arr-dim)');
+        });
+
+        if (activeIdx >= 0 && activeIdx < 8) {
+            document.getElementById(`at-${activeIdx}`)?.classList.add('active');
+            document.getElementById(`ab-${MAP[activeIdx]}`)?.classList.add('active');
+            svg.querySelectorAll('line').forEach(l => {
+                if (parseInt(l.dataset.idx, 10) === activeIdx) {
+                    l.setAttribute('stroke', '#0EA37B');
+                    l.setAttribute('stroke-width', '2.5');
+                    l.setAttribute('opacity', '1');
+                    l.setAttribute('marker-end', 'url(#ag-arr-active)');
+                }
+            });
+        }
+    }, 600);
 })();
 
 // ── Visa Manual Section Functions ──────────────────────────────────────────
