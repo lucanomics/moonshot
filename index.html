@@ -147,6 +147,10 @@ body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; 
 body.searched .header-inner { flex-direction: row; justify-content: space-between; max-width: 1160px; gap: 1rem; padding: 0.6rem 1.2rem; }
 body:not(.searched) .header-inner { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr); gap: 3.2rem; align-items: start; }
 body:not(.searched) .landing-main { display: flex; flex-direction: column; width: 100%; min-width: 0; }
+body.searched .landing-main { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex: 1; min-width: 0; width: 100%; }
+body.searched .landing-main .logo-area { flex: 0 0 auto; }
+body.searched .landing-main .search-wrap { flex: 1 1 auto; min-width: 180px; max-width: 480px; }
+body.searched .landing-main .ctrls { flex: 0 0 auto; white-space: nowrap; }
 
 /* Logo */
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; cursor: pointer; transition: all 0.7s ease; outline: none; }
