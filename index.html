@@ -2590,24 +2590,35 @@ function executeSearch() {
         }, 1200);
     } else renderResults(query);
 }
+function setDirectSearchToggleState(isOpen){
+    const stb = document.getElementById('searchToggleBtn');
+    if (!stb) return;
+    const iconEl = stb.querySelector('.hero-action-icon');
+    const labelEl = stb.querySelector('.hero-action-label');
+    stb.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    stb.classList.toggle('active', isOpen);
+    stb.setAttribute('aria-label', isOpen ? '직접 검색 닫기' : '비자 코드 및 키워드 직접 검색 열기');
+    stb.title = isOpen ? '직접 검색 닫기' : '비자 코드 및 키워드 직접 검색';
+    if (iconEl) iconEl.textContent = isOpen ? '✕' : '🔍';
+    if (labelEl) labelEl.textContent = isOpen ? '직접 검색 닫기' : '비자 코드 및 키워드 직접 검색';
+}
+
 function closeDirectSearchMode(){
     const sf = document.getElementById('searchForm');
-    const stb = document.getElementById('searchToggleBtn');
     const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'none';
     if (vms) vms.style.display = '';
     document.body.classList.remove('searching');
-    if (stb) { stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
+    setDirectSearchToggleState(false);
 }
 
 function openDirectSearchMode(){
     const sf = document.getElementById('searchForm');
-    const stb = document.getElementById('searchToggleBtn');
     const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'block';
     if (vms) vms.style.display = 'none';
     document.body.classList.add('searching');
-    if (stb) { stb.setAttribute('aria-expanded', 'true'); stb.classList.add('active'); }
+    setDirectSearchToggleState(true);
     if (qEl) qEl.focus();
 }
 
@@ -2845,6 +2856,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const stb = document.getElementById('searchToggleBtn');
                     const isOpen = stb && stb.getAttribute('aria-expanded') === 'true';
                     if (!isOpen) openDirectSearchMode();
+                    else if (!document.body.classList.contains('searched')) closeDirectSearchMode();
                     else if (qEl) qEl.focus();
                 },
                 'open-jobcode-modal': () => openJobCodeModal(),
