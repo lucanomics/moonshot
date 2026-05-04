@@ -800,6 +800,7 @@ body.searched .visa-manual-section.in-hero { display: none !important; }
 /* Search Toggle (inherits .hero-action-btn, accent border for primary action) */
 .hero-action-btn.search-toggle-btn { border: 1.5px dashed var(--ac); color: var(--ac); font-weight: 800; }
 .hero-action-btn.search-toggle-btn:hover { background: color-mix(in srgb, var(--ac) 12%, var(--bg1)); border-style: solid; }
+.hero-action-btn.search-toggle-btn.active { background: color-mix(in srgb, var(--ac) 14%, var(--bg1)); border-style: solid; border-color: var(--ac); }
 body.searched .search-toggle-btn { display: none !important; }
 body.searched #searchForm { display: block !important; }
 body.searching #searchForm { display: block !important; }
@@ -2642,7 +2643,7 @@ function executeSearch() {
         } catch(e) {}
         setTimeout(() => document.body.classList.add('launching'), 2200);
         setTimeout(() => {
-            document.body.classList.remove('landing', 'launching', 'anagram-run');
+            document.body.classList.remove('landing', 'launching', 'anagram-run', 'searching');
             document.body.setAttribute('data-scene', 'searched');
             document.querySelectorAll('.logo-brand .al').forEach(el => { el.style.transitionDelay = ''; el.style.removeProperty('--ax'); });
             document.body.classList.add('searched'); renderResults(query); window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2969,9 +2970,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.body.classList.contains('searched')) resetToLanding();
         }
         if (e.key === 'Escape') {
-            ['jobCodeModalOverlay', 'jurisdictionModalOverlay', 'aiModalOverlay', 'docModalOverlay', 'faqModalOverlay'].forEach(id => {
-                if (document.getElementById(id)?.classList.contains('active')) closeModal(id);
+            const anyModalOpen = ['jobCodeModalOverlay', 'jurisdictionModalOverlay', 'aiModalOverlay', 'docModalOverlay', 'faqModalOverlay'].some(id => {
+                const el = document.getElementById(id);
+                if (el?.classList.contains('active')) { closeModal(id); return true; }
+                return false;
             });
+            if (!anyModalOpen && document.body.classList.contains('searching') && !document.body.classList.contains('searched')) {
+                closeDirectSearchMode();
+            }
         }
     });
 
