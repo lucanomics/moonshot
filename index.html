@@ -199,6 +199,7 @@ body.searched #q { padding: 0.7rem 0.7rem 0.7rem 2.6rem; font-size: 0.9rem; }
 .xb { background: 0; border: 0; color: var(--t3); cursor: pointer; padding: 0.5rem; font-size: 1.1rem; display: none; transition: color 0.2s; }
 .xb:hover { color: var(--t1); }
 .xb.v { display: block; }
+body.searching:not(.searched) #xb { display: block; }
 .sbar-go { background: 0; border: 0; cursor: pointer; color: var(--t3); padding: 0 1rem 0 0.4rem; display: flex; align-items: center; transition: color 0.2s; }
 .sbar-go:hover { color: var(--ac); }
 .sbar-go:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -2681,7 +2682,18 @@ function handleInput(){
     const v=qEl.value; document.getElementById('xb').classList.toggle('v',v.length>0); showSuggestions(v);
     if(document.body.classList.contains('searched') && dataReady){ clearTimeout(dt); dt=setTimeout(()=>renderResults(v),150); }
 }
-function clearSearch(){ qEl.value=''; qEl.focus(); document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active'); if(document.body.classList.contains('searched') && dataReady) renderResults(''); }
+function clearSearch(){
+    const hasText = qEl.value.length > 0;
+    if (!hasText && document.body.classList.contains('searching') && !document.body.classList.contains('searched')) {
+        closeDirectSearchMode();
+        return;
+    }
+    qEl.value='';
+    qEl.focus();
+    document.getElementById('xb').classList.remove('v');
+    document.getElementById('auto-list').classList.remove('active');
+    if(document.body.classList.contains('searched') && dataReady) renderResults('');
+}
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(qEl.value);}
 
 function updateNightLightClass() {
@@ -2832,8 +2844,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 'toggle-search': () => {
                     const stb = document.getElementById('searchToggleBtn');
                     const isOpen = stb && stb.getAttribute('aria-expanded') === 'true';
-                    if (isOpen) closeDirectSearchMode();
-                    else openDirectSearchMode();
+                    if (!isOpen) openDirectSearchMode();
+                    else if (qEl) qEl.focus();
                 },
                 'open-jobcode-modal': () => openJobCodeModal(),
                 'open-jurisdiction-modal': () => openJurisdictionModal(),
