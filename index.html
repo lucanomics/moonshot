@@ -1349,6 +1349,104 @@ body.searched .es { padding: 5rem 1rem; }
   body.searched .doc-trigger-btn { padding: 0.85rem 0.7rem; font-size: 0.84rem; }
   body.searched .doc-buttons-grid { margin: 0.85rem 0.85rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Phase 6 · Mobile & tablet responsive polish
+   Scope: CSS-only responsive refinements for landing/direct-search/visa/results
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  body:not(.searched) .hero-container {
+    padding: clamp(3.5rem, 10vw, 5rem) 1rem 2.25rem;
+    justify-content: flex-start;
+  }
+  body:not(.searched) .hero-container::before {
+    background:
+      linear-gradient(160deg, rgba(0,0,0,.68) 0%, rgba(0,0,0,.60) 100%),
+      url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 30% / cover no-repeat,
+      #0d1f1b;
+  }
+  body:not(.searched) .header-inner { gap: 1.25rem; max-width: 100%; }
+  body:not(.searched) .logo-area { width: 100%; }
+  body:not(.searched) .logo-brand { font-size: clamp(2.8rem, 10vw, 4rem); line-height: 0.95; }
+  body:not(.searched) .logo-sub { font-size: 0.68rem; letter-spacing: 0.08em; }
+
+  .search-wrap, #searchForm, .sbar { width: 100%; }
+  #q { min-height: 48px; padding-top: 0.9rem; padding-bottom: 0.9rem; }
+  #xb, .sbar-go { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+  .hero-actions, .qa-main { margin-top: 0.8rem; }
+  .hero-action-btn { min-height: 52px; }
+
+  .landing-hints-section { margin-top: 1rem; max-width: 100%; }
+  .landing-hints { gap: 0.5rem; }
+  .lh { min-height: 38px; white-space: normal; text-align: center; }
+
+  #visaManualSection { margin-top: 0.75rem; }
+  .visa-track-card, .visa-purpose-card { min-height: 96px; }
+  .visa-step-container { padding: 1rem; }
+
+  body.searched .hero-container { min-height: 58px; }
+  body.searched .header-inner { align-items: center; padding: 0.45rem 0.75rem; }
+  body.searched .logo-area { min-width: 0; }
+  body.searched .search-wrap { min-width: 0; }
+  body.searched .results-area { padding: 0 0.75rem; }
+  body.searched .qf { gap: 0.45rem; margin-top: 0.95rem; margin-bottom: 0.75rem; }
+  body.searched .qb { min-height: 34px; padding: 0.35rem 0.75rem; }
+  body.searched .rlist { gap: 0.85rem; }
+  body.searched .vc { border-radius: 10px; }
+  body.searched .vc-h { padding: 0.95rem 1rem; }
+  body.searched .vs { padding: 0.9rem 1rem; }
+  body.searched .doc-buttons-grid { grid-template-columns: 1fr; margin: 0.8rem; gap: 0.6rem; }
+  body.searched .doc-trigger-btn { min-height: 46px; padding: 0.85rem 0.75rem; }
+
+  .modal-wrap, .modal-content, .modal-box { max-width: calc(100% - 1.2rem); }
+}
+
+@media (max-width: 640px) {
+  body:not(.searched) .hero-container { padding-top: 3.6rem; padding-bottom: 2rem; }
+  body:not(.searched) .header-inner { gap: 1rem; }
+  body:not(.searched) .logo-brand { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+
+  #q { font-size: 1rem; padding-left: 2.7rem; }
+  .sbar-icon { left: 0.85rem; }
+
+  .landing-hints-section .landing-hints { justify-content: flex-start; }
+  .lh { font-size: 0.76rem; padding: 0.45rem 0.7rem; }
+
+  .visa-track-card { padding: 0.9rem 0.75rem; }
+  .visa-purpose-card { min-height: 90px; padding: 0.8rem 0.75rem; }
+
+  body.searched .hero-container { top: 0; }
+  body.searched .header-inner { gap: 0.45rem; }
+  body.searched .logo-brand { font-size: 1.05rem; }
+  body.searched #q { min-height: 42px; font-size: 0.92rem; }
+  body.searched .qf { padding-top: 0.5rem; }
+  body.searched .qb { font-size: 0.7rem; }
+}
+
+@media (max-width: 480px) {
+  body:not(.searched) .hero-container {
+    padding: 3.4rem 0.7rem 1.8rem;
+  }
+  body:not(.searched) .hero-container::before {
+    background:
+      linear-gradient(160deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.64) 100%),
+      url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 24% / cover no-repeat,
+      #0d1f1b;
+  }
+  .logo-sub { line-height: 1.35; }
+  #q { min-height: 46px; }
+  .hero-action-btn { padding: 0.75rem 0.7rem; }
+  .visa-step-container { padding: 0.85rem 0.75rem; }
+
+  body.searched .results-area { padding: 0 0.6rem; }
+  body.searched .vc-h { padding: 0.85rem 0.9rem; }
+  body.searched .vs { padding: 0.8rem 0.9rem; }
+  body.searched .doc-buttons-grid { margin: 0.7rem; }
+
+  .modal-box { max-height: 88vh; overflow-y: auto; }
+}
     </style>
 </head>
 <body class="landing" data-theme="light">
