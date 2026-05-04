@@ -802,7 +802,6 @@ body.searched .visa-manual-section.in-hero { display: none !important; }
 body.searched .search-toggle-btn { display: none !important; }
 body.searched #searchForm { display: block !important; }
 body.searching #searchForm { display: block !important; }
-body.searching .hero-actions,
 body.searching .qa-main,
 body.searching #visaManualSection { display: none !important; }
     </style>
@@ -2590,16 +2589,34 @@ function executeSearch() {
         }, 1200);
     } else renderResults(query);
 }
-function resetToLanding(){
-    document.body.classList.remove('searched', 'searching'); document.body.classList.add('landing'); qEl.value='';
-    document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active');
-    document.getElementById('rlist').innerHTML=''; rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
+function closeDirectSearchMode(){
     const sf = document.getElementById('searchForm');
     const stb = document.getElementById('searchToggleBtn');
     const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'none';
-    if (stb) { stb.style.display = ''; stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
     if (vms) vms.style.display = '';
+    document.body.classList.remove('searching');
+    if (stb) { stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
+}
+
+function openDirectSearchMode(){
+    const sf = document.getElementById('searchForm');
+    const stb = document.getElementById('searchToggleBtn');
+    const vms = document.getElementById('visaManualSection');
+    if (sf) sf.style.display = 'block';
+    if (vms) vms.style.display = 'none';
+    document.body.classList.add('searching');
+    if (stb) { stb.setAttribute('aria-expanded', 'true'); stb.classList.add('active'); }
+    if (qEl) qEl.focus();
+}
+
+function resetToLanding(){
+    document.body.classList.remove('searched', 'searching'); document.body.classList.add('landing'); qEl.value='';
+    document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active');
+    document.getElementById('rlist').innerHTML=''; rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
+    const stb = document.getElementById('searchToggleBtn');
+    closeDirectSearchMode();
+    if (stb) stb.style.display = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetReveal();
 }
@@ -2813,22 +2830,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 'set-search-mode': () => setSearchMode(actionBtn.dataset.mode),
                 'toggle-accordions': () => toggleAccordions(actionBtn.dataset.fold === 'true'),
                 'toggle-search': () => {
-                    const sf = document.getElementById('searchForm');
                     const stb = document.getElementById('searchToggleBtn');
-                    const vms = document.getElementById('visaManualSection');
                     const isOpen = stb && stb.getAttribute('aria-expanded') === 'true';
-                    if (isOpen) {
-                        if (sf) sf.style.display = 'none';
-                        if (vms) vms.style.display = '';
-                        document.body.classList.remove('searching');
-                        if (stb) { stb.setAttribute('aria-expanded', 'false'); stb.classList.remove('active'); }
-                    } else {
-                        if (sf) sf.style.display = 'block';
-                        if (vms) vms.style.display = 'none';
-                        document.body.classList.add('searching');
-                        if (stb) { stb.setAttribute('aria-expanded', 'true'); stb.classList.add('active'); }
-                        if (qEl) qEl.focus();
-                    }
+                    if (isOpen) closeDirectSearchMode();
+                    else openDirectSearchMode();
                 },
                 'open-jobcode-modal': () => openJobCodeModal(),
                 'open-jurisdiction-modal': () => openJurisdictionModal(),
