@@ -937,6 +937,229 @@ body:not(.searched) .auto-list {
 body:not(.searched) .auto-item             { color: rgba(255,255,255,.86); border-bottom-color: rgba(255,255,255,.07); }
 body:not(.searched) .auto-item:hover       { background: rgba(255,255,255,.07); }
 body:not(.searched) .auto-item svg         { color: rgba(255,255,255,.38); }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 2: Action card & visa manual card refinement
+   Scope: body:not(.searched) only. CSS-only. No JS/HTML changes.
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1 · Spring transition on all action cards ─────────────────────
+   Replaces the global `all 0.18s` with per-property control so
+   transform uses a spring cubic-bezier while colours stay snappy. */
+body:not(.searched) .hero-action-btn {
+  transition:
+    background  0.20s ease,
+    border-color 0.20s ease,
+    box-shadow  0.20s ease,
+    color       0.16s ease,
+    transform   0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+body:not(.searched) .hero-action-btn:hover {
+  transform: translateY(-5px);
+}
+body:not(.searched) .hero-action-btn:active {
+  transform: translateY(-2px);
+  transition-duration: 0.10s;
+}
+
+/* 2 · Icon badge — circular glass chip ──────────────────────────
+   Padding-based so no fixed height is imposed; safe at all breakpoints. */
+body:not(.searched) .hero-action-icon {
+  background: rgba(255,255,255,.10);
+  border-radius: 50%;
+  padding: 0.45rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.20s ease;
+}
+body:not(.searched) .hero-action-btn:hover .hero-action-icon {
+  background: rgba(255,255,255,.18);
+}
+
+/* 3 · Action label — slightly bolder, better tracking ───────────*/
+body:not(.searched) .hero-action-label {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* 4 · Search toggle — primary CTA: stronger glass ───────────────
+   Overrides Phase 1 .11 alpha; still distinct from qa-main. */
+body:not(.searched) .search-toggle-btn {
+  background: rgba(255,255,255,.16);
+  border-width: 1.5px;
+}
+body:not(.searched) .search-toggle-btn:hover {
+  background: rgba(255,255,255,.26);
+  box-shadow: 0 14px 30px rgba(0,0,0,.34), 0 0 0 1px rgba(255,255,255,.26);
+}
+
+/* 5 · qa-main buttons — secondary: more restrained ──────────────
+   Slightly lower alpha than the primary search toggle. */
+body:not(.searched) .qa-main .hero-action-btn {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+}
+body:not(.searched) .qa-main .hero-action-btn:hover {
+  background: rgba(255,255,255,.17);
+  border-color: rgba(255,255,255,.26);
+  box-shadow: 0 12px 26px rgba(0,0,0,.30);
+}
+
+/* 6 · Section labels via ::before ────────────────────────────────
+   CSS-only visual headings; no HTML added. */
+body:not(.searched) .qa-main::before {
+  content: '관련 행정 도구';
+  grid-column: 1 / -1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.36);
+  margin-bottom: 0.1rem;
+  align-self: end;
+}
+body:not(.searched) #visaManualSection::before {
+  content: '체류 경로 선택';
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.36);
+  margin-bottom: 0.55rem;
+}
+
+/* 7 · Visa track cards — spring lift + tighter glass ────────────*/
+body:not(.searched) .visa-track-card {
+  transition:
+    background  0.20s ease,
+    border-color 0.20s ease,
+    box-shadow  0.20s ease,
+    transform   0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+body:not(.searched) .visa-track-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 34px rgba(0,0,0,.38), 0 0 0 1px rgba(255,255,255,.22);
+}
+body:not(.searched) .visa-track-card:active {
+  transform: translateY(-2px);
+}
+
+/* 8 · Visa track icon — circular badge ─────────────────────────*/
+body:not(.searched) .visa-track-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.12);
+  border-radius: 50%;
+  padding: 0.55rem;
+  font-size: 1.45rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-bottom: 0.4rem;
+  transition: background 0.20s ease;
+}
+body:not(.searched) .visa-track-card:hover .visa-track-icon {
+  background: rgba(255,255,255,.20);
+}
+
+/* 9 · Visa track title — stronger headline weight ───────────────*/
+body:not(.searched) .visa-track-title {
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+/* 10 · Visa purpose cards — spring lift ────────────────────────*/
+body:not(.searched) .visa-purpose-card {
+  transition:
+    background  0.20s ease,
+    border-color 0.20s ease,
+    box-shadow  0.20s ease,
+    color       0.16s ease,
+    transform   0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+body:not(.searched) .visa-purpose-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0,0,0,.32);
+}
+
+/* 11 · Visa purpose icon — circular badge ──────────────────────*/
+body:not(.searched) .visa-purpose-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.12);
+  border-radius: 50%;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-bottom: 0.3rem;
+  transition: background 0.20s ease;
+}
+body:not(.searched) .visa-purpose-card:hover .visa-purpose-icon {
+  background: rgba(255,255,255,.20);
+}
+
+/* 12 · Visa dynamic content — dark glass when expanded ──────────
+   Applies when a track is selected and the step container renders. */
+body:not(.searched) .visa-step-container {
+  background: rgba(12,26,22,.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+}
+body:not(.searched) .visa-step-header h3 { color: rgba(255,255,255,.94); }
+body:not(.searched) .visa-step-header p  { color: rgba(255,255,255,.54); }
+body:not(.searched) .visa-search-box {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.12);
+}
+body:not(.searched) .visa-track-btn {
+  background: rgba(255,255,255,.20);
+  color: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,255,255,.22);
+}
+body:not(.searched) .visa-track-btn:hover {
+  background: rgba(255,255,255,.32);
+  border-color: rgba(255,255,255,.36);
+}
+body:not(.searched) .visa-track-btn-secondary {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.78);
+}
+body:not(.searched) .visa-track-btn-secondary:hover {
+  background: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.24);
+  color: rgba(255,255,255,.96);
+}
+body:not(.searched) .visa-result-card {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.10);
+}
+body:not(.searched) .visa-result-card:hover {
+  background: rgba(255,255,255,.11);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.26);
+}
+body:not(.searched) .visa-result-header { color: rgba(255,255,255,.90); }
+body:not(.searched) .visa-result-desc   { color: rgba(255,255,255,.68); }
+
+/* 13 · Reference disclaimer — muted on dark ────────────────────*/
+body:not(.searched) .reference-disclaimer {
+  border-top-color: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.34);
+}
+
+/* 14 · Scroll cue — readable on dark hero ──────────────────────*/
+body:not(.searched) .scroll-cue         { color: rgba(255,255,255,.44); }
+body:not(.searched) .scroll-cue:hover   { color: rgba(255,255,255,.80); }
     </style>
 </head>
 <body class="landing" data-theme="light">
