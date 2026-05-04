@@ -1746,6 +1746,65 @@ const API_BASE = (location.hostname === 'localhost' || location.hostname === '12
 let VISA_DATA = [];
 let dataReady = false;
 const qEl = document.getElementById('q');
+const SEARCH_DEBUG_ENABLED = (() => {
+    try {
+        const url = new URL(window.location.href);
+        return url.searchParams.get('debugSearch') === '1' || url.hash.includes('debugSearch');
+    } catch (e) {
+        return false;
+    }
+})();
+
+function getSearchDebugSnapshot(label){
+    const sf = document.getElementById('searchForm');
+    const stb = document.getElementById('searchToggleBtn');
+    const xb = document.getElementById('xb');
+    const activeEl = document.activeElement;
+    return {
+        label,
+        bodyClassName: document.body.className,
+        searchFormComputedDisplay: sf ? getComputedStyle(sf).display : '(missing)',
+        searchFormInlineDisplay: sf ? sf.style.display : '(missing)',
+        searchToggleAriaExpanded: stb ? stb.getAttribute('aria-expanded') : '(missing)',
+        searchToggleText: stb ? stb.textContent.replace(/\s+/g, ' ').trim() : '(missing)',
+        searchToggleClassName: stb ? stb.className : '(missing)',
+        xbComputedDisplay: xb ? getComputedStyle(xb).display : '(missing)',
+        xbClassName: xb ? xb.className : '(missing)',
+        qValue: qEl ? qEl.value : '(missing)',
+        activeElement: activeEl ? `${activeEl.tagName.toLowerCase()}#${activeEl.id || ''}.${activeEl.className || ''}` : '(none)'
+    };
+}
+
+function ensureSearchDebugPanel(){
+    if (!SEARCH_DEBUG_ENABLED || document.getElementById('searchDebugPanel')) return;
+    const panel = document.createElement('aside');
+    panel.id = 'searchDebugPanel';
+    panel.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:99999;max-width:min(90vw,360px);background:rgba(0,0,0,.86);color:#9fffb0;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;padding:10px 12px;border:1px solid rgba(159,255,176,.5);border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.45);white-space:pre-wrap;word-break:break-word;pointer-events:none;';
+    panel.textContent = 'search debug panel';
+    document.body.appendChild(panel);
+}
+
+function debugSearchState(label){
+    const snapshot = getSearchDebugSnapshot(label);
+    window.__PARADISO_SEARCH_DEBUG__ = snapshot;
+    if (!SEARCH_DEBUG_ENABLED) return snapshot;
+    ensureSearchDebugPanel();
+    console.table(snapshot);
+    const panel = document.getElementById('searchDebugPanel');
+    if (panel) {
+        panel.textContent = [
+            `label: ${snapshot.label}`,
+            `body: ${snapshot.bodyClassName}`,
+            `searchForm(display): ${snapshot.searchFormComputedDisplay} / inline=${snapshot.searchFormInlineDisplay || '(empty)'}`,
+            `toggle(aria-expanded): ${snapshot.searchToggleAriaExpanded}`,
+            `toggle(text): ${snapshot.searchToggleText}`,
+            `xb(display): ${snapshot.xbComputedDisplay}`,
+            `input(length): ${typeof snapshot.qValue === 'string' ? snapshot.qValue.length : 0}`
+        ].join('\n');
+    }
+    return snapshot;
+}
+
 const rcEl = document.getElementById('rc');
 let currentSearchMode = 'and';
 const CC = {short:'var(--cSh)',study:'var(--cSt)',work:'var(--cWk)',invest:'var(--cIn)',family:'var(--cFm)',other:'var(--cOt)',diplo:'var(--cDp)',nhis:'var(--cNh)',faq:'var(--cFq)',scn:'var(--cSc)'};
@@ -2604,15 +2663,18 @@ function setDirectSearchToggleState(isOpen){
 }
 
 function closeDirectSearchMode(){
+    debugSearchState('closeDirectSearchMode:start');
     const sf = document.getElementById('searchForm');
     const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'none';
     if (vms) vms.style.display = '';
     document.body.classList.remove('searching');
     setDirectSearchToggleState(false);
+    debugSearchState('closeDirectSearchMode:end');
 }
 
 function openDirectSearchMode(){
+    debugSearchState('openDirectSearchMode:start');
     const sf = document.getElementById('searchForm');
     const vms = document.getElementById('visaManualSection');
     if (sf) sf.style.display = 'block';
@@ -2620,9 +2682,11 @@ function openDirectSearchMode(){
     document.body.classList.add('searching');
     setDirectSearchToggleState(true);
     if (qEl) qEl.focus();
+    debugSearchState('openDirectSearchMode:end');
 }
 
 function resetToLanding(){
+    debugSearchState('resetToLanding:start');
     document.body.classList.remove('searched', 'searching'); document.body.classList.add('landing'); qEl.value='';
     document.getElementById('xb').classList.remove('v'); document.getElementById('auto-list').classList.remove('active');
     document.getElementById('rlist').innerHTML=''; rcEl.textContent = dataReady ? `데이터 로드 완료 (${VISA_DATA.length}개)` : '데이터 로딩 중…';
@@ -2631,6 +2695,7 @@ function resetToLanding(){
     if (stb) stb.style.display = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     resetReveal();
+    debugSearchState('resetToLanding:end');
 }
 
 function renderResults(query){
@@ -2694,9 +2759,11 @@ function handleInput(){
     if(document.body.classList.contains('searched') && dataReady){ clearTimeout(dt); dt=setTimeout(()=>renderResults(v),150); }
 }
 function clearSearch(){
+    debugSearchState('clearSearch:start');
     const hasText = qEl.value.length > 0;
     if (!hasText && document.body.classList.contains('searching') && !document.body.classList.contains('searched')) {
         closeDirectSearchMode();
+        debugSearchState('clearSearch:end-empty-close');
         return;
     }
     qEl.value='';
@@ -2704,6 +2771,7 @@ function clearSearch(){
     document.getElementById('xb').classList.remove('v');
     document.getElementById('auto-list').classList.remove('active');
     if(document.body.classList.contains('searched') && dataReady) renderResults('');
+    debugSearchState('clearSearch:end');
 }
 function setSearchMode(m){currentSearchMode=m;document.getElementById('ma').classList.toggle('on',m==='and');document.getElementById('mo').classList.toggle('on',m==='or');if(document.body.classList.contains('searched')&&dataReady)renderResults(qEl.value);}
 
@@ -2809,6 +2877,7 @@ async function loadVisaData() {
 
 // --- Global Event Delegation ---
 document.addEventListener('DOMContentLoaded', () => {
+    ensureSearchDebugPanel();
     loadVisaData();
     if(qEl) qEl.addEventListener('input', handleInput);
 
@@ -2829,6 +2898,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (jcSearchInput) jcSearchInput.addEventListener('input', (e) => {
         clearTimeout(_jcSearchDebounce); _jcSearchDebounce = setTimeout(() => renderJobcodeResults(e.target.value), 200);
     });
+
+    debugSearchState('DOMContentLoaded:init');
 
     document.addEventListener('click', (e) => {
         // Toggle su wrapper inside results
@@ -2853,11 +2924,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 'set-search-mode': () => setSearchMode(actionBtn.dataset.mode),
                 'toggle-accordions': () => toggleAccordions(actionBtn.dataset.fold === 'true'),
                 'toggle-search': () => {
+                    debugSearchState('toggle-search:before');
                     const stb = document.getElementById('searchToggleBtn');
                     const isOpen = stb && stb.getAttribute('aria-expanded') === 'true';
                     if (!isOpen) openDirectSearchMode();
                     else if (!document.body.classList.contains('searched')) closeDirectSearchMode();
                     else if (qEl) qEl.focus();
+                    debugSearchState('toggle-search:after');
                 },
                 'open-jobcode-modal': () => openJobCodeModal(),
                 'open-jurisdiction-modal': () => openJurisdictionModal(),
