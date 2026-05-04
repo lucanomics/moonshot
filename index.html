@@ -457,6 +457,17 @@ body.searched .about-me { display: none !important; }
 [data-theme="dark"] .anagram-row.top-row .al.lit { color: #7FFFD4 !important; text-shadow: 0 0 16px rgba(52,212,168,0.85); }
 [data-theme="dark"] .anagram-row.bot-row .al.lit { color: #FFB3A7 !important; text-shadow: 0 0 16px rgba(255,107,91,0.85); }
 .anagram-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 1; pointer-events: none; }
+
+.anagram-panel { margin-top: 1rem; padding: 1rem; border-radius: 14px; background: color-mix(in srgb, var(--bg0) 86%, white); border: 1px solid var(--bd2); }
+.anagram-kicker { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t3); margin-bottom: 0.5rem; }
+.anagram-stage { position: relative; width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 4rem; user-select: none; }
+.anagram-word { font-size: 0.75rem; color: var(--t3); }
+.anagram-note { margin-top: 0.8rem; font-size: 0.78rem; color: var(--t3); }
+@media (prefers-reduced-motion: reduce) {
+  .ag-line { transition: none; stroke-dasharray: none !important; stroke-dashoffset: 0 !important; opacity: 0.32 !important; }
+  .anagram-row .al { transition: none; }
+}
+
 .ag-line { fill: none; stroke: var(--t3); stroke-width: 1.8; stroke-linecap: round; opacity: 0; transition: opacity 0.2s; }
 [data-theme="dark"] .ag-line { stroke: rgba(255,255,255,0.45); }
 .ag-line.drawn { opacity: 1; }
@@ -1695,7 +1706,19 @@ body:not(.searched) .landing-narrative {
     <section class="landing-narrative narrative-brand-story" aria-labelledby="narrativeStoryTitle">
         <h2 id="narrativeStoryTitle" class="narrative-title">Paradiso는 Diaspora에서 출발합니다</h2>
         <p class="narrative-copy">Paradiso라는 이름은 Diaspora의 문자를 재배열한 착안에서 출발했습니다. 이동과 정착의 여정 사이에서, 사용자가 필요한 정보를 더 명확하게 찾도록 길을 정리하는 브랜드 방향을 담고 있습니다.</p>
-        <p class="narrative-anagram" aria-label="브랜드 애너그램">DIASPORA <span aria-hidden="true">→</span> PARADISO</p>
+        <div class="anagram-panel" aria-label="DIASPORA에서 PARADISO로의 애너그램 매핑">
+            <p class="anagram-kicker" lang="en">Animated brand anagram</p>
+            <div class="anagram-stage" id="anagramStage">
+                <div class="anagram-word anagram-row top-row" id="agTop" aria-label="DIASPORA source letters">
+                    <span class="anagram-letter al">D</span><span class="anagram-letter al">I</span><span class="anagram-letter al">A</span><span class="anagram-letter al">S</span><span class="anagram-letter al">P</span><span class="anagram-letter al">O</span><span class="anagram-letter al">R</span><span class="anagram-letter al">A</span>
+                </div>
+                <svg class="anagram-lines anagram-svg" id="anagramSvg" aria-hidden="true"></svg>
+                <div class="anagram-word anagram-row bot-row" id="agBot" aria-label="PARADISO target letters">
+                    <span class="anagram-letter al">P</span><span class="anagram-letter al">A</span><span class="anagram-letter al">R</span><span class="anagram-letter al">A</span><span class="anagram-letter al">D</span><span class="anagram-letter al">I</span><span class="anagram-letter al">S</span><span class="anagram-letter al">O</span>
+                </div>
+            </div>
+            <p class="anagram-note">DIASPORA의 각 문자가 PARADISO의 대응 문자로 순차 매핑됩니다. (MAP = [4, 5, 1, 6, 0, 7, 2, 3])</p>
+        </div>
     </section>
 
     <section class="landing-narrative narrative-values" aria-labelledby="narrativeValuesTitle">
@@ -3646,62 +3669,79 @@ function resetReveal() {
     const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
     const topEls = Array.from(agTop.querySelectorAll('.al'));
     const botEls = Array.from(agBot.querySelectorAll('.al'));
-    let lineEls = [];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let cycleIndex = 0;
+    let timer = null;
+    let activeLine = null;
 
-    function buildLines() {
-        svg.innerHTML = ''; lineEls = [];
+    function createLine() {
+        svg.innerHTML = '';
         const sRect = stage.getBoundingClientRect();
         svg.setAttribute('viewBox', `0 0 ${sRect.width} ${sRect.height}`);
 
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `<marker id="ag-arr" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0.5 L0,5.5 L4.5,3 z" fill="var(--ac)"/></marker>`;
+        defs.innerHTML = '<marker id="ag-arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,1 L0,7 L6,4 z" fill="var(--ac)"/></marker>';
         svg.appendChild(defs);
 
-        MAP.forEach((bIdx, tIdx) => {
-            const tR = topEls[tIdx].getBoundingClientRect();
-            const bR = botEls[bIdx].getBoundingClientRect();
-            const x1 = tR.left + tR.width/2 - sRect.left, y1 = tR.bottom - sRect.top + 4;
-            const x2 = bR.left + bR.width/2 - sRect.left, y2 = bR.top - sRect.top - 4;
-            const len = Math.hypot(x2-x1, y2-y1);
-
-            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-            line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-            line.setAttribute('class','ag-line');
-            line.setAttribute('marker-end', 'url(#ag-arr)');
-            line.dataset.len = len;
-            line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
-            svg.appendChild(line); lineEls.push(line);
-        });
-        drawAll();
+        activeLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+        activeLine.setAttribute('class','ag-line anagram-line');
+        activeLine.setAttribute('marker-end', 'url(#ag-arr)');
+        activeLine.style.strokeWidth = '2.2';
+        activeLine.style.opacity = reduceMotion ? '0.32' : '0.92';
+        svg.appendChild(activeLine);
     }
 
-    function drawAll() {
-        lineEls.forEach((ln, i) => {
-            const len = parseFloat(ln.dataset.len);
-            ln.getAnimations().forEach(a => a.cancel());
-            ln.animate([
-                { strokeDashoffset: len, opacity: 0 },
-                { strokeDashoffset: len, opacity: 1, offset: 0.01 },
-                { strokeDashoffset: 0, opacity: 1 }
-            ], { duration: 380, delay: i * 45, easing: 'cubic-bezier(0.85, 0, 0.15, 1)', fill: 'forwards' });
-        });
+    function setLineFor(topIndex) {
+        if (!activeLine) return;
+        const bottomIndex = MAP[topIndex];
+        const sRect = stage.getBoundingClientRect();
+        const tR = topEls[topIndex].getBoundingClientRect();
+        const bR = botEls[bottomIndex].getBoundingClientRect();
+        const x1 = tR.left + tR.width / 2 - sRect.left;
+        const y1 = tR.bottom - sRect.top + 3;
+        const x2 = bR.left + bR.width / 2 - sRect.left;
+        const y2 = bR.top - sRect.top - 3;
+        const len = Math.hypot(x2 - x1, y2 - y1);
+
+        activeLine.setAttribute('x1', x1);
+        activeLine.setAttribute('y1', y1);
+        activeLine.setAttribute('x2', x2);
+        activeLine.setAttribute('y2', y2);
+
+        if (!reduceMotion) {
+            activeLine.style.strokeDasharray = `${len}`;
+            activeLine.style.strokeDashoffset = `${len}`;
+            requestAnimationFrame(() => {
+                activeLine.style.transition = 'stroke-dashoffset 0.42s cubic-bezier(0.2,0.7,0.2,1), opacity 0.25s';
+                activeLine.style.strokeDashoffset = '0';
+            });
+        }
     }
 
-    function highlight(tIdx, bIdx, on) {
-        lineEls.forEach((line, i) => { line.style.strokeWidth = (on && i === tIdx) ? '4' : ''; line.style.opacity = (on && i === tIdx) ? '1' : ''; });
-        topEls.forEach((l, i) => l.classList.toggle('lit', on && i === tIdx));
-        botEls.forEach((l, i) => l.classList.toggle('lit', on && i === bIdx));
+    function setActive(topIndex) {
+        const bottomIndex = MAP[topIndex];
+        topEls.forEach((el, i) => el.classList.toggle('lit', i === topIndex));
+        botEls.forEach((el, i) => el.classList.toggle('lit', i === bottomIndex));
+        setLineFor(topIndex);
     }
 
-    topEls.forEach((el,tIdx) => { el.addEventListener('mouseenter', () => highlight(tIdx, MAP[tIdx], true)); el.addEventListener('mouseleave', () => highlight(tIdx, MAP[tIdx], false)); });
-    botEls.forEach((el,bIdx) => { const tIdx = MAP.indexOf(bIdx); el.addEventListener('mouseenter', () => highlight(tIdx, bIdx, true)); el.addEventListener('mouseleave', () => highlight(tIdx, bIdx, false)); });
+    function rebuild() {
+        createLine();
+        setActive(cycleIndex % topEls.length);
+    }
 
-    if (document.readyState === 'complete') buildLines();
-    else window.addEventListener('load', buildLines);
-    window.addEventListener('resize', buildLines);
-    setInterval(drawAll, 3200);
-})();
+    rebuild();
+    window.addEventListener('resize', rebuild);
+
+    if (reduceMotion) return;
+
+    timer = window.setInterval(() => {
+        cycleIndex = (cycleIndex + 1) % topEls.length;
+        setActive(cycleIndex);
+    }, 720);
+
+    window.addEventListener('beforeunload', () => { if (timer) clearInterval(timer); });
+})();;
 
 // ── Visa Manual Section Functions ──────────────────────────────────────────
 
