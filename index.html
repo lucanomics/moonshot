@@ -143,8 +143,14 @@ body.night-light-mode .hero-container {
 .logo-sub { font-family: var(--ff-display, var(--ff)); }
 .hero-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 3.25rem 1.5rem 2.5rem; position: relative; z-index: 10; background: transparent; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .hero-container { min-height: 64px; padding: 0; position: sticky; top: 0; background: color-mix(in srgb, var(--bg1) 90%, transparent); border-bottom: 1px solid var(--bd); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--sh1); z-index: 50; }
-.header-inner { display: flex; flex-direction: column; align-items: center; gap: 2.6rem; width: 100%; max-width: 760px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+.header-inner { display: flex; flex-direction: column; align-items: center; gap: 2.6rem; width: 100%; max-width: 1240px; transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
 body.searched .header-inner { flex-direction: row; justify-content: space-between; max-width: 1160px; gap: 1rem; padding: 0.6rem 1.2rem; }
+body:not(.searched) .header-inner { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr); gap: 3.2rem; align-items: start; }
+body:not(.searched) .landing-main { display: flex; flex-direction: column; width: 100%; min-width: 0; }
+body.searched .landing-main { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex: 1; min-width: 0; width: 100%; }
+body.searched .landing-main .logo-area { flex: 0 0 auto; }
+body.searched .landing-main .search-wrap { flex: 1 1 auto; min-width: 180px; max-width: 480px; }
+body.searched .landing-main .ctrls { flex: 0 0 auto; white-space: nowrap; }
 
 /* Logo */
 .logo-area { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; cursor: pointer; transition: all 0.7s ease; outline: none; }
@@ -161,6 +167,8 @@ body.searched .logo-text { align-items: flex-start; }
 body.searched .logo-brand { font-size: 1.4rem; }
 .logo-sub { font-size: 0.72rem; font-weight: 600; color: var(--t3); letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.4s ease; }
 body.searched .logo-sub { font-size: 0; opacity: 0; height: 0; margin: 0; overflow: hidden; }
+body:not(.searched) .logo-area,
+body:not(.searched) .logo-text { align-items: flex-start; }
 
 /* Logo Animation Classes */
 .logo-brand { perspective: 800px; }
@@ -469,6 +477,15 @@ body.searched .about-me { display: none !important; }
 [data-theme="dark"] .brand-vision { color: #c8f5e3; }
 .brand-disclaimer { font-size: 0.8rem; color: var(--t3); margin: 0; line-height: 1.55; word-break: keep-all; }
 .reference-disclaimer { width: 100%; max-width: 680px; margin: 1.05rem 0 0; padding: 0.75rem 0; border-radius: 0; border: 0; border-top: 1px solid var(--bd2); background: transparent; color: var(--t3); font-size: 0.76rem; line-height: 1.65; word-break: keep-all; }
+body:not(.searched) .reference-disclaimer { max-width: 100%; }
+
+.landing-evidence-panel { width: 100%; border: 1px solid var(--bd2); border-radius: 4px; background: color-mix(in srgb, var(--bg1) 96%, white); padding: 1.35rem 1.1rem 1.05rem; }
+.landing-evidence-label { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ac); margin-bottom: 0.9rem; }
+.landing-evidence-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--bd2); }
+.landing-evidence-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 0.7rem; padding: 0.66rem 0; border-bottom: 1px solid var(--bd2); font-size: 0.86rem; color: var(--t1); letter-spacing: -0.01em; }
+.landing-evidence-list li span { color: var(--t3); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+.landing-evidence-note { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--bd2); font-size: 0.75rem; line-height: 1.6; color: var(--t3); }
+body.searched .landing-evidence-panel { display: none; }
 
 .about-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
 .intro-img-placeholder { background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary-soft) 40%, var(--bg1)), var(--bg2)); border-radius: 24px; aspect-ratio: 4/3; width: 100%; box-shadow: var(--sh1); display: flex; align-items: center; justify-content: center; font-size: 4rem; opacity: 0.8; }
@@ -546,6 +563,8 @@ body.searched .about-me { display: none !important; }
 }
 
 @media (max-width: 768px) {
+    body:not(.searched) .header-inner { display: flex; gap: var(--sp-5); }
+    .landing-evidence-panel { display: none; }
     body:not(.searched) .hero-container { min-height: auto; padding: var(--sp-6) var(--sp-4) var(--sp-5); }
     .hero-actions { display: grid; grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 100%; min-width: 0; }
     .qa-main { grid-template-columns: 1fr; gap: var(--sp-2); width: 100%; max-width: 100%; min-width: 0; }
@@ -823,6 +842,7 @@ body.searching #visaManualSection { display: none !important; }
 
 <header class="hero-container" id="hero">
     <div class="header-inner">
+        <div class="landing-main">
         <div class="logo-area" tabindex="0" role="button" aria-label="메인 화면으로 초기화" data-action="reset-to-landing">
             <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
@@ -922,6 +942,18 @@ body.searching #visaManualSection { display: none !important; }
             <h2 class="landing-hints-title" id="landingHintsTitle">추천 키워드</h2>
             <div class="landing-hints" id="landingHints" aria-label="빠른 추천 검색어"></div>
         </section>
+        </div>
+        <aside class="landing-evidence-panel" aria-hidden="true">
+            <p class="landing-evidence-label">근거 확인 흐름</p>
+            <ul class="landing-evidence-list">
+                <li><strong>공개 자료 기반</strong><span>01</span></li>
+                <li><strong>사증민원 매뉴얼</strong><span>02</span></li>
+                <li><strong>체류민원 매뉴얼</strong><span>03</span></li>
+                <li><strong>출입국관리법령</strong><span>04</span></li>
+                <li><strong>최종 확인: 하이코리아 또는 1345</strong><span>05</span></li>
+            </ul>
+            <p class="landing-evidence-note">본 서비스는 참고용 정보 제공 도구이며, 법적 상담이나 민원 대행이 아닙니다.</p>
+        </aside>
     </div>
     <button type="button" class="scroll-cue" id="scrollCue" data-action="scroll-to-brand" aria-label="아래로 스크롤">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
