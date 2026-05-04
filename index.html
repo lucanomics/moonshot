@@ -1266,6 +1266,89 @@ body:not(.searched) .hero-container::before {
       #0d1f1b;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Phase 5 · Searched-state result card and result list polish
+   Design direction: trustworthy public-service results desk
+   Scope: body.searched — landing state and Phase 1–4 visuals untouched
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1 · Results area — wider padding on desktop ──────────────────*/
+@media (min-width: 768px) {
+  body.searched .results-area { padding: 0 1.5rem; }
+}
+
+/* 2 · Quick filter row — more vertical breathing room ──────────*/
+body.searched .qf { margin-top: 1.75rem; margin-bottom: 1rem; }
+
+/* 3 · Quick filter chips — slightly taller, crisper hover ─────*/
+body.searched .qb {
+  height: 30px;
+  padding: 0 0.85rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  transition:
+    background  0.16s ease,
+    color        0.16s ease,
+    border-color 0.16s ease,
+    box-shadow   0.16s ease;
+}
+body.searched .qb:hover {
+  box-shadow: 0 2px 8px rgba(47,94,103,.16);
+}
+
+/* 4 · Result list — more gap between cards ─────────────────────*/
+body.searched .rlist { gap: 1.05rem; }
+
+/* 5 · Result card — rounded corners + subtle depth ────────────*/
+body.searched .vc {
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(24,28,26,.05), 0 0 0 1px rgba(209,198,180,.50);
+}
+body.searched .vc:hover {
+  box-shadow: 0 5px 18px rgba(24,28,26,.10), 0 0 0 1px rgba(47,94,103,.20);
+  border-color: color-mix(in srgb, var(--ac) 26%, var(--bd2));
+}
+
+/* 6 · Card header — top corners match card ─────────────────────*/
+body.searched .vc-h { border-radius: 10px 10px 0 0; }
+
+/* 7 · Code badge — slightly warmer radius ──────────────────────*/
+body.searched .bc { border-radius: 6px; }
+
+/* 8 · Content sections — slightly tighter padding ─────────────*/
+body.searched .vs { padding: 1.0rem 1.35rem; }
+
+/* 9 · Prose content block — warmer border-radius ───────────────*/
+body.searched .text-desc {
+  border-radius: 6px;
+  border-left-width: 2px;
+}
+
+/* 10 · Document trigger buttons — softer corners ───────────────*/
+body.searched .doc-buttons-grid { gap: 0.75rem; }
+body.searched .doc-trigger-btn  { border-radius: 8px; }
+
+/* 11 · Subcodes list — card style matches parent ───────────────*/
+body.searched .su { border-radius: 8px; }
+body.searched .su:hover { box-shadow: 0 3px 10px rgba(24,28,26,.08); }
+
+/* 12 · Data date footer — consistent muted size ────────────────*/
+body.searched .data-date { font-size: 0.67rem; }
+
+/* 13 · Search meta — better weight and tracking ────────────────*/
+body.searched .smeta { font-weight: 500; letter-spacing: 0.01em; }
+
+/* 14 · Empty state — more generous vertical space ──────────────*/
+body.searched .es { padding: 5rem 1rem; }
+
+/* 15 · Mobile: safe layout at narrow viewports ─────────────────*/
+@media (max-width: 640px) {
+  body.searched .vc-h            { padding: 1rem 1.1rem; gap: 0.55rem; }
+  body.searched .vs              { padding: 0.9rem 1.1rem; }
+  body.searched .doc-trigger-btn { padding: 0.85rem 0.7rem; font-size: 0.84rem; }
+  body.searched .doc-buttons-grid { margin: 0.85rem 0.85rem; }
+}
     </style>
 </head>
 <body class="landing" data-theme="light">
