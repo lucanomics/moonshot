@@ -3648,6 +3648,7 @@ function resetReveal() {
     const svg   = document.getElementById('anagramSvg');
     const agTop = document.getElementById('agTop');
     const agBot = document.getElementById('agBot');
+    const arrow = document.getElementById('anagramArrow');
     if (!stage || !svg || !agTop || !agBot) return;
     const MAP = [4, 5, 1, 6, 0, 7, 2, 3];
     const topEls = Array.from(agTop.querySelectorAll('.al'));
