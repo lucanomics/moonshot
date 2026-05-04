@@ -806,6 +806,137 @@ body.searched #searchForm { display: block !important; }
 body.searching #searchForm { display: block !important; }
 body.searching .qa-main,
 body.searching #visaManualSection { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   Phase 1: Cinematic Civic Gateway — landing hero visual reskin
+   Scope: body:not(.searched) only. CSS-only. No JS/HTML changes.
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1 · Dark cinematic backdrop ────────────────────────────────
+   Overrides the existing ::before gradient in landing/searching state.
+   body.searched .hero-container::before { opacity:0 } (existing rule)
+   correctly removes it for the searched compact header. */
+body:not(.searched) .hero-container::before {
+  background:
+    linear-gradient(160deg, rgba(0,0,0,.52) 0%, rgba(0,0,0,.44) 100%),
+    radial-gradient(circle at 18% 22%, rgba(47,94,103,.62), transparent 42%),
+    radial-gradient(circle at 80% 26%, rgba(255,107,91,.26), transparent 34%),
+    radial-gradient(circle at 54% 72%, rgba(14,163,123,.16), transparent 40%),
+    #0d1f1b;
+}
+/* Night-light mode retains its own opacity override */
+body.night-light-mode:not(.searched) .hero-container::before { opacity: 0.08 !important; }
+
+/* 2 · Logo ───────────────────────────────────────────────────
+   White headline + subdued sub on dark background */
+body:not(.searched) .logo-brand { color: rgba(255,255,255,.95); }
+body:not(.searched) .logo-sub   { color: rgba(255,255,255,.52); }
+
+/* 3 · Hero action buttons — glass ───────────────────────────*/
+body:not(.searched) .hero-action-btn {
+  background: rgba(255,255,255,.11);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.88);
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+body:not(.searched) .hero-action-btn:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.38);
+  color: rgba(255,255,255,.99);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+}
+
+/* 4 · Search toggle — white-accent replaces var(--ac) on dark */
+body:not(.searched) .search-toggle-btn {
+  border-color: rgba(255,255,255,.40);
+  color: rgba(255,255,255,.92);
+}
+body:not(.searched) .search-toggle-btn:hover {
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.60);
+  border-style: solid;
+  color: rgba(255,255,255,.99);
+}
+body:not(.searched) .search-toggle-btn.active {
+  background: rgba(255,255,255,.20);
+  border-color: rgba(255,255,255,.62);
+  border-style: solid;
+}
+
+/* 5 · Search bar — glass surface ────────────────────────────*/
+body:not(.searched) .sbar {
+  background: rgba(255,255,255,.13);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 6px 20px rgba(0,0,0,.20);
+}
+body:not(.searched) .sbar:focus-within {
+  border-color: rgba(255,255,255,.50);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.10), 0 10px 26px rgba(0,0,0,.22);
+}
+body:not(.searched) #q              { color: rgba(255,255,255,.96); }
+body:not(.searched) #q::placeholder { color: rgba(255,255,255,.40); }
+body:not(.searched) .sbar-icon      { color: rgba(255,255,255,.48); }
+body:not(.searched) .sbar:focus-within .sbar-icon { color: rgba(255,255,255,.78); }
+body:not(.searched) .xb             { color: rgba(255,255,255,.50); }
+body:not(.searched) .xb:hover       { color: rgba(255,255,255,.90); }
+body:not(.searched) .sbar-go        { color: rgba(255,255,255,.50); }
+body:not(.searched) .sbar-go:hover  { color: rgba(255,255,255,.92); }
+
+/* 6 · Landing hint chips ─────────────────────────────────────*/
+body:not(.searched) .lh {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.14);
+  color: rgba(255,255,255,.70);
+}
+body:not(.searched) .lh:hover {
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.34);
+  color: rgba(255,255,255,.96);
+  transform: translateY(-1px);
+}
+body:not(.searched) .landing-hints-title { color: rgba(255,255,255,.42); }
+
+/* 7 · Visa manual section cards — basic glass (full polish in Phase 2) */
+body:not(.searched) .visa-track-card {
+  background: rgba(255,255,255,.09);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,.14);
+}
+body:not(.searched) .visa-track-card:hover {
+  background: rgba(255,255,255,.17);
+  border-color: rgba(255,255,255,.28);
+}
+body:not(.searched) .visa-track-title { color: rgba(255,255,255,.92); }
+body:not(.searched) .visa-track-desc  { color: rgba(255,255,255,.58); }
+body:not(.searched) .visa-purpose-card {
+  background: rgba(255,255,255,.09);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(255,255,255,.14);
+  color: rgba(255,255,255,.90);
+}
+body:not(.searched) .visa-purpose-card:hover {
+  background: rgba(255,255,255,.17);
+  border-color: rgba(255,255,255,.28);
+  color: rgba(255,255,255,.99);
+}
+body:not(.searched) .visa-purpose-hint { color: rgba(255,255,255,.55); }
+
+/* 8 · Autocomplete dropdown — dark glass to match hero ──────*/
+body:not(.searched) .auto-list {
+  background: rgba(15,30,26,.92);
+  border-color: rgba(255,255,255,.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+body:not(.searched) .auto-item             { color: rgba(255,255,255,.86); border-bottom-color: rgba(255,255,255,.07); }
+body:not(.searched) .auto-item:hover       { background: rgba(255,255,255,.07); }
+body:not(.searched) .auto-item svg         { color: rgba(255,255,255,.38); }
     </style>
 </head>
 <body class="landing" data-theme="light">
