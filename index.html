@@ -1241,6 +1241,31 @@ body:not(.searched) .lh:hover {
 
 /* 10 · #searchForm — top spacing when direct-search is open ────*/
 body.searching:not(.searched) #searchForm { margin-top: var(--sp-2); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Phase 4 · Local Unsplash hero image asset integration
+   Overrides Phase 1 gradient-only background on .hero-container::before.
+   Scope: body:not(.searched) only. searched-state untouched.
+   Image: assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg (WS Chae, Unsplash)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1 · Primary scenic image — dark overlay for text readability ─ */
+body:not(.searched) .hero-container::before {
+  background:
+    linear-gradient(160deg, rgba(0,0,0,.60) 0%, rgba(0,0,0,.52) 100%),
+    url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 42% / cover no-repeat,
+    #0d1f1b;
+}
+
+/* 2 · Mobile — shift crop to upper portion of frame ───────────  */
+@media (max-width: 640px) {
+  body:not(.searched) .hero-container::before {
+    background:
+      linear-gradient(160deg, rgba(0,0,0,.64) 0%, rgba(0,0,0,.56) 100%),
+      url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg") center 28% / cover no-repeat,
+      #0d1f1b;
+  }
+}
     </style>
 </head>
 <body class="landing" data-theme="light">
