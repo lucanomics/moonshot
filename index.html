@@ -1670,6 +1670,186 @@ body.searched .es { padding: 5rem 1rem; }
 
   .modal-box { max-height: 88vh; overflow-y: auto; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Phase 9B-2 · Style Softening + Wordmark
+   Source: docs/design/STYLE_SOFTENING_BRIEF.md
+   Translates Jackie/Lazyweb concept (texture felt not seen,
+   organic rhythm without scrapbook chaos) into a CSS-only
+   refinement of the existing Paradiso surface. No new
+   external deps; no HTML structural changes; no JS.
+   ═══════════════════════════════════════════════════════════ */
+
+/* — Tokens — */
+:root {
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-soft:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-smooth: cubic-bezier(0.45, 0, 0.55, 1);
+
+  --shadow-float:
+    0 2px 4px rgba(11, 42, 36, 0.04),
+    0 8px 20px rgba(11, 42, 36, 0.06),
+    0 20px 40px rgba(11, 42, 36, 0.06);
+  --shadow-lift:
+    0 1px 3px rgba(11, 42, 36, 0.06),
+    0 4px 12px rgba(11, 42, 36, 0.08);
+  --shadow-press:
+    0 1px 2px rgba(11, 42, 36, 0.06);
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  --ff-serif: 'Bodoni Moda', 'Noto Serif KR', Georgia, 'Times New Roman', serif;
+}
+[data-theme="dark"] {
+  --shadow-float:
+    0 2px 4px rgba(0, 0, 0, 0.32),
+    0 8px 20px rgba(0, 0, 0, 0.42),
+    0 20px 40px rgba(0, 0, 0, 0.5);
+  --shadow-lift:
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.46);
+  --shadow-press:
+    0 1px 2px rgba(0, 0, 0, 0.42);
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* — Typography hierarchy softening — */
+/* Reduce 900/800 hammers; add display-serif breath. */
+.brand-hero-headline {
+  font-family: var(--ff-serif);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+.brand-hero-subtitle { font-weight: 400; }
+.feature-headline {
+  font-family: var(--ff-serif);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.feature-body { font-weight: 400; line-height: 1.85; }
+.about-title {
+  font-family: var(--ff-serif);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.brand-hero-stats .stat-num {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+.brand-hero-stats .stat-label { font-weight: 500; }
+.brand-hero-stats .stat-label span[lang="en"] { font-weight: 400; letter-spacing: 0.04em; }
+.figma-feature-section .check-list li strong { font-weight: 700; }
+.figma-anagram-section .anagram-right h3 { font-weight: 700; }
+.figma-anagram-section .philosophy-list strong { font-weight: 700; }
+.figma-anagram-section .philosophy-list li::before { font-weight: 600; }
+.figma-footer-hero-title {
+  font-family: var(--ff-serif);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.figma-footer-hero-content .footer-hero-eyebrow { font-weight: 700; letter-spacing: 0.22em; }
+.footer-hero-title { font-weight: 700; }
+
+/* — Layered shadow system — */
+.brand-hero-stats.figma-stat-grid {
+  box-shadow: var(--shadow-float), var(--highlight-top);
+}
+.figma-feature-section .check-list li {
+  box-shadow: var(--shadow-press), var(--highlight-top);
+}
+.figma-value-card { box-shadow: var(--shadow-lift); }
+.figma-value-card:hover { box-shadow: var(--shadow-float); }
+.figma-anagram-section {
+  box-shadow: var(--shadow-lift);
+}
+.figma-anagram-section .anagram-visual {
+  box-shadow:
+    var(--shadow-lift),
+    var(--highlight-top),
+    inset 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* — Border-radius variation: large containers slightly smaller,
+     small/play cards slightly larger — */
+.brand-feature.figma-feature-section { border-radius: 28px; }
+.about-me { border-radius: 28px; }
+.figma-anagram-section { border-radius: 22px; }
+.figma-anagram-section .anagram-visual { border-radius: 18px; }
+.brand-hero-stats.figma-stat-grid { border-radius: 22px; }
+.figma-footer-hero { border-radius: 26px; }
+
+/* — Brand section gradient harmonization (green palette) — */
+.brand-hero {
+  background: linear-gradient(
+    160deg,
+    var(--color-primary-ink) 0%,
+    var(--color-primary) 48%,
+    #0B6E55 100%
+  );
+}
+
+/* — Transition easing softening (CSS-only, no JS) — */
+.hero-action-btn {
+  transition:
+    transform 0.28s var(--ease-spring),
+    box-shadow 0.32s var(--ease-out-soft),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.figma-stat-grid .stat-card,
+.figma-value-card {
+  transition:
+    transform 0.4s var(--ease-spring),
+    box-shadow 0.4s var(--ease-out-soft);
+}
+.figma-feature-section .check-list li {
+  transition:
+    transform 0.28s var(--ease-spring),
+    box-shadow 0.28s var(--ease-out-soft);
+}
+.figma-roadmap-section .exp-row,
+.figma-roadmap-section .exp-dot {
+  transition: transform 0.32s var(--ease-spring);
+}
+
+/* — Wordmark image (Phase 10) — */
+.brand-wordmark-img {
+  display: none;
+  width: auto;
+  height: 64px;
+  max-width: min(420px, 86%);
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.22));
+  transition: opacity 0.4s var(--ease-out-soft, ease);
+}
+body:not(.searched) .brand-wordmark-img { display: block; }
+body.searched .brand-wordmark-img { display: none; }
+
+/* Mobile sizing keeps wordmark legible without crowding */
+@media (max-width: 760px) {
+  body:not(.searched) .brand-wordmark-img { height: 48px; }
+}
+@media (max-width: 480px) {
+  body:not(.searched) .brand-wordmark-img { height: 40px; }
+}
+
+/* Respect reduced-motion: drop the spring overshoot on hovers */
+@media (prefers-reduced-motion: reduce) {
+  .hero-action-btn,
+  .figma-stat-grid .stat-card,
+  .figma-value-card,
+  .figma-feature-section .check-list li,
+  .figma-roadmap-section .exp-row,
+  .figma-roadmap-section .exp-dot,
+  .brand-wordmark-img {
+    transition-duration: 0.01ms !important;
+  }
+}
     </style>
 </head>
 <body class="landing" data-theme="light">
@@ -1696,6 +1876,7 @@ body.searched .es { padding: 5rem 1rem; }
 <header class="hero-container" id="hero">
     <div class="header-inner">
         <div class="logo-area" tabindex="0" role="button" aria-label="메인 화면으로 초기화" data-action="reset-to-landing">
+            <img class="brand-wordmark-img" src="assets/brand/paradiso-wordmark-brush-white.png" alt="Paradiso" decoding="async" loading="eager" />
             <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
                     <clipPath id="p39clip"><circle cx="60" cy="60" r="54"/></clipPath>
@@ -2061,7 +2242,7 @@ body.searched .es { padding: 5rem 1rem; }
             <button type="button" class="modal-close" data-action="close-ai-modal" aria-label="닫기">✕</button>
         </div>
         <div class="modal-body">
-            <p style="font-size:0.85rem; color:var(--t3); line-height:1.5;">현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Paradiso AI가 2026년 현행 법령 및 출입국 실무 매뉴얼에 기반한 완벽한 솔루션을 제공합니다.</p>
+            <p style="font-size:0.85rem; color:var(--t3); line-height:1.5;">현재 국적, 보유 중인 체류자격(비자), 직무, 거주지 등 본인의 상황을 상세히 적어주시면, Paradiso AI가 공개 자료와 입력하신 상황을 바탕으로 관련 체류자격과 확인해야 할 절차를 정리해 드립니다. 최종 판단과 신청 절차는 관할기관 안내를 확인해 주세요.</p>
             <label for="aiInput" class="sr-only">상황 입력</label>
             <textarea id="aiInput" class="ai-textarea" placeholder="예: 미국 국적이며 현재 이태원에 거주 중입니다. 한국 대학교 4년제 학사를 졸업했고 D-10 구직 비자 상태인데 E-7으로 취업하고 싶습니다."></textarea>
             
