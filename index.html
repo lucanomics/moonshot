@@ -1948,6 +1948,135 @@ body *:not(code):not(pre):not(kbd):not(samp):not(.jc-code):not(.jur-big) {
   font-family: var(--ff) !important;
 }
 
+
+/* Phase 11: Jeju hero atmosphere and interactive wordmark */
+:root {
+  --jeju-hero-coast: url("assets/hero/clary-garcia-QHlGCk9I_lY-unsplash.jpg");
+  --jeju-brand-field: url("assets/hero/ji-seongkwang-CX7fI2LXJgo-unsplash.jpg");
+  --jeju-start-stone: url("assets/hero/ws-chae--jVX4mW1Uac-unsplash.jpg");
+  --jeju-footer-night: url("assets/hero/yeonhee-VWLhifg5VMA-unsplash.jpg");
+}
+
+body:not(.searched) .hero-container {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+body:not(.searched) .hero-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(135deg, rgba(3, 30, 26, 0.78), rgba(8, 94, 72, 0.50) 46%, rgba(20, 28, 36, 0.72)),
+    radial-gradient(circle at 18% 20%, rgba(255, 107, 91, 0.22), transparent 36%),
+    radial-gradient(circle at 82% 16%, rgba(127, 255, 212, 0.16), transparent 34%),
+    var(--jeju-hero-coast);
+  background-size: cover, cover, cover, cover;
+  background-position: center, center, center, center 42%;
+  transform: scale(1.035);
+  filter: saturate(0.95) contrast(1.04);
+  animation: heroPhotoBreath 28s ease-in-out infinite alternate;
+}
+
+body:not(.searched) .hero-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.16), transparent 22%, rgba(0,0,0,0.24)),
+    radial-gradient(ellipse at center, transparent 44%, rgba(0,0,0,0.32));
+}
+
+@keyframes heroPhotoBreath {
+  from {
+    transform: scale(1.035) translate3d(0, 0, 0);
+    background-position: center, center, center, center 42%;
+  }
+  to {
+    transform: scale(1.075) translate3d(0, -1.4%, 0);
+    background-position: center, center, center, center 48%;
+  }
+}
+
+body:not(.searched) .brand-wordmark-img {
+  height: clamp(120px, 16vw, 230px) !important;
+  width: auto !important;
+  max-width: min(94vw, 1120px) !important;
+  object-fit: contain !important;
+  filter:
+    drop-shadow(0 14px 34px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 22px rgba(255, 255, 255, 0.18));
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease;
+}
+
+body:not(.searched) .logo-area:hover .brand-wordmark-img,
+body:not(.searched) .logo-area:focus-visible .brand-wordmark-img {
+  transform: scale(1.028) translateY(-4px);
+  filter:
+    drop-shadow(0 18px 44px rgba(0, 0, 0, 0.48))
+    drop-shadow(0 0 32px rgba(255, 255, 255, 0.30));
+}
+
+.brand-hero {
+  background-image:
+    linear-gradient(135deg, rgba(4, 50, 42, 0.84), rgba(8, 94, 72, 0.62)),
+    var(--jeju-brand-field) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.figma-start-section .figma-start-img,
+.intro-img-placeholder {
+  background-image:
+    linear-gradient(135deg, rgba(5, 38, 33, 0.36), rgba(255, 255, 255, 0.08)),
+    var(--jeju-start-stone) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.figma-footer-hero,
+.footer-hero-img {
+  background-image:
+    linear-gradient(135deg, rgba(5, 16, 22, 0.70), rgba(8, 94, 72, 0.34)),
+    var(--jeju-footer-night) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+@media (max-width: 768px) {
+  body:not(.searched) .brand-wordmark-img {
+    height: clamp(76px, 21vw, 118px) !important;
+    max-width: 92vw !important;
+  }
+
+  body:not(.searched) .hero-container::before {
+    background-position: center, center, center, center 45%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.searched) .hero-container::before {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  body:not(.searched) .brand-wordmark-img {
+    transition: none !important;
+  }
+
+  body:not(.searched) .logo-area:hover .brand-wordmark-img,
+  body:not(.searched) .logo-area:focus-visible .brand-wordmark-img {
+    transform: none !important;
+  }
+}
+
 </style>
 </head>
 <body class="landing" data-theme="light">
