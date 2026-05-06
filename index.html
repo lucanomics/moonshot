@@ -2141,6 +2141,125 @@ body:not(.searched) .brand-points li:has(strong:first-child) strong {
   color: var(--color-primary-ink);
 }
 
+
+/* Phase 12C: restore readable contrast in dark scrolled landing sections */
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) :is(
+  h1, h2, h3, h4, h5, h6,
+  p, li, small,
+  .feature-headline,
+  .about-title,
+  .figma-section-title,
+  .figma-section-kicker,
+  .figma-footer-hero-title,
+  .figma-value-title,
+  .figma-value-body,
+  .brand-hero-headline,
+  .brand-hero-subtitle,
+  .footer-hero-title,
+  .footer-hero-eyebrow,
+  .roadmap-title,
+  .roadmap-body,
+  .check-list li
+) {
+  color: rgba(255, 255, 255, 0.90) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) :is(
+  .figma-highlight-box,
+  .figma-value-card,
+  .figma-roadmap-card,
+  .stat-card,
+  .check-list li,
+  .feature-card,
+  .about-card
+) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.115), rgba(255, 255, 255, 0.055)) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) :is(
+  .figma-highlight-box,
+  .figma-value-card,
+  .figma-roadmap-card,
+  .stat-card,
+  .check-list li,
+  .feature-card,
+  .about-card
+) :is(h1, h2, h3, h4, p, li, span, strong) {
+  color: rgba(255, 255, 255, 0.90) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) :is(.muted, .subtle, .eyebrow, .caption, .figma-muted) {
+  color: rgba(255, 255, 255, 0.68) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) a {
+  color: rgba(190, 255, 232, 0.96) !important;
+}
+
+body:not(.searched) :is(
+  .brand-feature,
+  .about-me,
+  .figma-anagram-section,
+  .figma-values-section,
+  .figma-roadmap-section,
+  .figma-start-section
+) :is(button, .hero-action-btn, .doc-trigger-btn, .visa-track-btn) {
+  color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+}
+
 </style>
 </head>
 <body class="landing" data-theme="light">
