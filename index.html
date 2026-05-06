@@ -1883,6 +1883,29 @@ body {
   font-family: var(--ff) !important;
 }
 
+
+/* Phase 10E: enlarge Paradiso brush wordmark on landing */
+body:not(.searched) .brand-wordmark-img {
+  height: clamp(72px, 9vw, 128px) !important;
+  width: auto !important;
+  max-width: min(88vw, 760px) !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  body:not(.searched) .brand-wordmark-img {
+    height: clamp(56px, 15vw, 82px) !important;
+    max-width: 86vw !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body:not(.searched) .brand-wordmark-img {
+    height: clamp(48px, 14vw, 68px) !important;
+    max-width: 88vw !important;
+  }
+}
+
 </style>
 </head>
 <body class="landing" data-theme="light">
