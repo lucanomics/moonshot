@@ -7,8 +7,6 @@
     <meta name="theme-color" content="#0f172a">
     <link rel="icon" type="image/png" href="assets/brand/paradiso-favicon-o.png?v=2">
     <link rel="apple-touch-icon" href="assets/brand/paradiso-favicon-o.png?v=2">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1699,7 +1697,7 @@ body.searched .es { padding: 5rem 1rem; }
     0 1px 2px rgba(11, 42, 36, 0.06);
   --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 
-  --ff-serif: 'Bodoni Moda', 'Noto Serif KR', Georgia, 'Times New Roman', serif;
+  --ff-serif: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 [data-theme="dark"] {
   --shadow-float:
@@ -1717,20 +1715,20 @@ body.searched .es { padding: 5rem 1rem; }
 /* — Typography hierarchy softening — */
 /* Reduce 900/800 hammers; add display-serif breath. */
 .brand-hero-headline {
-  font-family: var(--ff-serif);
+  font-family: var(--ff-display);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1.12;
 }
 .brand-hero-subtitle { font-weight: 400; }
 .feature-headline {
-  font-family: var(--ff-serif);
+  font-family: var(--ff-display);
   font-weight: 600;
   letter-spacing: -0.025em;
 }
 .feature-body { font-weight: 400; line-height: 1.85; }
 .about-title {
-  font-family: var(--ff-serif);
+  font-family: var(--ff-display);
   font-weight: 600;
   letter-spacing: -0.035em;
 }
@@ -1746,7 +1744,7 @@ body.searched .es { padding: 5rem 1rem; }
 .figma-anagram-section .philosophy-list strong { font-weight: 700; }
 .figma-anagram-section .philosophy-list li::before { font-weight: 600; }
 .figma-footer-hero-title {
-  font-family: var(--ff-serif);
+  font-family: var(--ff-display);
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -1937,6 +1935,16 @@ select {
 .anagram-letter,
 .anagram-row .al,
 .anagram-label {
+  font-family: var(--ff) !important;
+}
+
+
+/* Phase 10G: remove remaining serif font leftovers */
+:root {
+  --ff-serif: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body *:not(code):not(pre):not(kbd):not(samp):not(.jc-code):not(.jur-big) {
   font-family: var(--ff) !important;
 }
 
