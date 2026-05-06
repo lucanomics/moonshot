@@ -2078,67 +2078,118 @@ body:not(.searched) .logo-area:focus-visible .brand-wordmark-img {
 }
 
 
-/* Phase 12: clean scrolled visual atmosphere and remove old background feel */
-body:not(.searched) .brand-feature,
-body:not(.searched) .about-me,
-body:not(.searched) .figma-anagram-section,
-body:not(.searched) .figma-values-section,
-body:not(.searched) .figma-roadmap-section,
-body:not(.searched) .figma-start-section {
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--bg1) 88%, rgba(232, 244, 238, 0.72)),
-      color-mix(in srgb, var(--bg0) 92%, rgba(255, 184, 168, 0.16))
-    ) !important;
-  border: 1px solid color-mix(in srgb, var(--bd2) 72%, transparent) !important;
-  box-shadow:
-    0 18px 54px rgba(8, 94, 72, 0.08),
-    0 4px 18px rgba(0, 0, 0, 0.04) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+/* Phase 12B: refine remaining lower-section legacy visuals */
+body:not(.searched) .brand-feature {
+  background: #13181f !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-body:not(.searched) .brand-hero.figma-brand-bridge,
-body:not(.searched) .brand-hero {
-  background-image:
-    linear-gradient(135deg, rgba(4, 42, 36, 0.82), rgba(8, 94, 72, 0.58)),
-    var(--jeju-brand-field) !important;
-  background-size: cover !important;
-  background-position: center !important;
+body:not(.searched) .about-me,
+body:not(.searched) .figma-start-section {
+  background: #0d1117 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(.searched) .figma-anagram-section {
+  background: #13181f !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
 }
 
 body:not(.searched) .figma-start-section .figma-start-img,
 body:not(.searched) .intro-img-placeholder {
   background-image:
-    linear-gradient(135deg, rgba(4, 42, 36, 0.26), rgba(255, 255, 255, 0.12)),
+    linear-gradient(135deg, rgba(13, 17, 23, 0.74), rgba(13, 17, 23, 0.42)),
     var(--jeju-start-stone) !important;
   background-size: cover !important;
   background-position: center !important;
 }
 
-body:not(.searched) .figma-footer-hero,
-body:not(.searched) .footer-hero-img {
-  background-image:
-    linear-gradient(135deg, rgba(4, 16, 22, 0.74), rgba(8, 94, 72, 0.38)),
-    var(--jeju-footer-night) !important;
+body:not(.searched) .figma-footer-hero {
+  background-color: #0d1117 !important;
+  background-image: url("assets/hero/yeonhee-VWLhifg5VMA-unsplash.jpg") !important;
   background-size: cover !important;
-  background-position: center !important;
+  background-position: center 40% !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
 }
 
-body:not(.searched) .figma-highlight-box,
-body:not(.searched) .figma-value-card,
-body:not(.searched) .check-list li,
+body:not(.searched) .figma-footer-hero-overlay {
+  background: rgba(13, 17, 23, 0.82) !important;
+}
+
+body:not(.searched) .footer-hero-img {
+  display: none !important;
+}
+
 body:not(.searched) .stat-card {
-  background:
-    color-mix(in srgb, var(--bg1) 86%, rgba(255,255,255,0.32)) !important;
-  border-color: color-mix(in srgb, var(--bd2) 70%, transparent) !important;
-  box-shadow:
-    0 10px 28px rgba(8, 94, 72, 0.07),
-    0 2px 8px rgba(0, 0, 0, 0.035) !important;
+  background: transparent !important;
+  border: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+  padding: 2.5rem 2rem !important;
+  text-align: center;
 }
 
-body:not(.searched) .brand-points li:has(strong:first-child) strong {
-  color: var(--color-primary-ink);
+body:not(.searched) .stat-card:last-child {
+  border-right: none !important;
+}
+
+body:not(.searched) .figma-stat-grid .stat-card:hover,
+body:not(.searched) .stat-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+body:not(.searched) .figma-value-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  transition: border-color 0.2s ease !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+body:not(.searched) .figma-value-card:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+body:not(.searched) .figma-highlight-box {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+}
+
+body:not(.searched) .figma-highlight-box p {
+  color: #f0ede8 !important;
+}
+
+@media (max-width: 768px) {
+  body:not(.searched) .stat-card {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    padding: 1.5rem 1rem !important;
+  }
+
+  body:not(.searched) .stat-card:last-child {
+    border-bottom: none !important;
+  }
+
+  body:not(.searched) .figma-value-card {
+    padding: 1.5rem !important;
+  }
+
+  body:not(.searched) .figma-footer-hero {
+    background-position: center center !important;
+  }
 }
 
 </style>
