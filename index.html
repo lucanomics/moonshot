@@ -2077,6 +2077,70 @@ body:not(.searched) .logo-area:focus-visible .brand-wordmark-img {
   }
 }
 
+
+/* Phase 12: clean scrolled visual atmosphere and remove old background feel */
+body:not(.searched) .brand-feature,
+body:not(.searched) .about-me,
+body:not(.searched) .figma-anagram-section,
+body:not(.searched) .figma-values-section,
+body:not(.searched) .figma-roadmap-section,
+body:not(.searched) .figma-start-section {
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--bg1) 88%, rgba(232, 244, 238, 0.72)),
+      color-mix(in srgb, var(--bg0) 92%, rgba(255, 184, 168, 0.16))
+    ) !important;
+  border: 1px solid color-mix(in srgb, var(--bd2) 72%, transparent) !important;
+  box-shadow:
+    0 18px 54px rgba(8, 94, 72, 0.08),
+    0 4px 18px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+body:not(.searched) .brand-hero.figma-brand-bridge,
+body:not(.searched) .brand-hero {
+  background-image:
+    linear-gradient(135deg, rgba(4, 42, 36, 0.82), rgba(8, 94, 72, 0.58)),
+    var(--jeju-brand-field) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+body:not(.searched) .figma-start-section .figma-start-img,
+body:not(.searched) .intro-img-placeholder {
+  background-image:
+    linear-gradient(135deg, rgba(4, 42, 36, 0.26), rgba(255, 255, 255, 0.12)),
+    var(--jeju-start-stone) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+body:not(.searched) .figma-footer-hero,
+body:not(.searched) .footer-hero-img {
+  background-image:
+    linear-gradient(135deg, rgba(4, 16, 22, 0.74), rgba(8, 94, 72, 0.38)),
+    var(--jeju-footer-night) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+body:not(.searched) .figma-highlight-box,
+body:not(.searched) .figma-value-card,
+body:not(.searched) .check-list li,
+body:not(.searched) .stat-card {
+  background:
+    color-mix(in srgb, var(--bg1) 86%, rgba(255,255,255,0.32)) !important;
+  border-color: color-mix(in srgb, var(--bd2) 70%, transparent) !important;
+  box-shadow:
+    0 10px 28px rgba(8, 94, 72, 0.07),
+    0 2px 8px rgba(0, 0, 0, 0.035) !important;
+}
+
+body:not(.searched) .brand-points li:has(strong:first-child) strong {
+  color: var(--color-primary-ink);
+}
+
 </style>
 </head>
 <body class="landing" data-theme="light">
@@ -2352,8 +2416,7 @@ body:not(.searched) .logo-area:focus-visible .brand-wordmark-img {
                 <ul class="philosophy-list">
                     <li><strong>Paradiso</strong> — 이탈리아어 "낙원(Paradise)". 한국에서의 체류가 모두에게 머무를 만한 곳이기를 바랍니다.</li>
                     <li><strong>Diaspora (애너그램)</strong> — 'Paradiso'는 이주민을 뜻하는 영단어 'Diaspora'의 알파벳 8개를 재배열(Anagram)한 단어입니다. 고국을 떠나온 이주민들이 대한민국에서 안정적인 정주 환경을 영위할 수 있도록 돕고자 하는 지향점을 담았습니다.</li>
-                    <li><strong>39</strong> — 출입국관리법령상 대한민국 체류자격 39종을 의미합니다.</li>
-                </ul>
+</ul>
                 <div class="figma-highlight-box">
                     <p>300만 체류 외국인 시대를 함께 준비합니다.</p>
                 </div>
