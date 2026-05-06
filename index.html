@@ -2487,6 +2487,161 @@ body:not(.searched) :is(
   color: var(--color-primary-ink, #132f2a) !important;
 }
 
+
+/* Phase 13: modernize searched-state header and results interface */
+body.searched .hero-container {
+  min-height: 72px !important;
+  padding: 0 !important;
+  background:
+    linear-gradient(135deg,
+      rgba(252, 250, 245, 0.94),
+      rgba(232, 244, 238, 0.90)
+    ) !important;
+  border-bottom: 1px solid rgba(8, 94, 72, 0.13) !important;
+  box-shadow:
+    0 10px 30px rgba(8, 94, 72, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.70) inset !important;
+  backdrop-filter: blur(18px) saturate(1.06) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.06) !important;
+}
+
+body.searched .header-inner {
+  max-width: 1180px !important;
+  padding: 0.65rem 1.2rem !important;
+  gap: 1rem !important;
+}
+
+/* Hide legacy searched-state animated/text logo */
+body.searched .logo-svg,
+body.searched .logo-brand,
+body.searched .logo-sub,
+body.searched .logo-text {
+  display: none !important;
+}
+
+/* Use the brush wordmark in searched state too, with a dark civic capsule for contrast */
+body.searched .logo-area {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 132px !important;
+  height: 42px !important;
+  padding: 0.38rem 0.72rem !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(135deg, rgba(5, 72, 58, 0.96), rgba(8, 94, 72, 0.88)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 10px 24px rgba(8, 94, 72, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+body.searched .brand-wordmark-img {
+  display: block !important;
+  height: 26px !important;
+  width: auto !important;
+  max-width: 118px !important;
+  object-fit: contain !important;
+  filter:
+    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25))
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.12)) !important;
+}
+
+/* Refine searched-state search bar */
+body.searched .search-wrap {
+  max-width: 540px !important;
+}
+
+body.searched .sbar {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(252,250,245,0.82)) !important;
+  border: 1px solid rgba(8, 94, 72, 0.15) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    0 8px 24px rgba(8, 94, 72, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.82) !important;
+}
+
+body.searched .sbar:focus-within {
+  border-color: rgba(14, 163, 123, 0.52) !important;
+  box-shadow:
+    0 0 0 3px rgba(14, 163, 123, 0.16),
+    0 12px 32px rgba(8, 94, 72, 0.12) !important;
+}
+
+body.searched #q {
+  color: var(--color-primary-ink, #085E48) !important;
+}
+
+body.searched #q::placeholder {
+  color: rgba(8, 94, 72, 0.48) !important;
+}
+
+body.searched .ctrls .cb,
+body.searched .cb {
+  background: rgba(255,255,255,0.72) !important;
+  border: 1px solid rgba(8, 94, 72, 0.14) !important;
+  color: var(--color-primary-ink, #085E48) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 14px rgba(8, 94, 72, 0.055) !important;
+}
+
+body.searched .ctrls .cb:hover,
+body.searched .cb:hover {
+  background: rgba(232, 244, 238, 0.92) !important;
+  border-color: rgba(14, 163, 123, 0.42) !important;
+  color: var(--color-primary, #0EA37B) !important;
+}
+
+/* Make searched results feel less like the old mode */
+body.searched .results-area {
+  padding-top: 1.25rem !important;
+}
+
+body.searched .rlist {
+  gap: 0.9rem !important;
+}
+
+body.searched .card,
+body.searched .result-card,
+body.searched .r {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.86), rgba(252,250,245,0.74)) !important;
+  border: 1px solid rgba(8, 94, 72, 0.12) !important;
+  box-shadow:
+    0 14px 38px rgba(8, 94, 72, 0.07),
+    inset 0 1px 0 rgba(255,255,255,0.68) !important;
+}
+
+@media (max-width: 720px) {
+  body.searched .hero-container {
+    min-height: auto !important;
+  }
+
+  body.searched .header-inner {
+    align-items: stretch !important;
+    gap: 0.65rem !important;
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  body.searched .logo-area {
+    align-self: flex-start !important;
+    min-width: 112px !important;
+    height: 38px !important;
+  }
+
+  body.searched .brand-wordmark-img {
+    height: 23px !important;
+    max-width: 102px !important;
+  }
+
+  body.searched .search-wrap {
+    max-width: none !important;
+    width: 100% !important;
+  }
+}
+
 </style>
 </head>
 <body class="landing" data-theme="light">
