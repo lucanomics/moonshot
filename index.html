@@ -9,14 +9,13 @@
     <link rel="apple-touch-icon" href="assets/brand/paradiso-favicon-o.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;1,6..96,400;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --ff: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ff: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ff-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --ff-display: 'DM Sans', 'Pretendard Variable', sans-serif;
+  --ff-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --fs: clamp(14px, 1.35vw, 16px);
 
   --color-primary: #0EA37B;           
@@ -68,7 +67,10 @@
   --btn-pad-lg: 0 var(--sp-5);
   --btn-fw: 700;
   --btn-tr: all 0.18s cubic-bezier(0.4,0,0.2,1);
-}
+
+  --font-body: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;}
 [data-theme="dark"] {
   --bg0: #0B2A24; --bg1: #113B32; --bg2: #184B40; --bg3: #205A4E;
   --bgI: #0B2A24; --bd: #2D5A50; --bd2: #224A41; --bd3: #2D5A50;
@@ -1904,6 +1906,38 @@ body:not(.searched) .brand-wordmark-img {
     height: clamp(48px, 14vw, 68px) !important;
     max-width: 88vw !important;
   }
+}
+
+
+/* Phase 10F: force Pretendard-first Korean/UI typography */
+:root {
+  --ff: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ff-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ff-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--ff) !important;
+}
+
+.logo-brand,
+.logo-sub,
+.ft-logo,
+.brand-hero-headline,
+.brand-hero-subtitle,
+.figma-footer-hero-title,
+.anagram-letter,
+.anagram-row .al,
+.anagram-label {
+  font-family: var(--ff) !important;
 }
 
 </style>
