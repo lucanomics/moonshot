@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paradiso — 대한민국 39가지 체류자격을 한 번에</title>
     <meta name="theme-color" content="#0f172a">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2274%22 font-family=%22ui-serif,Georgia,serif%22 font-size=%2272%22 font-weight=%22700%22 fill=%22%230EA37B%22 text-anchor=%22middle%22>P</text><circle cx=%2278%22 cy=%2228%22 r=%226%22 fill=%22%23FF6B5B%22/></svg>">
-    <link rel="icon" type="image/png" href="assets/brand/paradiso-favicon-o.png">
-    <link rel="apple-touch-icon" href="assets/brand/paradiso-favicon-o.png">
+    <link rel="icon" type="image/png" href="assets/brand/paradiso-favicon-o.png?v=2">
+    <link rel="apple-touch-icon" href="assets/brand/paradiso-favicon-o.png?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;1,6..96,400;1,6..96,500;1,6..96,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -16,7 +15,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --ff: 'Pretendard Variable', Pretendard, 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --ff-logo: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --ff-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ff-display: 'DM Sans', 'Pretendard Variable', sans-serif;
   --fs: clamp(14px, 1.35vw, 16px);
 
@@ -1851,7 +1850,40 @@ body.searched .brand-wordmark-img { display: none; }
     transition-duration: 0.01ms !important;
   }
 }
-    </style>
+    
+/* Phase 10D: hide legacy visible brand mark after brush wordmark integration */
+body:not(.searched) .logo-svg,
+body:not(.searched) .logo-brand,
+body:not(.searched) .logo-sub {
+  display: none !important;
+}
+
+body:not(.searched) .logo-text {
+  display: none !important;
+}
+
+body:not(.searched) .brand-wordmark-img {
+  display: block !important;
+}
+
+.logo-brand .logo-39 {
+  display: none !important;
+}
+
+
+/* Phase 10D: Pretendard-first UI typography */
+:root {
+  --ff: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ff-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ff-logo: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body {
+  font-family: var(--ff) !important;
+}
+
+</style>
 </head>
 <body class="landing" data-theme="light">
 <canvas id="starCanvas"></canvas>
